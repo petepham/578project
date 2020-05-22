@@ -28,8 +28,18 @@
 
 # Results ###################
 ## Descriptive Statistics
+### Summary statistics
+
 ## Survival Analysis
+### [GRAPHIC] KM Curve
+### [GRAPHIC] Weibull Curve
+### [GRAPHIC] Cox PH Curve
+
 ## Model Dianostics
+### AIC/R/BIC
+### Residual Analysis
+### QQ Plot
+
 
 # Conclusion
 
