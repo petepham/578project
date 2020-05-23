@@ -26,7 +26,9 @@ It's clear that survival rates is not the same after a heart attack.??
 
 # Introduction
 
-Myocardial infarctions are becoming largely common among U.S. populations. It has become so common, that approximately 23% of all fatalities in the United States in 2015 are due to heart disease (cdc. cite please). Through decades of research and study, our medical system has refined techniques to increase the probability of surviving a myocardial infarction. There is growing concern that the heart's efficacy is large effected by infarction and cannot return to previous levels of productivity. 
+Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Reports of decreased blood pressure efficiency and abnormal heart rate have raised concerns of variable-dependent survivability among post-infarction patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
+
+[Insert more kaggle context]
 
 ```{r cdc.deathsummary, echo=FALSE}
 
@@ -37,7 +39,7 @@ summary(cars)
 We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
 
 ## Objective
-We seek to further analysis this dataset to see if there are notable differences in one year survival proportion between age, gender, demographic. 
+We seek to apply survival analysis techniques to this given dats set to examine the characteristics of survival rates among post-infarction patients. Additionally, we hope to achieve better understanding of survival rates as stratified among several classifications.
 
 ## Dataset
 We have obtained our data set from Kaggle. The data set contains # of observations and records 13 variables. Please refer to the data set below for more details.
