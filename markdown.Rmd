@@ -28,6 +28,12 @@ It's clear that survival rates is not the same after a heart attack.??
 
 Myocardial infarctions are becoming largely common among U.S. populations. It has become so common, that approximately 23% of all fatalities in the United States in 2015 are due to heart disease (cdc. cite please). Through decades of research and study, our medical system has refined techniques to increase the probability of surviving a myocardial infarction. There is growing concern that the heart's efficacy is large effected by infarction and cannot return to previous levels of productivity. 
 
+```{r cdc.deathsummary, echo=FALSE}
+
+
+summary(cars)
+```
+
 We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
 
 ## Objective
@@ -38,13 +44,13 @@ We have obtained our data set from Kaggle. The data set contains # of observatio
 
 [add table summarizing the headers]
 
-```{r Dataset.summary, echo=FLASE}
+```{r Dataset.summary, echo=FALSE}
 summary(cars)
 ```
 
 [add the data set??]
 
-```{r Dataset.actual, echo=FLASE}
+```{r Dataset.actual, echo=FALSE}
 summary(cars)
 ```
 
@@ -66,42 +72,42 @@ summary(cars)
 # Results
 ## Table of Summary Statistics
 
-```{r stats.summary, echo=FLASE}
+```{r stats.summary, echo=FALSE}
 summary(cars)
 ```
 
 ## KM Curve
 
-```{r km.plot, echo=FLASE}
+```{r km.plot, echo=FALSE}
 summary(cars)
 ```
 
 ## Weibull Curve
 
-```{r wb.plot, echo=FLASE}
+```{r wb.plot, echo=FALSE}
 summary(cars)
 ```
 
 ## Cox Proportional Hazard
 
-```{r coxph.plot, echo=FLASE}
+```{r coxph.plot, echo=FALSE}
 summary(cars)
 ```
 
 ## Model Diagnostics
 ### AIC, BIC, and Confidence Intervals
 
-```{r diagnostic.table, echo=FLASE}
+```{r diagnostic.table, echo=FALSE}
 summary(cars)
 ```
 
 ### Residual Analysis/QQ Plot
 
-```{r diagnostic.resid, echo=FLASE}
+```{r diagnostic.resid, echo=FALSE}
 summary(cars)
 ```
 
-```{r diagnostic.qqplot, echo=FLASE}
+```{r diagnostic.qqplot, echo=FALSE}
 summary(cars)
 ```
 
