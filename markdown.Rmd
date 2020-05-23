@@ -34,6 +34,13 @@ Out of all of our methods, we have determined that [] is the most appropriate mo
 
 Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode. We examine records of several patient variables
 
+We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
+
+## Dataset
+We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details. Since the time of infartion varies, some patients were followed for less than a year.
+
+Survival is the the number of months patient survived (has survived, if patient is still alive). Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
+
 [Insert more kaggle context]
 
 ```{r cdc.deathsummary, echo=FALSE}
@@ -41,13 +48,6 @@ Myocardial infarctions are becoming largely common among U.S. populations. The n
 
 summary(cars)
 ```
-
-We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
-
-## Dataset
-We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details.
-
-Survival is the the number of months patient survived (has survived, if patient is still alive). Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
 
 Alive.end is a binary variable if a patient is alive by the end of the survival variable, 0 means the patient has died at the end of the time period while 1 means that patient is still alive.
 
@@ -67,14 +67,18 @@ Alive-at-1: 0 means patient was either dead after 1 year or had been followed fo
 
 [add table summarizing the headers]
 
-```{r Dataset.summary, echo=FALSE}
-summary(cars)
+```{r Dataset.summary, echo=FALSE, results='asis'}
+library(readxl)
+library(knitr)
+df.sum <- data.frame(read_excel("df.sum.xlsx"))
+kable(df.sum, caption = "Dataset Variable Labels")
 ```
 
 [add the data set??]
 
-```{r Dataset.actual, echo=FALSE}
-summary(cars)
+```{r Dataset.actual, echo=FALSE, results='asis'}
+df <- data.frame(read_excel("df.xlsx"))
+kable(df, caption = "Dataset")
 ```
 
 [add details from kaggle]
@@ -93,10 +97,12 @@ Left Censored: Because all the patients had their heart attacks at different tim
 By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 # Methodology
+## Imputation
 ## Summary statistics
 ## Kaplan-Meier
 ## Weibull Fits
 ## Cox PH
+
 
 # Results
 ## Table of Summary Statistics

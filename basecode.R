@@ -1,19 +1,17 @@
-# Abstract (Summary) ###################
-## Background
-## Objective
-## Methods
-## Results
-## Conclusion
-
 # Introduction ###################
 ## Background
 
 ## Objective
 
 ## Data
-### Table of the data
 ### Header definition
+library(readxl)
+df.sum <- data.frame(read_excel("df.sum.xlsx"))
+df.sum
 
+### Table of the data
+df <- data.frame(read_excel("df.xlsx"))
+df
 ## Definitions
 ### Medical definitions
 ### Censored information
