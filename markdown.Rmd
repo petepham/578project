@@ -1,30 +1,110 @@
 ---
-title: "project"
+title: "Survival Analysis of Post-Myocardial Infarction Patients"
 author: "Alvein, Orr, Pham"
 date: "5/22/2020"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Abstract
+** Two sentences each, at most!
 
-## R Markdown
+[Brief Intro]
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+[Objective + methods]
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Using [], [], and seek to better understand the nature of survival for patients that have survived the infarction. As rate of infarction increases, so will the rate of patients that will require monitoring.
 
-```{r cars}
+[Results]
+We have found that...
+
+[Conclusion]
+It's clear that survival rates is not the same after a heart attack.??
+
+
+# Introduction
+
+Myocardial infarctions are becoming largely common among U.S. populations. It has become so common, that approximately 23% of all fatalities in the United States in 2015 are due to heart disease (cdc. cite please). Through decades of research and study, our medical system has refined techniques to increase the probability of surviving a myocardial infarction. There is growing concern that the heart's efficacy is large effected by infarction and cannot return to previous levels of productivity. 
+
+We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
+
+## Objective
+We seek to further analysis this dataset to see if there are notable differences in one year survival proportion between age, gender, demographic. 
+
+## Dataset
+We have obtained our data set from Kaggle. The data set contains # of observations and records 13 variables. Please refer to the data set below for more details.
+
+[add table summarizing the headers]
+
+```{r Dataset.summary, echo=FLASE}
 summary(cars)
 ```
 
-## Including Plots
+[add the data set??]
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r Dataset.actual, echo=FLASE}
+summary(cars)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+[add details from kaggle]
+
+## Mathematical Definitions
+### Censoring
+### Cruves
+### equations
+
+[latex]
+
+# Methodology
+## Summary statistics
+## Kaplan-Meier
+## Weibull Fits
+## Cox PH
+
+# Results
+## Table of Summary Statistics
+
+```{r stats.summary, echo=FLASE}
+summary(cars)
+```
+
+## KM Curve
+
+```{r km.plot, echo=FLASE}
+summary(cars)
+```
+
+## Weibull Curve
+
+```{r wb.plot, echo=FLASE}
+summary(cars)
+```
+
+## Cox Proportional Hazard
+
+```{r coxph.plot, echo=FLASE}
+summary(cars)
+```
+
+## Model Diagnostics
+### AIC, BIC, and Confidence Intervals
+
+```{r diagnostic.table, echo=FLASE}
+summary(cars)
+```
+
+### Residual Analysis/QQ Plot
+
+```{r diagnostic.resid, echo=FLASE}
+summary(cars)
+```
+
+```{r diagnostic.qqplot, echo=FLASE}
+summary(cars)
+```
+
+# Discussion
+
+# References
