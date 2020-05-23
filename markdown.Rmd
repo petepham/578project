@@ -9,24 +9,30 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 # Abstract
-** Two sentences each, at most!
 
-[Brief Intro]
+## Background
+The rates of myocardial infarction is becoming an increasing common occurence in the United States. As medical knowledge and techniques improve to meet need of infarction episode, so does the need to understand the survivbility of patients who have survived such episodes.
 
-[Objective + methods]
+## Objectives
+Our goal is to provide detailed survival statistics of post-myocardial infarction patients as well as provide an accurate regression model to best prediction of survival outcomes of a single year following an infarction episode.
 
-Using survival and hazard analysis tools, we see to better understand the nature of survival for patients that have survived the infarction. As rate of infarction cases increase, so will the rate of patients that will require monitoring.We found that 
+## Methods
+Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weibull/Cox PH) to determine estimates of survival among age, gender, and myocardial strata (contraction depth, muscular activity, ). We consider a slew of statistical and graphical results before determining the most appropriate method of modeling.
 
-[Results]
-We have found that...
+## Results
+Out of all of our methods, we have determined that [] is the most appropriate model for prediction of patient survival. We have AIC values of. We have BIC values. Thus, this model is the best.
 
-[Conclusion]
-It's clear that survival rates is not the same after a heart attack.??
+
+## Conclusion
+[summary statistics]
+[review of our model + specific surval rates]
+
+
 
 
 # Introduction
 
-Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode. We examine record 
+Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode. We examine records of several patient variables
 
 [Insert more kaggle context]
 
@@ -37,9 +43,6 @@ summary(cars)
 ```
 
 We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
-
-## Objective
-We seek to apply survival analysis techniques to this given dats set to examine the characteristics of survival rates among post-infarction patients. Additionally, we hope to achieve better understanding of survival rates as stratified among several classifications.
 
 ## Dataset
 We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details.
@@ -85,6 +88,9 @@ Left Censored: Because all the patients had their heart attacks at different tim
 ### equations
 
 [latex]
+
+
+By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 # Methodology
 ## Summary statistics
