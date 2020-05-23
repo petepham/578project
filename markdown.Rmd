@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Objective + methods]
 
-Using [], [], and seek to better understand the nature of survival for patients that have survived the infarction. As rate of infarction increases, so will the rate of patients that will require monitoring.
+Using survival and hazard analysis tools, we see to better understand the nature of survival for patients that have survived the infarction. As rate of infarction cases increase, so will the rate of patients that will require monitoring.We found that 
 
 [Results]
 We have found that...
