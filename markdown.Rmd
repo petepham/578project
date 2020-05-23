@@ -42,7 +42,7 @@ We have obtained a data set examining the the length and survival of post-myocar
 We seek to apply survival analysis techniques to this given dats set to examine the characteristics of survival rates among post-infarction patients. Additionally, we hope to achieve better understanding of survival rates as stratified among several classifications.
 
 ## Dataset
-We have obtained our data set from Kaggle. The data set contains 133 of observations and records 8 variables. Please refer to the data set below for more details.
+We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details.
 
 Survival is the the number of months patient survived (has survived, if patient is still alive). Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
 
