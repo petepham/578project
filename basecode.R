@@ -37,6 +37,54 @@ df
 
 ## Survival Analysis (chapter 3 material) 
 ### [GRAPHIC] KM Curve
+df <- data.frame(read_excel("df.xlsx"))
+s.df = Surv(df$Survival,df$Status)
+km.all = survfit(s.df~1,type="kaplan-meier", data = df)
+ggsurvplot(km.all, 
+           palette = "#2E9FDF", 
+           conf.int = TRUE, 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="All Groups",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = "All")
+
+km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
+ggsurvplot(km.age, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Age Group",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
+
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
+ggsurvplot(km.effusion, 
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Presence of Pericardial Effusion",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("Present","Absent"))
+
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve
 
