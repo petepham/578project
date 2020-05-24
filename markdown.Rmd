@@ -13,7 +13,8 @@ library(knitr)
 library(tidyverse)
 library(dplyr)
 library(kableExtra)
-library(dplyr)
+library(survival)
+library(survminer)
 ```
 # Abstract
 
@@ -24,7 +25,7 @@ The rates of myocardial infarction is becoming an increasing common occurence in
 Our goal is to provide detailed survival statistics of post-myocardial infarction patients as well as provide an accurate regression model to best prediction of survival outcomes of a single year following an infarction episode.
 
 ## Methods
-Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weibull/Cox PH) to determine estimates of survival among age, gender, and myocardial strata (contraction depth, muscular activity, ). We consider a slew of statistical and graphical results before determining the most appropriate method of modeling.
+Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weibull/Cox PH) to determine estimates of survival among gender and myocardial strata (contraction depth, muscular activity, ). We consider a slew of statistical and graphical results before determining the most appropriate method of modeling.
 
 ## Results
 Out of all of our methods, we have determined that [] is the most appropriate model for prediction of patient survival. We have AIC values of. We have BIC values. Thus, this model is the best.
@@ -62,11 +63,12 @@ The full dataset is available in the appendix of this paper.
 # Methodology
 
 ## Censoring
-Left Censored: Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
+Right censored: this study has a fixed start and end date. Some patients start the study midway through the study and thus, we cannot measure the total little length.
 
 ## Imputation
 There are several missing values in the data set. The variables we chose to more 
 ## Summary statistics
+Over the course of the study, there is a 
 ## Kaplan-Meier
 We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition.
 
@@ -85,17 +87,18 @@ summary(cars)
 
 KM Overall
 ```{r km.all, echo=FALSE}
-summary(cars)
+
+df <- data.frame(read_excel("df.xlsx"))
+s.df = Surv(df$Survival,df$Status)
+km.all = survfit(s.df~1,type="kaplan-meier", data = df)
+ggsurvplot(kmf.all, palette = "#2E9FDF")
 ```
 
 KM Age
 ```{r km.age, echo=FALSE}
-summary(cars)
-```
 
-KM Gender
-```{r km.gender, echo=FALSE}
-summary(cars)
+km.age = survfit(s.df~strata(df$Age.Strata),type="kaplan-meier", data = df)
+ggsurvplot(km.age, palette = c("darkcyan","darkgoldenrod3","darkorange3"))
 ```
 
 KM Ventricular Activity
@@ -150,6 +153,6 @@ Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovasc
 # Appendix
 
 ```{r Dataset.actual, echo=FALSE, results='asis'}
-df <- data.frame(read_excel("df.xlsx"))
+
 kable(df, caption = "Dataset")
 ```
