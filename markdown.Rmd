@@ -133,7 +133,7 @@ ggsurvplot(km.age,
 
 ```
 
-Brief fitting of stratification survival by age shows some surviving results. The youngest group has the highest survival to the median, and then see a sharp decrease in survivability after the median time of 30 months has past. In contrast, our two older groups have relatively similar patterns of survivability through the median. Given that younger individuals generally have healthier hearts, patients that experience a myocardial infarction at a younger age are likely to have a slew of other complication
+Brief fitting of stratification survival by age shows some surviving results. The youngest group has the highest survival to the median, and then see a sharp decrease in survivability after the median time of 30 months has past. In contrast, our two older groups have relatively similar patterns of survivability through the median. Given that younger individuals generally have healthier hearts, patients that experience a myocardial infarction at a younger age are likely to have a slew of other complication.
 
 #### KM P.Effusion
 ```{r km.effusion, fig.align='center', echo=FALSE}
