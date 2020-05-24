@@ -7,9 +7,11 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 library(readxl)
 library(knitr)
 library(tidyverse)
+library(dplyr)
 library(kableExtra)
 library(dplyr)
 ```
@@ -43,7 +45,7 @@ By applying survival analysis techniques to this data set, we seek to achieve im
 
 
 ## Dataset
-We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details.
+We have obtained our data set from Kaggle. The data set contains 131 of observations and records 8 variables. It should be noted that two patients data were removed as there was no recorded months survival date.
 
 Below is a table summary of each table header variable label and a definition of that variable.
 
@@ -66,6 +68,8 @@ Left Censored: Because all the patients had their heart attacks at different tim
 There are several missing values in the data set. The variables we chose to more 
 ## Summary statistics
 ## Kaplan-Meier
+We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition.
+
 ## Weibull Fits
 ## Cox PH
 
@@ -79,9 +83,26 @@ summary(cars)
 
 ## KM Curve
 
+KM Overall
+```{r km.all, echo=FALSE}
+summary(cars)
+```
+
+KM Age
+```{r km.age, echo=FALSE}
+summary(cars)
+```
+
+KM Gender
+```{r km.gender, echo=FALSE}
+summary(cars)
+```
+
+KM Ventricular Activity
 ```{r km.plot, echo=FALSE}
 summary(cars)
 ```
+
 
 ## Weibull Curve
 
@@ -127,8 +148,8 @@ Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovasc
 
 
 # Appendix
+
 ```{r Dataset.actual, echo=FALSE, results='asis'}
 df <- data.frame(read_excel("df.xlsx"))
-kable(df, caption = "Dataset") %>%
-  kable_styling(full_width = F, position = "float_right")
+kable(df, caption = "Dataset")
 ```

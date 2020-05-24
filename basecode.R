@@ -2,6 +2,8 @@ library(readxl)
 library(knitr)
 library(tidyverse)
 library(kableExtra)
+library(survival)
+library(ggsurvplot)
 
 # Introduction ###################
 ## Background
