@@ -43,14 +43,15 @@ df
 
 # Regression (chapter 4-6 material)
 
-### [GRAPHIC] Cox PH Curve (Weibull?)
+### [GRAPHIC] Cox PH Curve - Note we need to verify that Proportional Hazards assumption is not violated. 
+     ### If it is, refer to page 136 for details on how to adjust analysis strategy
 ### [GRAPHIC] Other
-### other - grab from Ch 4/5 HW
+###  Model parameter estimates and CIs
+### other - grab from Ch 4/5 HW (covariate interatcion, Step AIC covariate selection, etc,)
 
 ## Model Dianostics
-##  LRT
-### AIC/R/BIC (for the regressio models - ch 4-6 materials)
-### Residual Analysis (for the regression models - ch 4-6 models)
+### LRT/AIC/R/BIC (for each regressio models - ch 4-6 materials)
+### Residual Analysis (for the regression models - ch 4-6 material)
 ### QQ Plot 
   #1) for the overall models (ch3 material)
   #2) for the stratified models (ch3 material)
@@ -59,3 +60,10 @@ df
 # Conclusion
 
 # Discussion
+
+#Weibull parametric model 
+
+
+
+
+
