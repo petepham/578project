@@ -83,7 +83,7 @@ We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We f
 ## Table of Summary Statistics
 
 ```{r stats.summary, echo=FALSE}
-summary(cars)
+
 ```
 
 ## KM Curve & Hazard
@@ -111,10 +111,10 @@ ggsurvplot(km.all,
            legend.labs = "All")
 ```
 
-Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is given to our limited interval study time of a single year. 
+Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is very intuitive given to our limited interval study time of a single year. We clearly see a median survival time of approximately 29 weeks.
 
 #### KM Age
-```{r km.age, fig.align='center', echo=FALSE}
+```{r km., fig.align='center', echo=FALSE}
 
 km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
 ggsurvplot(km.age, 
@@ -132,6 +132,9 @@ ggsurvplot(km.age,
            legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
 
 ```
+
+Brief fitting of stratification survival by age shows some surviving results. The youngest group has the highest survival to the median, and then see a sharp decrease in survivability after the median time of 30 months has past. In contrast, our two older groups have relatively similar patterns of survivability through the median. Given that younger individuals generally have healthier hearts, patients that experience a myocardial infarction at a younger age are likely to have a slew of other complication
+
 #### KM P.Effusion
 ```{r km.effusion, fig.align='center', echo=FALSE}
 
@@ -154,7 +157,7 @@ ggsurvplot(km.effusion,
 
 #### KM Ventricular Activity
 ```{r km.plot, echo=FALSE}
-summary(cars)
+
 ```
 
 ### Hazard Plots
@@ -162,13 +165,13 @@ summary(cars)
 ## Weibull Curve
 
 ```{r wb.plot, echo=FALSE}
-summary(cars)
+
 ```
 
 ## Cox Proportional Hazard
 
 ```{r coxph.plot, echo=FALSE}
-summary(cars)
+
 ```
 
 ## Model Diagnostics
@@ -176,17 +179,17 @@ summary(cars)
 ### AIC, BIC, and Confidence Intervals
 
 ```{r diagnostic.table, echo=FALSE}
-summary(cars)
+
 ```
 
 ### Residual Analysis/QQ Plot
 
 ```{r diagnostic.resid, echo=FALSE}
-summary(cars)
+
 ```
 
 ```{r diagnostic.qqplot, echo=FALSE}
-summary(cars)
+
 ```
 
 # Discussion
