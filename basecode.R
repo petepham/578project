@@ -24,8 +24,6 @@ df
 ### Censored information
 ### Randomness
 
-#test comment
-
 
 # Methods ###################
 ## Statistical Analysis
@@ -34,19 +32,29 @@ df
 ### Cox PH
 
 # Results ###################
-## Descriptive Statistics
+### Descriptive Statistics [point estimates and quantiles go here]
 ### Summary statistics
 
-## Survival Analysis
+## Survival Analysis (chapter 3 material) 
 ### [GRAPHIC] KM Curve
 ### [GRAPHIC] Weibull Curve
-### [GRAPHIC] Cox PH Curve
+### [GRAPHIC] Log-Logistic Curve
+
+
+# Regression (chapter 4-6 material)
+
+### [GRAPHIC] Cox PH Curve (Weibull?)
+### [GRAPHIC] Other
+### other - grab from Ch 4/5 HW
 
 ## Model Dianostics
-### AIC/R/BIC
-### Residual Analysis
-### QQ Plot
-
+##  LRT
+### AIC/R/BIC (for the regressio models - ch 4-6 materials)
+### Residual Analysis (for the regression models - ch 4-6 models)
+### QQ Plot 
+  #1) for the overall models (ch3 material)
+  #2) for the stratified models (ch3 material)
+  #4) for the regression models (ch 4-6 material)
 
 # Conclusion
 
