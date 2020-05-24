@@ -7,6 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.height=6, fig.width=7)
 
 library(readxl)
 library(knitr)
@@ -15,6 +16,7 @@ library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
+library(ggplot2)
 ```
 # Abstract
 
@@ -67,13 +69,14 @@ There are several missing values in the data set. The variables we chose to more
 ## Summary statistics
 Over the course of the study, there is a 
 ## Kaplan-Meier
-We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition.
+We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition. A survival function can be defined as:
 
-## Weibull Fits
+[insert latex equation for survival function, with censored values]
+
+## Weibull Fits (+Cox PH)
 
 ## Log-Normal
 
-## Cox PH
 
 
 # Results
@@ -86,19 +89,58 @@ summary(cars)
 ## KM Curve
 
 KM Overall
-```{r km.all, echo=FALSE}
+```{r km.all, fig.align='center', echo=FALSE}
 
 df <- data.frame(read_excel("df.xlsx"))
 s.df = Surv(df$Survival,df$Status)
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
-ggsurvplot(km.all, palette = "#2E9FDF")
+ggsurvplot(km.all, 
+           palette = "#2E9FDF", 
+           conf.int = TRUE, 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="All Groups",
+           font.title="bold",
+           font.subtitle = "italic",
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = "All")
 ```
 
 KM Age
-```{r km.age, echo=FALSE}
+```{r km.age, fig.align='center', echo=FALSE}
 
-km.age = survfit(s.df~strata(df$Age.Strata),type="kaplan-meier", data = df)
-ggsurvplot(km.age, palette = c("darkcyan","darkgoldenrod3","darkorange3"))
+km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
+ggsurvplot(km.age, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Age Group",
+           font.title="bold",
+           font.subtitle = "italic",
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
+
+```
+KM P.Effusion
+```{r km.effusion, fig.align='center', echo=FALSE}
+
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
+ggsurvplot(km.effusion, 
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Presence of Pericardial Effusion",
+           font.title="bold",
+           font.subtitle = "italic",
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("Present","Absent"))
+
 ```
 
 KM Ventricular Activity
