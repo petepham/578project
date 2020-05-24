@@ -40,7 +40,7 @@ Out of all of our methods, we have determined that [] is the most appropriate mo
 
 # Introduction
 
-Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
+Heart disease has become the leader cause of death among the US population among a majority of all racial and ethnic groups (Heron 2019). Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
 
 By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
@@ -73,6 +73,9 @@ Over the course of the study, there is a
 We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition.
 
 ## Weibull Fits
+
+## Log-Normal
+
 ## Cox PH
 
 
@@ -91,7 +94,7 @@ KM Overall
 df <- data.frame(read_excel("df.xlsx"))
 s.df = Surv(df$Survival,df$Status)
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
-ggsurvplot(kmf.all, palette = "#2E9FDF")
+ggsurvplot(km.all, palette = "#2E9FDF")
 ```
 
 KM Age
@@ -120,6 +123,7 @@ summary(cars)
 ```
 
 ## Model Diagnostics
+
 ### AIC, BIC, and Confidence Intervals
 
 ```{r diagnostic.table, echo=FALSE}
@@ -139,8 +143,6 @@ summary(cars)
 # Discussion
 
 # References
-[https://www.cdc.gov/heartdisease/facts.htm]
-
 Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
 
 Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
@@ -152,7 +154,12 @@ Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovasc
 
 # Appendix
 
+## Dataset
+
 ```{r Dataset.actual, echo=FALSE, results='asis'}
 
 kable(df, caption = "Dataset")
 ```
+
+
+## R Code
