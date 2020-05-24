@@ -7,7 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(fig.height=6, fig.width=7)
+knitr::opts_chunk$set(fig.height=4.5, fig.width=6)
 
 library(readxl)
 library(knitr)
@@ -83,12 +83,13 @@ We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We f
 ## Table of Summary Statistics
 
 ```{r stats.summary, echo=FALSE}
-summary(cars)
+
 ```
 
-## KM Curve
+## KM Curve & Hazard
 
-KM Overall
+### Survival Curves
+#### KM Overall
 ```{r km.all, fig.align='center', echo=FALSE}
 
 df <- data.frame(read_excel("df.xlsx"))
@@ -99,8 +100,10 @@ ggsurvplot(km.all,
            conf.int = TRUE, 
            title="Post-Myocardial Infarction Survival", 
            subtitle="All Groups",
-           font.title="bold",
-           font.subtitle = "italic",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
            ylab="Surival Proportion", 
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
@@ -108,16 +111,20 @@ ggsurvplot(km.all,
            legend.labs = "All")
 ```
 
-KM Age
-```{r km.age, fig.align='center', echo=FALSE}
+Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is very intuitive given to our limited interval study time of a single year. We clearly see a median survival time of approximately 29 weeks.
+
+#### KM Age
+```{r km., fig.align='center', echo=FALSE}
 
 km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Age Group",
-           font.title="bold",
-           font.subtitle = "italic",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
            ylab="Surival Proportion", 
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
@@ -125,7 +132,10 @@ ggsurvplot(km.age,
            legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
 
 ```
-KM P.Effusion
+
+Brief fitting of stratification survival by age shows some surviving results. The youngest group has the highest survival to the median, and then see a sharp decrease in survivability after the median time of 30 months has past. In contrast, our two older groups have relatively similar patterns of survivability through the median. Given that younger individuals generally have healthier hearts, patients that experience a myocardial infarction at a younger age are likely to have a slew of other complication
+
+#### KM P.Effusion
 ```{r km.effusion, fig.align='center', echo=FALSE}
 
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
@@ -133,8 +143,10 @@ ggsurvplot(km.effusion,
            palette = c("darkcyan","darkgoldenrod3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Presence of Pericardial Effusion",
-           font.title="bold",
-           font.subtitle = "italic",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
            ylab="Surival Proportion", 
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
@@ -143,22 +155,23 @@ ggsurvplot(km.effusion,
 
 ```
 
-KM Ventricular Activity
+#### KM Ventricular Activity
 ```{r km.plot, echo=FALSE}
-summary(cars)
+
 ```
 
+### Hazard Plots
 
 ## Weibull Curve
 
 ```{r wb.plot, echo=FALSE}
-summary(cars)
+
 ```
 
 ## Cox Proportional Hazard
 
 ```{r coxph.plot, echo=FALSE}
-summary(cars)
+
 ```
 
 ## Model Diagnostics
@@ -166,17 +179,17 @@ summary(cars)
 ### AIC, BIC, and Confidence Intervals
 
 ```{r diagnostic.table, echo=FALSE}
-summary(cars)
+
 ```
 
 ### Residual Analysis/QQ Plot
 
 ```{r diagnostic.resid, echo=FALSE}
-summary(cars)
+
 ```
 
 ```{r diagnostic.qqplot, echo=FALSE}
-summary(cars)
+
 ```
 
 # Discussion
