@@ -1,3 +1,8 @@
+library(readxl)
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+
 # Introduction ###################
 ## Background
 
@@ -5,13 +10,13 @@
 
 ## Data
 ### Header definition
-library(readxl)
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
 ### Table of the data
 df <- data.frame(read_excel("df.xlsx"))
 df
+
 ## Definitions
 ### Medical definitions
 ### Censored information

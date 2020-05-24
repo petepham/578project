@@ -7,6 +7,11 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(dplyr)
 ```
 # Abstract
 
@@ -32,72 +37,33 @@ Out of all of our methods, we have determined that [] is the most appropriate mo
 
 # Introduction
 
-Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode. We examine records of several patient variables
+Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
 
-We have obtained a data set examining the the length and survival of post-myocardial patients over the course of one year.
+By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
+
 
 ## Dataset
-We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details. Since the time of infartion varies, some patients were followed for less than a year.
+We have obtained our data set from Kaggle. The data set contains 133 of observations and records 9 variables. Please refer to the data set below for more details.
 
-Survival is the the number of months patient survived (has survived, if patient is still alive). Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
+Below is a table summary of each table header variable label and a definition of that variable.
 
-[Insert more kaggle context]
-
-```{r cdc.deathsummary, echo=FALSE}
-
-
-summary(cars)
-```
-
-Alive.end is a binary variable if a patient is alive by the end of the survival variable, 0 means the patient has died at the end of the time period while 1 means that patient is still alive.
-
-p.age is a patient's age at the time of the infarction.
-
-If pericardial-effusion is present around the heart, it is recorded as a 1. If the effusion is not present around the heart, it is recorded as a 0.
-
-Fractional shortening, the measure of contracility around the heart, is recorded as continuous numbers. Lower numbers can be concidered as increasingly abnormal.
-
-E-point septal separation (epss), another measure of contractility, is also recorded with continuous numbers. Larger numbers are increasingly abnormal.
-
-Left ventricular end-diastolic dimension is a measure of the size of the heart at end-diastole. Large hearts tend to be sick hearts.
-
-Wall-motion-index is a wall-motion-score divided by number of segments seen. Usually 12-13 segments are seen in an echocardiogram.
-
-Alive-at-1: 0 means patient was either dead after 1 year or had been followed for less than 1 year. 1 means patient was alive at 1 year.
-
-[add table summarizing the headers]
-
-```{r Dataset.summary, echo=FALSE, results='asis'}
-library(readxl)
-library(knitr)
+```{r Dataset.summary, echo=FALSE}
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 kable(df.sum, caption = "Dataset Variable Labels")
 ```
 
-[add the data set??]
+Since the time of infartion varies, some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this concern in detail in the later in this section. It should be noted that we have a slew of missing values. Since a single patient has shown as missing, we have opted to impute the values for this data row. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
-```{r Dataset.actual, echo=FALSE, results='asis'}
-df <- data.frame(read_excel("df.xlsx"))
-kable(df, caption = "Dataset")
-```
+The full dataset is available in the appendix of this paper.
 
-[add details from kaggle]
-
-## Mathematical Definitions
-### Censoring
-
-Left Censored: Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
-
-### Curves
-### equations
-
-[latex]
-
-
-By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 # Methodology
+
+## Censoring
+Left Censored: Because all the patients had their heart attacks at different times, it is possible that some patients have survived less than one year but they are still alive. Check the second variable to confirm this. Such patients cannot be used for the prediction task mentioned above.
+
 ## Imputation
+There are several missing values in the data set. The variables we chose to more 
 ## Summary statistics
 ## Kaplan-Meier
 ## Weibull Fits
@@ -160,4 +126,9 @@ Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predi
 Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
 
 
-
+# Appendix
+```{r Dataset.actual, echo=FALSE, results='asis'}
+df <- data.frame(read_excel("df.xlsx"))
+kable(df, caption = "Dataset") %>%
+  kable_styling(full_width = F, position = "float_right")
+```
