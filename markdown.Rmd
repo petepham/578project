@@ -24,19 +24,19 @@ s.df = Surv(df$Survival,df$Status)
 ```
 # Abstract
 
-## Background
+### Background
 The rates of myocardial infarction is becoming an increasing common occurence in the United States. As medical knowledge and techniques improve to meet need of infarction episode, so does the need to understand the survivbility of patients who have survived such episodes.
 
-## Objectives
+### Objectives
 Our goal is to provide detailed survival statistics of post-myocardial infarction patients as well as provide an accurate regression model to best prediction of survival outcomes of a single year following an infarction episode.
 
-## Methods
+### Methods
 Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weibull/Cox PH) to determine estimates of survival among gender and myocardial strata (contraction depth, muscular activity, ). We consider a slew of statistical and graphical results before determining the most appropriate method of modeling.
 
-## Results
+### Results
 Out of all of our methods, we have determined that [] is the most appropriate model for prediction of patient survival. We have AIC values of. We have BIC values. Thus, this model is the best.
 
-## Conclusion
+### Conclusion
 [summary statistics]
 [review of our model + specific surval rates]
 
@@ -53,10 +53,14 @@ We have obtained our data set from Kaggle. The data set contains 131 of observat
 
 Below is a table summary of each table header variable label and a definition of that variable.
 
-```{r Dataset.summary, echo=FALSE, results="asis"}
+```{r Dataset.summary, echo=FALSE}
 
 df.sum = data.frame(read_excel("df.sum.xlsx"))
-kable(df.sum, caption = "Dataset Variable Labels")
+
+df.sum %>%
+  kable() %>%
+  kable_styling(full_width =TRUE)
+
 ```
 
 Since the time of infartion varies, some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this concern in detail in the later in this section. It should be noted that we have a slew of missing values. Since a single patient has shown as missing, we have opted to impute the values for this data row. With this in mind, our predictive and summary models will have less than ideal accuracy.
@@ -67,7 +71,6 @@ The full dataset is available in the appendix of this paper.
 # Methodology
 
 ## Censoring
-Right censored: this study has a fixed start and end date. Some patients start the study midway through the study and thus, we cannot measure the total little length.
 
 ## Imputation
 There are several missing values in the data set. The variables we chose to more 
@@ -115,79 +118,15 @@ ggsurvplot(km.all,
 
 Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is very intuitive given to our limited interval study time of a single year. We clearly see a median survival time of approximately 29 weeks.
 
-#### KM Age
-```{r km., fig.align='center', echo=FALSE}
+```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
 
-km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
-ggsurvplot(km.age, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Age Group",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
-
+kable(t(summary(km.all)$table))
 ```
 
-Brief fitting of stratification survival by age shows some surviving results. The youngest group has the highest survival to the median, and then see a sharp decrease in survivability after the median time of 30 months has past. In contrast, our two older groups have relatively similar patterns of survivability through the median. Given that younger individuals generally have healthier hearts, patients that experience a myocardial infarction at a younger age are likely to have a slew of other complication.
 
-#### KM P.Effusion
-```{r km.effusion, fig.align='center', echo=FALSE}
 
-km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
-ggsurvplot(km.effusion, 
-           palette = c("darkcyan","darkgoldenrod3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Presence of Pericardial Effusion",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("Present","Absent"))
 
-```
 
-#### KM Wall Motion Index
-```{r km.wmi, echo=FALSE}
-
-km.wmi = survfit(s.df~WMI.S, type="kaplan-meier", data = df)
-ggsurvplot(km.wmi, 
-           palette = c("darkcyan","darkgoldenrod3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Wall Motion Index",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("\u2264 1.28","> 1.28"))
-
-```
-```
-Wall motion index is determined by taking the wall motion score and dividing it by the number of heart segments that are moving. Normally 12-13 segments are observed moving. Here, comparing the two strata (around 1.28), we see slight different between the two curves, but nothing substantial. 1.28 was chosen as a demarcation line as half of the patients belong in either group. In this scenario, we that the upper half has little difference from the lower half:
-
-```{r km.wmi.diff, echo=FALSE, results="asis"}
-
-wmi.diff = survdiff(s.df~WMI.S, data=df)
-
-summary(tableby(WMI.S~s.df, data=df))
-
-kable(wmi.diff)
-
-```
 
 ### Hazard Plots
 
