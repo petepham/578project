@@ -17,6 +17,10 @@ library(kableExtra)
 library(survival)
 library(survminer)
 library(ggplot2)
+library(arsenal)
+
+df = data.frame(read_excel("df.xlsx"))
+s.df = Surv(df$Survival,df$Status)
 ```
 # Abstract
 
@@ -49,8 +53,9 @@ We have obtained our data set from Kaggle. The data set contains 131 of observat
 
 Below is a table summary of each table header variable label and a definition of that variable.
 
-```{r Dataset.summary, echo=FALSE}
-df.sum <- data.frame(read_excel("df.sum.xlsx"))
+```{r Dataset.summary, echo=FALSE, results="asis"}
+
+df.sum = data.frame(read_excel("df.sum.xlsx"))
 kable(df.sum, caption = "Dataset Variable Labels")
 ```
 
@@ -91,9 +96,6 @@ We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We f
 ### Survival Curves
 #### KM Overall
 ```{r km.all, fig.align='center', echo=FALSE}
-
-df <- data.frame(read_excel("df.xlsx"))
-s.df = Surv(df$Survival,df$Status)
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
@@ -155,8 +157,35 @@ ggsurvplot(km.effusion,
 
 ```
 
-#### KM Ventricular Activity
-```{r km.plot, echo=FALSE}
+#### KM Wall Motion Index
+```{r km.wmi, echo=FALSE}
+
+km.wmi = survfit(s.df~WMI.S, type="kaplan-meier", data = df)
+ggsurvplot(km.wmi, 
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Wall Motion Index",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("\u2264 1.28","> 1.28"))
+
+```
+```
+Wall motion index is determined by taking the wall motion score and dividing it by the number of heart segments that are moving. Normally 12-13 segments are observed moving. Here, comparing the two strata (around 1.28), we see slight different between the two curves, but nothing substantial. 1.28 was chosen as a demarcation line as half of the patients belong in either group. In this scenario, we that the upper half has little difference from the lower half:
+
+```{r km.wmi.diff, echo=FALSE, results="asis"}
+
+wmi.diff = survdiff(s.df~WMI.S, data=df)
+
+summary(tableby(WMI.S~s.df, data=df))
+
+kable(wmi.diff)
 
 ```
 
