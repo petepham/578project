@@ -1,3 +1,4 @@
+# Setup
 library(readxl)
 library(knitr)
 library(tidyverse)
@@ -7,13 +8,11 @@ library(survminer)
 library(VIM)
 
 
-# Introduction ###################
-## Background
-
-## Objective
-
-## Data
-### Header definition
+# Introduction <><><><><><><><><><>
+# Background
+# Objective
+# Data
+# Header definition
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
@@ -46,13 +45,13 @@ round_df <- function(x, digits) {
 df.new = round_df(df.i$ximp,2)
 df.new
 
-# Methods ###################
+# Methods  <><><><><><><><><><>
 ## Statistical Analysis
 ### Kaplan-Meier
 ### Weibull
 ### Cox PH
 
-# Results ###################
+# Results  <><><><><><><><><><>
 ### Descriptive Statistics [point estimates and quantiles go here]
 ### Summary statistics
 
