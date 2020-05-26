@@ -18,6 +18,7 @@ library(survival)
 library(survminer)
 library(ggplot2)
 library(arsenal)
+library(VIM)
 library(missForest)
 
 df = data.frame(read_excel("df.xlsx"))
@@ -54,21 +55,10 @@ By applying survival analysis techniques to this data set, we seek to achieve im
 ## Dataset
 We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two of the patients as survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
-Below is a table summary of each table header variable label and a definition of that variable.
-
-```{r Dataset.summary, echo=FALSE}
-
-df.sum = data.frame(read_excel("df.sum.xlsx"))
-
-df.sum %>%
-  kable() %>%
-  kable_styling(full_width =TRUE)
-
-```
 
 Since the time of infartion varies, some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this concern in detail in the later in this section. It should be noted that we have a slew of missing values. Since a single patient has shown as missing, we have opted to impute the values for this data row. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
-The full dataset is available in the appendix of this paper.
+The reader may find a summary of tables and original dataset in the appendix of this paper.
 
 
 # Methodology
@@ -92,19 +82,23 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 
 ```{r imputation, echo=FALSE}
 
-df #dataset with missing values
 df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
-summary(df.m)
 df.i = missForest(df.m)
-df.i$ximp #quick check of imputed values
-kable(df.i$OOBerror)
-
+kable(t(df.i$OOBerror))
 
 ```
 
+The full imputed dataset may be found in the appendix of this paper.
+
 ## Censoring
 
+Fixed study start time and fixed study end time.
 
+Patients can start late.
+
+Left censored: Some values, we are unsure how long ago was their myocardial infarction episode. We only have recorded data from the moment patients entered the study and when the study ends.
+
+Right censored: Additionally, some patients live far beyond the scope of the study. 
 
 
 
@@ -198,7 +192,10 @@ kable(t(summary(km.all)$table))
 # Discussion
 
 # References
+
 Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
+
+Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
 
 Daniel J. Stekhoven, Peter Bühlmann, MissForest—non-parametric missing value imputation for mixed-type data, Bioinformatics, Volume 28, Issue 1, 1 January 2012, Pages 112–118,
 
@@ -211,11 +208,42 @@ Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovasc
 
 # Appendix
 
-## Dataset
+## Dataset Variable Summary
+
+```{r Dataset.summary, echo=FALSE, results='asis'}
+
+df.sum = data.frame(read_excel("df.sum.xlsx"))
+
+df.sum %>%
+  kable() %>%
+  kable_styling(full_width =TRUE)
+
+```
+
+## Original Dataset
 
 ```{r Dataset.actual, echo=FALSE, results='asis'}
 
 kable(df, caption = "Dataset")
+```
+
+## Imputed Dataset
+
+```{r imp.table, echo=FALSE, results='asis'}
+
+df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
+df.i = missForest(df.m)
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x}
+
+df.new = round_df(df.i$ximp,2)
+kable(df.new)
+
 ```
 
 
