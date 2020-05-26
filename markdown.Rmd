@@ -28,20 +28,21 @@ s.df = Surv(df$Survival,df$Status)
 # Abstract
 
 ### Background
-The rates of myocardial infarction is becoming an increasing common occurence in the United States. As medical knowledge and techniques improve to meet need of infarction episode, so does the need to understand the survivbility of patients who have survived such episodes.
+The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
 
 ### Objectives
-Our goal is to provide detailed survival statistics of post-myocardial infarction patients as well as provide an accurate regression model to best prediction of survival outcomes of a single year following an infarction episode.
+Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardic state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
+
+We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe the data as well as choose a regression model to be used for predictive surviability. 
 
 ### Methods
-Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weibull/Cox PH) to determine estimates of survival among gender and myocardial strata (contraction depth, muscular activity, ). We consider a slew of statistical and graphical results before determining the most appropriate method of modeling.
+Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weilbull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardic state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
 ### Results
-Out of all of our methods, we have determined that [] is the most appropriate model for prediction of patient survival. We have AIC values of. We have BIC values. Thus, this model is the best.
+Initial non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups. We choose a Weibull regression fit (tenative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
 
 ### Conclusion
-[summary statistics]
-[review of our model + specific surval rates]
+Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-mycardial episode survival.
 
 
 # Introduction
@@ -52,9 +53,11 @@ By applying survival analysis techniques to this data set, we seek to achieve im
 
 
 ## Dataset
-We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two of the patients as survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
-Since the time of infartion varies, some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this concern in detail in the later in this section. It should be noted that we have a slew of missing values. Since a single patient has shown as missing, we have opted to impute the values for this data row. With this in mind, our predictive and summary models will have less than ideal accuracy.
+Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this specifically in the following section.
+
+It should be noted the the dataset have 40 missing values after the removal of the two patients. To develop estimates for the missing dated, we employed a k-nearest Neighbor algorithmic approach to predict the values for the missing values. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
 The reader may find a summary of tables and original dataset in the appendix of this paper.
 
@@ -194,7 +197,21 @@ kable(t(summary(km.all)$table))
 
 # References
 
+###Introduction
+Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
+
 Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
+
+Eric B. Rimm, Meir J. Stampfer, Edward Giovannucci, Alberto Ascherio, Donna Spiegelman, Graham A. Colditz, Walter C. Willett, Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men, American Journal of Epidemiology, Volume 141, Issue 12, 15 June 1995, Pages 1117–1127, https://doi.org/10.1093/oxfordjournals.aje.a117385
+
+
+Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
+
+Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
+
+
+### Imputation Methods
+Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
 
 Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
 
@@ -202,9 +219,13 @@ Daniel J. Stekhoven, Peter Bühlmann, MissForest—non-parametric missing value 
 
 Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
 
-Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
+### Discussion
+Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
 
-Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
+Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G., Stefanadis, C. I., … Chimonas, E. T. (2006). Younger age potentiates post myocardial infarction survival disadvantage of women. International Journal of Cardiology, 108(3), 320–325. doi: 10.1016/j.ijcard.2005.05.016
+
+
+
 
 
 # Appendix
