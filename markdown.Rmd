@@ -51,10 +51,8 @@ Heart disease has become the leader cause of death among the US population among
 By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 
-
 ## Dataset
 We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two of the patients as survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
-
 
 Since the time of infartion varies, some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this concern in detail in the later in this section. It should be noted that we have a slew of missing values. Since a single patient has shown as missing, we have opted to impute the values for this data row. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
@@ -72,13 +70,16 @@ In addition to the two rows that we removed, we further modified the dataset. Th
 missing.data = aggr(df,
                     col=c("paleturquoise3","sienna2"),
                     sortVars=TRUE,)
-
-
+missing.data
 ```
 
 The algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. sing a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail.
 
-Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). Our calculated NRMSE is as follows:
+Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
+
+\[ NRMSE = \sqrt[2]{\frac{mean((\text{X}^true - \text{X}^imputed)^2)}{var(\text{X}^true)} \]
+
+Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE}
 
@@ -248,3 +249,4 @@ kable(df.new)
 
 
 ## R Code
+
