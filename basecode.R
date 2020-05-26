@@ -3,7 +3,9 @@ library(knitr)
 library(tidyverse)
 library(kableExtra)
 library(survival)
-library(ggsurvplot)
+library(survminer)
+library(VIM)
+
 
 # Introduction ###################
 ## Background
@@ -20,10 +22,29 @@ df <- data.frame(read_excel("df.xlsx"))
 df
 
 ## Definitions
-### Medical definitions
-### Censored information
-### Randomness
 
+### Imputation
+
+library(missForest)
+missing.data = aggr(df) #visualize the missing information
+missing.data
+df #dataset with missing values
+df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
+summary(df.m)
+df.i = missForest(df.m)
+df.i$ximp #quick check of imputed values
+df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
+
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x}
+
+df.new = round_df(df.i$ximp,2)
+df.new
 
 # Methods ###################
 ## Statistical Analysis
