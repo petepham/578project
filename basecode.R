@@ -28,9 +28,9 @@ df
 library(missForest)
 missing.data = aggr(df) #visualize the missing information
 missing.data
-df #dataset with missing values
+
 df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
-summary(df.m)
+
 df.i = missForest(df.m)
 df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step

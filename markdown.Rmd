@@ -77,9 +77,9 @@ The algorithmic process used here uses a modified k-nearest neighbot (KNN) appro
 
 Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
 
-\[ NRMSE = \sqrt[2]{\frac{mean((\text{X}^true - \text{X}^imputed)^2)}{var(\text{X}^true)} \]
+\[ NRMSE\ =\ \sqrt{\frac{mean\left(\left(X^{true}-X^{imp}\right)^2\right)}{var\left(X^{true}\right)}} \]
 
-Our calculated NRMSE is as follows:
+Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE}
 
