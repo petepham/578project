@@ -36,12 +36,12 @@ df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
 round_df <- function(x, digits) {
-    # round all numeric variables
-    # x: data frame 
-    # digits: number of digits to round
-    numeric_columns <- sapply(x, mode) == 'numeric'
-    x[numeric_columns] <-  round(x[numeric_columns], digits)
-    x}
+  # round all numeric variables
+  # x: data frame 
+  # digits: number of digits to round
+  numeric_columns <- sapply(x, mode) == 'numeric'
+  x[numeric_columns] <-  round(x[numeric_columns], digits)
+  x}
 
 df.new = round_df(df.i$ximp,2)
 df.new
@@ -113,7 +113,7 @@ ggsurvplot(km.effusion,
 # Regression (chapter 4-6 material)
 
 ### [GRAPHIC] Cox PH Curve - Note we need to verify that Proportional Hazards assumption is not violated. 
-     ### If it is, refer to page 136 for details on how to adjust analysis strategy
+### If it is, refer to page 136 for details on how to adjust analysis strategy
 ### [GRAPHIC] Other
 ###  Model parameter estimates and CIs
 ### other - grab from Ch 4/5 HW (covariate interatcion, Step AIC covariate selection, etc,)
@@ -122,9 +122,9 @@ ggsurvplot(km.effusion,
 ### LRT/AIC/R/BIC (for each regressio models - ch 4-6 materials)
 ### Residual Analysis (for the regression models - ch 4-6 material)
 ### QQ Plot 
-  #1) for the overall models (ch3 material)
-  #2) for the stratified models (ch3 material)
-  #4) for the regression models (ch 4-6 material)
+#1) for the overall models (ch3 material)
+#2) for the stratified models (ch3 material)
+#4) for the regression models (ch 4-6 material)
 
 # Conclusion
 

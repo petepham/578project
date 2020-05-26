@@ -86,9 +86,9 @@ missing.data = aggr(df,
 
 ```
 
-sing a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). 
+The algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. sing a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail.
 
-We were able to impute every missing value and have the normalized random mean square error output below:
+Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE}
 
@@ -97,7 +97,8 @@ df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values
 summary(df.m)
 df.i = missForest(df.m)
 df.i$ximp #quick check of imputed values
-df.i$OOBerror 
+kable(df.i$OOBerror)
+
 
 ```
 
