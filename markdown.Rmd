@@ -24,7 +24,9 @@ df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
 s.df = Surv(df$Survival,df$Status)
 ```
-# Abstract
+
+
+# Abstract  ####################################################################
 
 ### Background
 The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
@@ -44,14 +46,17 @@ Initial non-parametric Kaplan-Meier curve shows a median survival time of ~30 mo
 Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-mycardial episode survival.
 
 
-# Introduction
+
+
+# Introduction  #################################################################################
 
 Heart disease has become the leader cause of death among the US population among a majority of all racial and ethnic groups (Heron 2019). Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
 
 By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 
-### Dataset
+# Dataset ##################################################################################
+
 We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
 Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this specifically in the following section.
@@ -59,9 +64,6 @@ Since the time of myocardial infarction varies (depending if a patient joined th
 It should be noted the the dataset have 40 missing values after the removal of the two patients. To develop estimates for the missing dated, we employed a k-nearest Neighbor algorithmic approach to predict the values for the missing values. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
 The reader may find a summary of tables and original dataset in the appendix of this paper.
-
-
-# Methodology
 
 ### Imputation
 
@@ -97,43 +99,48 @@ Being a random forest iterative process, each imputed dataset will be different 
 
 The full imputed dataset may be found in the appendix of this paper.
 
-## Censoring
+### Censoring
 
-Fixed study start time and fixed study end time.
-
-Patients can start late.
-
-Left censored: Some values, we are unsure how long ago was their myocardial infarction episode. We only have recorded data from the moment patients entered the study and when the study ends.
-
-Right censored: Additionally, some patients live far beyond the scope of the study. 
+-Fixed study start time and fixed study end time.
+-Patients can start late.
+-Left censored: Some values, we are unsure how long ago was their myocardial infarction episode. We only have recorded data from the moment patients entered the study and when the study ends.
+-Right censored: Additionally, some patients live far beyond the scope of the study. 
 
 
 
 
-## Summary statistics
-Over the course of the study, there is a 
-## Kaplan-Meier
-We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition. A survival function can be defined as:
+# Methodology ################################################################################
+
+Here, we brief review the methodology and theory behind our analysis techniques for context.
+
+## Non-Parametric Estimates
+
+For our non-parametric estimates, we rely on Kaplan-Meier survival estimates.We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition. A survival function can be defined as:
 
 [insert latex equation for survival function, with censored values]
 
-## Weibull Fits (+Cox PH)
 
-## Log-Normal
+## Parametric Estimates
+
+### Log-Normal Distribution
+
+### Log-Logistic Distribution
+
+### Weibull Distribution
+
+## Regression & Model Selection
 
 
 
-# Results
-## Table of Summary Statistics
+# Results ##########################################################################################
 
-```{r stats.summary, echo=FALSE}
+## Exploratory Data Analysis
 
-```
 
-## KM Curve & Hazard
 
-### Survival Curves
-#### KM Overall
+
+## Non-Parametric: Kaplan-Meier Survival Estimates
+
 
 ```{r km.all, fig.align='center', echo=FALSE}
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
@@ -161,18 +168,46 @@ kable(t(summary(km.all)$table)) %>%
   kable_styling(position = "center")
 ```
 
+Add stratified
+
+Add hazard plots
+
+Add median and mean + 95% CI
 
 
 
-
-
-### Hazard Plots
-
-## Weibull Curve
+## Parametric: Log-Normal Model
 
 ```{r wb.plot, echo=FALSE}
 
 ```
+
+
+
+
+
+## Parametric: Log-Logistic Model
+
+```{r wb.plot, echo=FALSE}
+
+```
+
+
+
+
+
+
+## Parametric: Weibull Model
+
+```{r wb.plot, echo=FALSE}
+
+```
+
+
+
+
+
+
 
 ## Cox Proportional Hazard
 
@@ -181,6 +216,11 @@ kable(t(summary(km.all)$table)) %>%
 ```
 
 ## Model Diagnostics
+
+
+
+
+
 
 ### AIC, BIC, and Confidence Intervals
 
