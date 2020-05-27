@@ -120,15 +120,29 @@ For our non-parametric estimates, we rely on Kaplan-Meier survival estimates.We 
 [insert latex equation for survival function, with censored values]
 
 
-## Parametric Estimates
 
-### Log-Normal Distribution
 
-### Log-Logistic Distribution
+## Parametric Estimates: Log-Normal Distribution
 
-### Weibull Distribution
+
+
+## Parametric Estimates: Log-Logistic Distribution
+
+
+
+## Parametric Estimates: Weibull Distribution
+
+
+
+## Hazard Estimates 
+
+
 
 ## Regression & Model Selection
+
+
+
+
 
 
 
@@ -168,11 +182,15 @@ kable(t(summary(km.all)$table)) %>%
   kable_styling(position = "center")
 ```
 
-Add stratified
+- Add stratified on age
 
-Add hazard plots
+- Add stratified on cardiac physiology
 
-Add median and mean + 95% CI
+- Add pericardial effusion
+
+- Add median and mean + 95% CI
+
+- Add hazard plots
 
 
 
