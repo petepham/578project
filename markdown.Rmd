@@ -5,7 +5,7 @@ date: "5/22/2020"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(fig.height=4.5, fig.width=7)
 
@@ -17,7 +17,6 @@ library(kableExtra)
 library(survival)
 library(survminer)
 library(ggplot2)
-library(arsenal)
 library(VIM)
 library(missForest)
 
@@ -52,7 +51,7 @@ Heart disease has become the leader cause of death among the US population among
 By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
 
 
-## Dataset
+### Dataset
 We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
 Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this specifically in the following section.
@@ -64,19 +63,20 @@ The reader may find a summary of tables and original dataset in the appendix of 
 
 # Methodology
 
-## Imputation
+### Imputation
 
 In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. Below is a summary of the missing data:
 
-```{r missing, echo=FALSE}
+```{r missing, echo=FALSE, warning=FALSE, message=FALSE}
 
-missing.data = aggr(df,
-                    col=c("paleturquoise3","sienna2"),
-                    sortVars=TRUE,)
-missing.data
+missing.data = aggr(df, col=c("paleturquoise3","sienna2"))
+  title(main="Graphical Represenation of Missing Values in Original Dataset", line = 5)
+
+kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
+  kable_styling(position = "center")
 ```
 
-The algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. sing a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail.
+The algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail.
 
 Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
 
@@ -84,13 +84,16 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 
 Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
 
-```{r imputation, echo=FALSE}
+```{r imputation, echo=FALSE, warning=FALSE, message=FALSE}
 
-df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
+df.m = prodNA(df, noNA = 0.2) #seed 10% of the missing values 
 df.i = missForest(df.m)
-kable(t(df.i$OOBerror))
+kable(t(df.i$OOBerror), caption="Normal Root Mean Square Error") %>%
+  kable_styling(position="center")
 
 ```
+
+Being a random forest iterative process, each imputed dataset will be different from each other. Out of 500 iterations, we have an averaged NRMSE value of [] - that is our inputted values have an estimate []% deviation from true accuracy.
 
 The full imputed dataset may be found in the appendix of this paper.
 
@@ -131,6 +134,7 @@ We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We f
 
 ### Survival Curves
 #### KM Overall
+
 ```{r km.all, fig.align='center', echo=FALSE}
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
@@ -153,7 +157,8 @@ Here is the survival curve for all groups within our dataset. We see that a majo
 
 ```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
 
-kable(t(summary(km.all)$table))
+kable(t(summary(km.all)$table)) %>%
+  kable_styling(position = "center")
 ```
 
 
@@ -197,7 +202,8 @@ kable(t(summary(km.all)$table))
 
 # References
 
-###Introduction
+### Introduction
+
 Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
 
 Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
@@ -209,26 +215,29 @@ Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predi
 
 Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
 
+### Methodology
 
-### Imputation Methods
 Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
+
+Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
+
+### Imputation
 
 Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
 
 Daniel J. Stekhoven, Peter Bühlmann, MissForest—non-parametric missing value imputation for mixed-type data, Bioinformatics, Volume 28, Issue 1, 1 January 2012, Pages 112–118,
 
-Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
-
 ### Discussion
+
 Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
 
 Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G., Stefanadis, C. I., … Chimonas, E. T. (2006). Younger age potentiates post myocardial infarction survival disadvantage of women. International Journal of Cardiology, 108(3), 320–325. doi: 10.1016/j.ijcard.2005.05.016
 
+Sia, Y. T., Parker, T. G., Liu, P., Tsoporis, J. N., Adam, A., & Rouleau, J. L. (2002). Improved post-myocardial infarction survival with probucol in rats: Effects on left ventricular function, morphology, cardiac oxidative stress and cytokine expression. Journal of the American College of Cardiology, 39(1), 148–156. doi: 10.1016/s0735-1097(01)01709-0
 
+\newpage
 
-
-
-# Appendix
+# Appendix 
 
 ## Dataset Variable Summary
 
@@ -236,25 +245,40 @@ Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G
 
 df.sum = data.frame(read_excel("df.sum.xlsx"))
 
-df.sum %>%
-  kable() %>%
-  kable_styling(full_width =TRUE)
+kable(df.sum, "latex", 
+      booktabs = TRUE,
+      longtable = TRUE,
+      linesep = "\\addlinespace",
+      caption = "Summary of Dataset Covariates") %>%
+  kable_styling(latex_options = c("hold_positon","repeat_header"),
+                full_width = TRUE)
 
 ```
+
+
+
+
 
 ## Original Dataset
 
 ```{r Dataset.actual, echo=FALSE, results='asis'}
 
-kable(df, caption = "Dataset")
+kable(df, "latex", 
+      booktabs = TRUE,
+      longtable = TRUE,
+      caption = "Original Dataset") %>%
+  kable_styling(latex_options = c("hold_positon","repeat_header"),
+                full_width = TRUE)
 ```
+
+
+
+
 
 ## Imputed Dataset
 
-```{r imp.table, echo=FALSE, results='asis'}
+```{r imp.table, echo=FALSE, results='asis', warning=FALSE, message=FALSE}
 
-df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
-df.i = missForest(df.m)
 round_df <- function(x, digits) {
     # round all numeric variables
     # x: data frame 
@@ -264,10 +288,22 @@ round_df <- function(x, digits) {
     x}
 
 df.new = round_df(df.i$ximp,2)
-kable(df.new)
+
+kable(df.new, "latex", 
+      booktabs = TRUE,
+      longtable = TRUE,
+      caption = "Imputed Dataset") %>%
+  kable_styling(latex_options = c("hold_positon","repeat_header"),
+                full_width = TRUE)
 
 ```
 
+\newpage
 
 ## R Code
 
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```
+
+
+\newpage
