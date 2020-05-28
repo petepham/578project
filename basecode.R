@@ -141,8 +141,8 @@ library(survminer)
 
 df <- data.frame(read_excel("df.xlsx"))
 
-months=df$Survival
-status=df$Status
+months=df.new$Survival
+status=df.new$Status
 months.u=months[status == 1]
 months.u = sort(months.u)
 nu = length(months.u)
@@ -202,3 +202,42 @@ plot(km.all,conf.int=F,xlab="time until death (in months)",ylab="proportion surv
 lines(months.u, Shat.w, lty=4)
 legend(40, 0.8, legend=c("Kaplan-Meier", "Weibull"),lty=1:4, cex=0.8)
 abline(h=0)
+
+#####
+
+
+library(survminer)
+library(MASS)
+
+y=df.new$Survival
+
+#select the following pool of possible covariates
+
+x1=df.new$Age
+x2=df.new$Age.Strata
+x3=df.new$P.Effusion
+x4=df.new$F.Shortening
+x5=df.new$EPSS
+x6=df.new$LVDD
+x7=df.new$WMI
+y2=Surv(months,status)
+data.frame.2=data.frame(y,x1,x2,x3,x4,x5,x6,x7)
+
+cph.fit1=coxph(Surv(months,status)~x1+x2+x3+x4+x5+x6+x7,data=df.new)
+summary(cph.fit1)
+
+cph.fit2=stepAIC(cph.fit1,~.^2)
+cph.fit2$anova
+
+summary(cph.fit1)
+
+pairs(data.frame.2) 
+pairs(data.frame.3)
+
+#diagnostics - check for cox assumptions
+test.ph <- cox.zph(cph.fit1)
+ggcoxzph(test.ph)
+ggcoxdiagnostics(cph.fit1, type = "dfbeta",
+                 linear.predictions = FALSE, ggtheme = theme_bw())
+ggcoxdiagnostics(cph.fit1, type = "deviance",
+                 linear.predictions = FALSE, ggtheme = theme_bw())
