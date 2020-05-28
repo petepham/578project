@@ -69,16 +69,12 @@ The reader may find a summary of tables and original dataset in the appendix of 
 
 In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. Below is a summary of the missing data:
 
-```{r missing, echo=FALSE, warning=FALSE, message=FALSE}
-
-missing.data = aggr(df, col=c("paleturquoise3","sienna2"))
-  title(main="Graphical Represenation of Missing Values in Original Dataset", line = 5)
-
+```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
-  kable_styling(position = "center")
-```
+  kable_styling(position = "center", latex_options="hold_position")
 
-The algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the missForest algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail.
+```
+We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail. Below is 
 
 Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
 
@@ -87,11 +83,10 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE, warning=FALSE, message=FALSE}
-
 df.m = prodNA(df, noNA = 0.2) #seed 10% of the missing values 
 df.i = missForest(df.m)
 kable(t(df.i$OOBerror), caption="Normal Root Mean Square Error") %>%
-  kable_styling(position="center")
+  kable_styling(position="center", latex_options="hold_position")
 
 ```
 
@@ -177,9 +172,8 @@ ggsurvplot(km.all,
 Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is very intuitive given to our limited interval study time of a single year. We clearly see a median survival time of approximately 29 weeks.
 
 ```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
-
 kable(t(summary(km.all)$table)) %>%
-  kable_styling(position = "center")
+  kable_styling(position = "center", latex_options="hold_position")
 ```
 
 - Add stratified on age
@@ -196,7 +190,7 @@ kable(t(summary(km.all)$table)) %>%
 
 ## Parametric: Log-Normal Model
 
-```{r wb.plot, echo=FALSE}
+```{r ln.plot, echo=FALSE}
 
 ```
 
@@ -206,7 +200,7 @@ kable(t(summary(km.all)$table)) %>%
 
 ## Parametric: Log-Logistic Model
 
-```{r wb.plot, echo=FALSE}
+```{r ll.plot, echo=FALSE}
 
 ```
 
