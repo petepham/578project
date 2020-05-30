@@ -32,13 +32,10 @@ df <- data.frame(read_excel("df.xlsx"))
 df
 
 # Dataset: Imputation
-missing.data = aggr(df) #visualize the missing information
-missing.data
+missing.data = aggr(df) #visualize the missing information, missing 40 points
 
-# 40 missing data points
-
-set.seed(7522)
-df.i = missForest(df, maxiter = 20, ntree = 1000)
+set.seed(7522) #this allows for consistent algorithms for each run
+df.i = missForest(df, maxiter = 20, ntree = 1000) # random forest, maximum of 20 interations, 1000 trees per iteration.
 df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
@@ -50,10 +47,12 @@ round_df <- function(x, digits) {
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x}
 
-df.imputed = round_df(df.i$ximp,2)
-write.csv(df.imputed, "df.new.csv")
-df.new = read_csv("df.new.csv")
-
+df.impute = round_df(df.i$ximp,2) #imputed values table
+df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
+Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
+WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
+df.new$Age.s = Age.s
+df.new$WMI.s = WMI.s
 
 s.df = Surv(df.new$Survival,df.new$Status)
 
@@ -119,9 +118,9 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS, type="kaplan-meier", data = df.new)
-ggsurvplot(km.effusion, 
-           palette = c("darkcyan","darkgoldenrod3"), 
+km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+ggsurvplot(km.wmi, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",
            font.title=c(12,"bold.italic"),
@@ -132,7 +131,7 @@ ggsurvplot(km.effusion,
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
            legend.title = "Groups",
-           legend.labs = c("< 12", "12-17", "> 17"))
+           legend.labs = c("< 12", "12-14", "> 14"))
            
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve

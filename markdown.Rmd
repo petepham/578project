@@ -65,18 +65,14 @@ It should be noted the the dataset have 40 missing values after the removal of t
 
 We then classify continuous variables into groups for stratification. 
 
-Age is divided into three groups with 0 denoting younger than 55 years, 1 denoting 55 to 70 years, and 2 denoting older than 70 years. 
-
-Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. 
-
-Finally, wall motion score is divided into three groups: 0 denoting scores less than 12, 1 denoting scores of 12 - 17, and 2 denoting scores greater than 17. These groups are summarized in the table below:
+Age is divided into three groups with 0 denoting younger than 55 years, 1 denoting 55 to 70 years, and 2 denoting older than 70 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Finally, wall motion score is divided into three groups: 0 denoting scores less than 12, 1 denoting scores of 12 - 17, and 2 denoting scores greater than 14. These groups are summarized in the table below:
 
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 Indicator = c("0","1","2")
 Age = c("< 55 Years", "55-70 Years", "> 70 Years")
 Effusion = c("Fluid is absent", "Fluid is present","")
-WMS = c("< 12", "12-17", "> 17")
+WMS = c("< 12", "12-14", "> 14")
 
 groupings = data.frame(Indicator, Age, Effusion, WMS)
 groupings
