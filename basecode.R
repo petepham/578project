@@ -1,38 +1,44 @@
 # Setup
+library(readr)
 library(readxl)
 library(knitr)
 library(tidyverse)
+library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
+library(ggplot2)
 library(VIM)
+library(missForest)
 
-# Hello World!
-#Nice!!!!!!!!!! I got it!!!!!!!
+df = data.frame(read_excel("df.xlsx"))    #importing the dataset
+df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
+# Survival object created during the imputation stage
 
-# Introduction <><><><><><><><><><>
-# Background
-# Objective
-# Data
-# Header definition
+# Abstract ##################################################################
+
+
+# Introduction ##############################################################
+
+
+# Dataset ###################################################################
+
+# Dataset: Variable Summary (Appendix)
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
-### Table of the data
+# Dataset: Table of the Original data (Appendix)
 df <- data.frame(read_excel("df.xlsx"))
 df
 
-## Definitions
-
-### Imputation
-
-library(missForest)
+# Dataset: Imputation
 missing.data = aggr(df) #visualize the missing information
 missing.data
 
-df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
+# 40 missing data points
 
-df.i = missForest(df.m)
+set.seed(7522)
+df.i = missForest(df, maxiter = 20, ntree = 1000)
 df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
@@ -44,24 +50,30 @@ round_df <- function(x, digits) {
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x}
 
-df.new = round_df(df.i$ximp,2)
-df.new
+df.imputed = round_df(df.i$ximp,2)
+write.csv(df.imputed, "df.new.csv")
+df.new = read_csv("df.new.csv")
 
-# Methods  <><><><><><><><><><>
-## Statistical Analysis
-### Kaplan-Meier
-### Weibull
-### Cox PH
 
-# Results  <><><><><><><><><><>
-### Descriptive Statistics [point estimates and quantiles go here]
-### Summary statistics
+s.df = Surv(df.new$Survival,df.new$Status)
+
+# Methodology ###################################################################
+### Non-parametric: Kaplan
+### Parametric: Log-Normal
+### Parametric: Log-Logistic
+### Parametric: Weibull
+### Regression: Cox PH Model
+### Regression: Alternative Methods - Accelerated Hazard Model
+
+
+# Results #######################################################################
+# Descriptive Statistics [point estimates and quantiles go here]
+## Mean, Median
 
 ## Survival Analysis (chapter 3 material) 
 ### [GRAPHIC] KM Curve
-df <- data.frame(read_excel("df.xlsx"))
-s.df = Surv(df$Survival,df$Status)
-km.all = survfit(s.df~1,type="kaplan-meier", data = df)
+
+km.all = survfit(s.df~1,type="kaplan-meier", data = df.new)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
@@ -77,7 +89,7 @@ ggsurvplot(km.all,
            legend.title = "Groups",
            legend.labs = "All")
 
-km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
+km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -90,9 +102,9 @@ ggsurvplot(km.age,
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
            legend.title = "Groups",
-           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
+           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
 
-km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
 ggsurvplot(km.effusion, 
            palette = c("darkcyan","darkgoldenrod3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -107,6 +119,21 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
+km.wmi = survfit(s.df~WMS, type="kaplan-meier", data = df.new)
+ggsurvplot(km.effusion, 
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Wall Motion Index",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 12", "12-17", "> 17"))
+           
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve
 

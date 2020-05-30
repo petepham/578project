@@ -22,11 +22,10 @@ library(missForest)
 
 df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
-s.df = Surv(df$Survival,df$Status)
 ```
 
 
-# Abstract  ####################################################################
+# Abstract
 
 ### Background
 The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
@@ -47,21 +46,45 @@ Thus, for predictive model we found the Weibull regression fit to be the most id
 
 
 
+# Introduction
 
-# Introduction  #################################################################################
+Heart disease has become the leading cause of US deaths among all racial and ethnic groups (Heron 2019, Fryar 2012). In 2009 cardiovascular disease represented nearly 64% of all cardiac related deaths (Dalen, et. Al. 2014). These myocardial infarctions – commonly known as heart attacks - are becoming largely common among all U.S. demographic populations. As such, researchers are looking to understand the underlying causes of these episodes. Specifically, increases in cardiovascular disease (CVD) cases have been largely attributed to many risk factors such as high levels of low-density lipoproteins (LPL), high blood pressure, and smoking (Fryar 2012). 
 
-Heart disease has become the leader cause of death among the US population among a majority of all racial and ethnic groups (Heron 2019). Myocardial infarctions are becoming largely common among U.S. populations. The number of myocardial infarctions are remarkedly increased from [start date] to [end date] by [x] amount (add citation). In 2015, approximately 23% of all fatalities in the United States was related to some degree of heart disease (cdc. cite please). Unsurprisingly, clinical studies have shown harmful symptoms in post-infarction survival patients. Our obtained dataset to examine the tangible difference in survability rates from the course of year following an infarction episode.
+These variables are often the results of lifestyle choices and effects of poverty. The prevalence of the disease has closely been followed a large body of conducted researchers aiming to reduce either the number of these cases or reduce the mortality of the specific myocardial infarction rates. Between 1980 and 2002, mortality rates saw a decrease of approximately 49% (Wilmot 2015). Decreases in mortality was common through the world better medical intervention techniques and increase awareness of healthier lifestyle choices became more prevalent (Goldman, et al. 1984).	
 
-By applying survival analysis techniques to this data set, we seek to achieve improved understanding of the characteristics exhibited by patients in a one year post-infarction interval.We also propose a model to better predict the probability of a survival of patients based on these variable characteristics.
+Unsurprisingly, as more patients survive CVD related infarction episodes, more detail has been paid to understand the survivability the time period following an episode. Wall motion score (a measure of heart contractility during cycling) was significantly higher in those that survived versus those that died (Kan, et. Al. 1986). We hope to examine several factors that determine survivability among these patients. In addition to wall motion score, we hope to stratify and understand the relationships between time to event (death) measurements compared to general heart health and age. Our goal is to describe the survivability of our dataset and provide a model to predict the factors that determine survability in the one-year period following a myocardial infarction episode.
 
 
-# Dataset ##################################################################################
+# Dataset
 
-We have obtained our data set from Kaggle. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
 Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this specifically in the following section.
 
 It should be noted the the dataset have 40 missing values after the removal of the two patients. To develop estimates for the missing dated, we employed a k-nearest Neighbor algorithmic approach to predict the values for the missing values. With this in mind, our predictive and summary models will have less than ideal accuracy.
+
+We then classify continuous variables into groups for stratification. 
+
+Age is divided into three groups with 0 denoting younger than 55 years, 1 denoting 55 to 70 years, and 2 denoting older than 70 years. 
+
+Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. 
+
+Finally, wall motion score is divided into three groups: 0 denoting scores less than 12, 1 denoting scores of 12 - 17, and 2 denoting scores greater than 17. These groups are summarized in the table below:
+
+```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+Indicator = c("0","1","2")
+Age = c("< 55 Years", "55-70 Years", "> 70 Years")
+Effusion = c("Fluid is absent", "Fluid is present","")
+WMS = c("< 12", "12-17", "> 17")
+
+groupings = data.frame(Indicator, Age, Effusion, WMS)
+groupings
+
+kable(groupings, caption="Stratification Groupings") %>%
+  kable_styling(position = "center", latex_options="hold_position")
+
+```
 
 The reader may find a summary of tables and original dataset in the appendix of this paper.
 
@@ -70,10 +93,14 @@ The reader may find a summary of tables and original dataset in the appendix of 
 In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. Below is a summary of the missing data:
 
 ```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+missing.data = aggr(df) #visualize the missing information
+
 kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
   kable_styling(position = "center", latex_options="hold_position")
 
 ```
+
 We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail. Below is 
 
 Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
@@ -83,38 +110,57 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE, warning=FALSE, message=FALSE}
-df.m = prodNA(df, noNA = 0.2) #seed 10% of the missing values 
-df.i = missForest(df.m)
-kable(t(df.i$OOBerror), caption="Normal Root Mean Square Error") %>%
-  kable_styling(position="center", latex_options="hold_position")
+set.seed(7522) 
+df.i = missForest(df, maxiter = 30, ntree = 1000)
+
+# dataframe rounding option
+round_df <- function(x, digits) {
+  # round all numeric variables
+  # x: data frame 
+  # digits: number of digits to round
+  numeric_columns <- sapply(x, mode) == 'numeric'
+  x[numeric_columns] <-  round(x[numeric_columns], digits)
+  x}
+
+df.new = round_df(df.i$ximp,2) #create the new dataset for all methods to use
+s.df = Surv(df.new$Survival,df.new$Status) #create the new survival obejct for all methods to use
 
 ```
 
-Being a random forest iterative process, each imputed dataset will be different from each other. Out of 500 iterations, we have an averaged NRMSE value of [] - that is our inputted values have an estimate []% deviation from true accuracy.
+Being a random forest iterative process, each imputed dataset will be different from each other. Out of 500 iterations, we have an averaged NRMSE value of 0.2246 - that is our inputted values have an estimate 22.46% deviation from estimated true accuracy.
 
-The full imputed dataset may be found in the appendix of this paper.
+The full imputed dataset may be found in the appendix of this paper. As well as references to the authors who created the algorithm.
 
 ### Censoring
 
--Fixed study start time and fixed study end time.
--Patients can start late.
--Left censored: Some values, we are unsure how long ago was their myocardial infarction episode. We only have recorded data from the moment patients entered the study and when the study ends.
--Right censored: Additionally, some patients live far beyond the scope of the study. 
+Our dataset has numerous censored valued - that is, valued that cannot be recorded due the constrainst of the study design. In our data set, we are exmaining the survival after a heart attack, that is, the event of interest is death given that a patient has had already survived a heart attack (left truncation).
+
+We have fixed start and end dates for when the data was collection. Some patients joined when the study began. Others joined later after the start date. Because of this, we cannot accurately determine how long a patient survived after our observation period is over. In addition, there are some patients that have been lost to follow up or may have died due to the onset of other unrelated factors. These data present themselves as being randomly right censored.
 
 
-
-
-# Methodology ################################################################################
+# Methodology
 
 Here, we brief review the methodology and theory behind our analysis techniques for context.
 
-## Non-Parametric Estimates
+## Non-Parametric: Kaplan Meier
 
-For our non-parametric estimates, we rely on Kaplan-Meier survival estimates.We conduct nonparametric Kaplan-Meier fit on our data over multiple strata. We first conduct a fit over all patients in regards to censoring. Then we work on gender groups, age, and general ventriculular condition. A survival function can be defined as:
+We use Kaplan-Meier (KM) survival estimators to model a step curve for the survival of our censored dataset. The KM estimator is an adjustment of an empirical survival function to reflect the presence of right-censored observations (Tableman & Kim, 2004). The estimator can be described in the following equation:
 
-[insert latex equation for survival function, with censored values]
+\[ \hat{S}(t) = \prod_{y_{(i)}\leq{t}}^{k} p_i = \prod_{i=1}^{k} (\frac{n_i -d_i}{n_i}) \]
 
+Where $ n_i $ is the number alive before time $ y_i $ and $ d_i $ is the number of events during during that interval. In our case, $ y_i $ is the specific patient being observed, $ n_i $ is the number of patients alive at time $ y_i $. With $ k = 131 $, our KM equation is:
 
+\[ \hat{S}(t) = \prod_{i=1}^{131} (\frac{n_i -d_i}{n_i}) \]
+
+We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericadial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit.
+
+### Cumulative Hazard Estimators
+
+The relationship between KM and hazard can be model by the following equation (Tableman & Kim, 2004):
+
+\[ haaazzaaarrrddd \]
+
+- define variables. Make notes
 
 
 ## Parametric Estimates: Log-Normal Distribution
@@ -141,7 +187,7 @@ For our non-parametric estimates, we rely on Kaplan-Meier survival estimates.We 
 
 
 
-# Results ##########################################################################################
+# Results
 
 ## Exploratory Data Analysis
 
@@ -150,9 +196,10 @@ For our non-parametric estimates, we rely on Kaplan-Meier survival estimates.We 
 
 ## Non-Parametric: Kaplan-Meier Survival Estimates
 
+Output from our Kaplan-Meier estimators give us the following curve (full KM estimator table can be found in the appendix).
 
 ```{r km.all, fig.align='center', echo=FALSE}
-km.all = survfit(s.df~1,type="kaplan-meier", data = df)
+km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
@@ -169,23 +216,22 @@ ggsurvplot(km.all,
            legend.labs = "All")
 ```
 
-Here is the survival curve for all groups within our dataset. We see that a majority of our censored values have very short survival times. This is very intuitive given to our limited interval study time of a single year. We clearly see a median survival time of approximately 29 weeks.
+Here is the survival curve for all groups within our dataset. With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is approximately 29 months a 95% lower and upper confidence limits of 27 and 33 months, respectively.  We see that a majority of our censored values have very short survival times. This is an intuitive finding as patients who joined the study late have relatively unknown survival (hence, their right censored nature. A summary of the results from our KM fit is below:
 
 ```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
-kable(t(summary(km.all)$table)) %>%
+km.all.summary = data.frame(t(summary(km.all)$table))
+km.as = km.all.summary[,c(1,4,5,7,8,9)]
+colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+
+kable(km.as, caption="Kaplan-Meier Results") %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
 - Add stratified on age
 
-- Add stratified on cardiac physiology
-
 - Add pericardial effusion
 
-- Add median and mean + 95% CI
-
-- Add hazard plots
-
+- Add stratified on cardiac physiology
 
 
 ## Parametric: Log-Normal Model
@@ -255,13 +301,15 @@ kable(t(summary(km.all)$table)) %>%
 # References
 
 ### Introduction
+Wilmot, K. A., O’Flaherty, M., Capewell, S., Ford, E. S., & Vaccarino, V. (2015). Coronary Heart Disease Mortality Declines in the United States From 1979 Through 2011CLINICAL PERSPECTIVE. Circulation, 132(11), 997–1002. doi: 10.1161/circulationaha.115.015293
+
+Goldman, L. (1984). The Decline in Ischemic Heart Disease Mortality Rates. Annals of Internal Medicine, 101(6), 825. doi: 10.7326/0003-4819-101-6-825
 
 Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
 
 Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
 
 Eric B. Rimm, Meir J. Stampfer, Edward Giovannucci, Alberto Ascherio, Donna Spiegelman, Graham A. Colditz, Walter C. Willett, Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men, American Journal of Epidemiology, Volume 141, Issue 12, 15 June 1995, Pages 1117–1127, https://doi.org/10.1093/oxfordjournals.aje.a117385
-
 
 Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
 
@@ -308,9 +356,6 @@ kable(df.sum, "latex",
 ```
 
 
-
-
-
 ## Original Dataset
 
 ```{r Dataset.actual, echo=FALSE, results='asis'}
@@ -322,9 +367,6 @@ kable(df, "latex",
   kable_styling(latex_options = c("hold_positon","repeat_header"),
                 full_width = TRUE)
 ```
-
-
-
 
 
 ## Imputed Dataset
@@ -351,6 +393,19 @@ kable(df.new, "latex",
 ```
 
 \newpage
+
+## Table of Kaplan-Meier Estimators
+
+```{r km.table, echo=FALSE, results='asis', warning=FALSE, message=FALSE}
+
+km.all$summary
+
+kable(km.sum, caption="Kaplan-Meier Estimate Summary") %>%
+  kable_styling(latex_options = c("hold_positon","repeat_header"),
+                full_width = TRUE)
+
+```
+
 
 ## R Code
 
