@@ -97,7 +97,9 @@ kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
 
 ```
 
-We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). Refer to Stekhoven, et. al 2012 for more detail. Below is 
+We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
+
+We used the missFortune package to run up to 500 iterations. Each iteration was allotted 1000 trees for the random forest algorithmic approach.
 
 Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
 
@@ -123,7 +125,7 @@ s.df = Surv(df.new$Survival,df.new$Status) #create the new survival obejct for a
 
 ```
 
-Being a random forest iterative process, each imputed dataset will be different from each other. Out of 500 iterations, we have an averaged NRMSE value of 0.2246 - that is our inputted values have an estimate 22.46% deviation from estimated true accuracy.
+Being a random forest iterative process, each imputed dataset will be different from each other. For our particular seed and iterations, we aobtained a NRMSE value of 0.1442 - that is our inputted values have an estimate 14.42% deviation from estimated true accuracy.
 
 The full imputed dataset may be found in the appendix of this paper. As well as references to the authors who created the algorithm.
 
@@ -152,10 +154,7 @@ We use this equation to estimate the survival at each time interval. We conduct 
 
 ### Cumulative Hazard Estimators
 
-The relationship between KM and hazard can be model by the following equation (Tableman & Kim, 2004):
-
-\[ haaazzaaarrrddd \]
-
+We calculate the hazard of our Kaplan-Survivor function by using Nelson-Aalen's hazard estimate 
 - define variables. Make notes
 
 
@@ -294,46 +293,40 @@ kable(km.as, caption="Kaplan-Meier Results") %>%
 
 # Discussion
 
-# References
+\newpage
 
-### Introduction
-Wilmot, K. A., O’Flaherty, M., Capewell, S., Ford, E. S., & Vaccarino, V. (2015). Coronary Heart Disease Mortality Declines in the United States From 1979 Through 2011CLINICAL PERSPECTIVE. Circulation, 132(11), 997–1002. doi: 10.1161/circulationaha.115.015293
+# Appendix
 
-Goldman, L. (1984). The Decline in Ischemic Heart Disease Mortality Rates. Annals of Internal Medicine, 101(6), 825. doi: 10.7326/0003-4819-101-6-825
-
-Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
-
-Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
-
-Eric B. Rimm, Meir J. Stampfer, Edward Giovannucci, Alberto Ascherio, Donna Spiegelman, Graham A. Colditz, Walter C. Willett, Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men, American Journal of Epidemiology, Volume 141, Issue 12, 15 June 1995, Pages 1117–1127, https://doi.org/10.1093/oxfordjournals.aje.a117385
-
-Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
-
-Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
-
-### Methodology
-
-Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
-
-Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
-
-### Imputation
-
-Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
-
-Daniel J. Stekhoven, Peter Bühlmann, MissForest—non-parametric missing value imputation for mixed-type data, Bioinformatics, Volume 28, Issue 1, 1 January 2012, Pages 112–118,
-
-### Discussion
-
-Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
+## References
 
 Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G., Stefanadis, C. I., … Chimonas, E. T. (2006). Younger age potentiates post myocardial infarction survival disadvantage of women. International Journal of Cardiology, 108(3), 320–325. doi: 10.1016/j.ijcard.2005.05.016
 
+Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
+
+Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
+
+Goldman, L. (1984). The Decline in Ischemic Heart Disease Mortality Rates. Annals of Internal Medicine, 101(6), 825. doi: 10.7326/0003-4819-101-6-825
+Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
+Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
+
+Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
+Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
+
+Rimm, E. B., Stampfer, M. J., Giovannucci, E., Ascherio, A., Spiegelman, D., Colditz, G. A., & Willett, W. C. (1995). Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men. American Journal of Epidemiology, 141(12), 1117–1127. doi: 10.1093/oxfordjournals.aje.a117385 
+
+Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
+
 Sia, Y. T., Parker, T. G., Liu, P., Tsoporis, J. N., Adam, A., & Rouleau, J. L. (2002). Improved post-myocardial infarction survival with probucol in rats: Effects on left ventricular function, morphology, cardiac oxidative stress and cytokine expression. Journal of the American College of Cardiology, 39(1), 148–156. doi: 10.1016/s0735-1097(01)01709-0
+
+Stekhoven, D. J., & Buhlmann, P. (2011). MissForest--non-parametric missing value imputation for mixed-type data. Bioinformatics, 28(1), 112–118. doi: 10.1093/bioinformatics/btr597 
+
+Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
+
+Wilmot, K. A., O’Flaherty, M., Capewell, S., Ford, E. S., & Vaccarino, V. (2015). Coronary Heart Disease Mortality Declines in the United States From 1979 Through 2011CLINICAL PERSPECTIVE. Circulation, 132(11), 997–1002. doi: 10.1161/circulationaha.115.015293
+
 
 \newpage
 
-# Appendix 
 
 ## Dataset Variable Summary
 
@@ -346,7 +339,7 @@ kable(df.sum, "latex",
       longtable = TRUE,
       linesep = "\\addlinespace",
       caption = "Summary of Dataset Covariates") %>%
-  kable_styling(latex_options = c("hold_positon","repeat_header"),
+  kable_styling(latex_options = c("hold_position","repeat_header"),
                 full_width = TRUE)
 
 ```
@@ -360,10 +353,11 @@ kable(df, "latex",
       booktabs = TRUE,
       longtable = TRUE,
       caption = "Original Dataset") %>%
-  kable_styling(latex_options = c("hold_positon","repeat_header"),
+  kable_styling(latex_options = c("hold_position","repeat_header"),
                 full_width = TRUE)
 ```
 
+\newpage
 
 ## Imputed Dataset
 
@@ -383,7 +377,7 @@ kable(df.new, "latex",
       booktabs = TRUE,
       longtable = TRUE,
       caption = "Imputed Dataset") %>%
-  kable_styling(latex_options = c("hold_positon","repeat_header"),
+  kable_styling(latex_options = c("hold_position","repeat_header"),
                 full_width = TRUE)
 
 ```
@@ -394,19 +388,19 @@ kable(df.new, "latex",
 
 ```{r km.table, echo=FALSE, results='asis', warning=FALSE, message=FALSE}
 
-km.all$summary
+km.sum = data.frame(km.all$n.risk, km.all$n.event, km.all$n.censor, km.all$surv, km.all$std.err, km.all$lower, km.all$upper)
 
-kable(km.sum, caption="Kaplan-Meier Estimate Summary") %>%
-  kable_styling(latex_options = c("hold_positon","repeat_header"),
-                full_width = TRUE)
+kable(km.sum, 
+      caption="Kaplan-Meier Estimate Summary",
+      col.names = c("Ni","Di","Ci","Survival","Std. Err", "95% LCL", "95% UCL")) %>%
+  kable_styling(latex_options = "hold_position")
 
 ```
 
+\newpage
 
 ## R Code
 
 ```{r ref.label=knitr::all_labels(), echo = T, eval = F}
 ```
 
-
-\newpage
