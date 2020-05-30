@@ -154,9 +154,19 @@ We use this equation to estimate the survival at each time interval. We conduct 
 
 ### Cumulative Hazard Estimators
 
-We calculate the hazard of our Kaplan-Survivor function by using Nelson-Aalen's hazard estimate 
-- define variables. Make notes
+We calculate the hazard of our Kaplan-Survivor function by using Nelson-Aalen's hazard estimate. 
 
+\[ \tilde{H}(t) = \sum_{y_{(i)}\leq{t}} \frac{d_i}{n_i}  \]
+
+Where $ d_i_ $ is the number of events during each interval and $ n_i $ is the number alive before each time. The variance of the Nelson-Aalen's hazard estimate can be found as follows:
+
+\[ var(\tilde{H}(t)) = \sum_{y_{(i)}\leq{t}} \frac{d_i}{{n_i}^2}\]
+
+Nelson-Aalen's hazard estimate is an approximatation of the standard cumulative hazard estimate (shown below):
+
+\[ \hat{H}(t) = -log \prod_{y_{(i)}\leq{t}} \frac{d_i - n_i}{n_i}  \]
+
+The Nelson-Aalen estimate approximation is exceptionally effective as the estimate sums the hazard from each interval step. Thus, producing an effective substitution of the observed cumulative hazard product sum shown above. We just Nelson-Aalen to estimate the hazard for each of our non-parametric stratification.
 
 ## Parametric Estimates: Log-Normal Distribution
 
