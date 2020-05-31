@@ -257,8 +257,8 @@ km.plot3 = ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wms = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
-km.plot4 = ggsurvplot(km.wms, 
+km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+km.plot4 = ggsurvplot(km.wmi, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",

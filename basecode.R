@@ -1,30 +1,24 @@
 # Setup
-library(readr)
 library(readxl)
 library(knitr)
 library(tidyverse)
-library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
-library(ggplot2)
 library(VIM)
 library(missForest)
 library(writexl)
 
 df = data.frame(read_excel("df.xlsx"))    #importing the dataset
 df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
-df.new = data.frame(read_excel("df.new.xlsx")) 
-  
-# Survival object created during the imputation stage
+# df.new = data.frame(read_excel("df.new.xlsx")) 
 
-# Dataset
 
 # Dataset: Variable Summary (Appendix)
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
-# Dataset: Table of the Original data (Appendix)
+### Table of the data
 df <- data.frame(read_excel("df.xlsx"))
 df
 
@@ -32,8 +26,10 @@ df
 
 set.seed(7522) 
 df.i = missForest(df, maxiter = 30, ntree = 1000)
+df.i$ximp #quick check of imputed values
+df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
-# dataframe rounding option
+# dataframe rounding function
 round_df <- function(x, digits) {
   # round all numeric variables
   # x: data frame 
@@ -64,15 +60,21 @@ s.df = Surv(df.new$Survival,df.new$Status)
 ### Regression: Cox PH Model
 ### Regression: Alternative Methods - Accelerated Hazard Model
 
+# Methods  <><><><><><><><><><>
+## Statistical Analysis
+### Kaplan-Meier
+### Weibull
+### Cox PH
 
-# Results #######################################################################
-# Descriptive Statistics [point estimates and quantiles go here]
-## Mean, Median
+# Results  <><><><><><><><><><>
+### Descriptive Statistics [point estimates and quantiles go here]
+### Summary statistics
 
 ## Survival Analysis (chapter 3 material) 
 ### [GRAPHIC] KM Curve
-
-km.all = survfit(s.df~1,type="kaplan-meier", data = df.new)
+df <- data.frame(read_excel("df.xlsx"))
+s.df = Surv(df$Survival,df$Status)
+km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
@@ -88,6 +90,7 @@ ggsurvplot(km.all,
            legend.title = "Groups",
            legend.labs = "All")
 
+
 km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df.new)
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
@@ -101,9 +104,9 @@ ggsurvplot(km.age,
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
            legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
 
-km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
 ggsurvplot(km.effusion, 
            palette = c("darkcyan","darkgoldenrod3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -119,7 +122,7 @@ ggsurvplot(km.effusion,
            legend.labs = c("Present","Absent"))
 
 km.wms = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
-ggsurvplot(km.wms, 
+ggsurvplot(km.wms,
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",
@@ -133,6 +136,7 @@ ggsurvplot(km.wms,
            legend.title = "Groups",
            legend.labs = c("< 12", "12-14", "> 14"))
            
+
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve
 
@@ -153,10 +157,6 @@ ggsurvplot(km.wms,
 #2) for the stratified models (ch3 material)
 #4) for the regression models (ch 4-6 material)
 
-# Conclusion
-
-# Discussion
-
 #Weibull parametric model 
 
 library(readxl)
@@ -166,8 +166,6 @@ library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
-
-df <- data.frame(read_excel("df.xlsx"))
 
 months=df.new$Survival
 status=df.new$Status
@@ -211,7 +209,7 @@ round(C.I.Shat.w,5)
 
 #k-m and s curves same plot
 
-s.df = Surv(df$Survival,df$Status)
+s.df.new = Surv(df.new$Survival,df.new$Status)
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
@@ -251,7 +249,7 @@ x7=df.new$WMI
 y2=Surv(months,status)
 data.frame.2=data.frame(y,x1,x2,x3,x4,x5,x6,x7)
 
-cph.fit1=coxph(Surv(months,status)~x1+x2+x3+x4+x5+x6+x7,data=df.new)
+cph.fit1=coxph(Surv(months,status)~x2,data=df.new)
 summary(cph.fit1)
 
 cph.fit2=stepAIC(cph.fit1,~.^2)
