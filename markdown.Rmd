@@ -108,6 +108,7 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
 
 ```{r imputation, echo=FALSE, warning=FALSE, message=FALSE}
+
 set.seed(7522) 
 df.i = missForest(df, maxiter = 30, ntree = 1000)
 
@@ -122,10 +123,10 @@ round_df <- function(x, digits) {
 
 df.impute = round_df(df.i$ximp,2) #imputed values table
 df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
-Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
-WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
+Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data
+WMS.s = ifelse(df.impute$WMS < 12,0,ifelse(df.impute$WMS < 15, 1, 2)) #new WMS strata based on imputed data
 df.new$Age.s = Age.s
-df.new$WMS.s = WMI.s
+df.new$WMS.s = WMS.s
 
 s.df = Surv(df.new$Survival,df.new$Status)
 ```
@@ -256,8 +257,8 @@ km.plot3 = ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
-km.plot4 = ggsurvplot(km.wmi, 
+km.wms = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
+km.plot4 = ggsurvplot(km.wms, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",

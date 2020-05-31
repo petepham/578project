@@ -29,13 +29,11 @@ df <- data.frame(read_excel("df.xlsx"))
 df
 
 # Dataset: Imputation
-missing.data = aggr(df) #visualize the missing information, missing 40 points
 
-set.seed(7522) #this allows for consistent algorithms for each run
-df.i = missForest(df, maxiter = 20, ntree = 1000) # random forest, maximum of 20 interations, 1000 trees per iteration.
-df.i$ximp #quick check of imputed values
-df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
+set.seed(7522) 
+df.i = missForest(df, maxiter = 30, ntree = 1000)
 
+# dataframe rounding option
 round_df <- function(x, digits) {
   # round all numeric variables
   # x: data frame 
@@ -46,10 +44,12 @@ round_df <- function(x, digits) {
 
 df.impute = round_df(df.i$ximp,2) #imputed values table
 df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
-Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
-WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
+Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data
+WMS.s = ifelse(df.impute$WMS < 12,0,ifelse(df.impute$WMS < 15, 1, 2)) #new WMS strata based on imputed data
 df.new$Age.s = Age.s
-df.new$WMS.s = WMI.s
+df.new$WMS.s = WMS.s
+
+s.df = Surv(df.new$Survival,df.new$Status)
 
 write_xlsx(df.new,"df.new.xlsx")
 write.csv(df.new,"df.new.xlsx")
@@ -118,8 +118,8 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
-ggsurvplot(km.wmi, 
+km.wms = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
+ggsurvplot(km.wms, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",
