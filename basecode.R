@@ -42,8 +42,27 @@ round_df <- function(x, digits) {
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x}
 
+<<<<<<< HEAD
 df.new = round_df(df.i$ximp,2)
 df.new
+=======
+df.impute = round_df(df.i$ximp,2) #imputed values table
+df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
+Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
+WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
+df.new$Age.s = Age.s
+df.new$WMS.s = WMI.s
+
+s.df = Surv(df.new$Survival,df.new$Status)
+
+# Methodology ###################################################################
+### Non-parametric: Kaplan
+### Parametric: Log-Normal
+### Parametric: Log-Logistic
+### Parametric: Weibull
+### Regression: Cox PH Model
+### Regression: Alternative Methods - Accelerated Hazard Model
+>>>>>>> b52b93aa6cd12fb04733dfc3a3af106a008b7f5a
 
 # Methods  <><><><><><><><><><>
 ## Statistical Analysis
@@ -75,7 +94,11 @@ ggsurvplot(km.all,
            legend.title = "Groups",
            legend.labs = "All")
 
+<<<<<<< HEAD
 km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
+=======
+km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df.new)
+>>>>>>> b52b93aa6cd12fb04733dfc3a3af106a008b7f5a
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -105,6 +128,24 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
+<<<<<<< HEAD
+=======
+km.wmi = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
+ggsurvplot(km.wmi, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Wall Motion Index",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 12", "12-14", "> 14"))
+           
+>>>>>>> b52b93aa6cd12fb04733dfc3a3af106a008b7f5a
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve
 
