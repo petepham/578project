@@ -14,15 +14,11 @@ library(writexl)
 
 df = data.frame(read_excel("df.xlsx"))    #importing the dataset
 df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
+df.new = data.frame(read_excel("df.new.xlsx")) 
+  
 # Survival object created during the imputation stage
 
-# Abstract ##################################################################
-
-
-# Introduction ##############################################################
-
-
-# Dataset ###################################################################
+# Dataset
 
 # Dataset: Variable Summary (Appendix)
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
