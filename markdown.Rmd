@@ -19,9 +19,13 @@ library(survminer)
 library(ggplot2)
 library(VIM)
 library(missForest)
+library(ggplot2)
+library(ggpubr)
 
 df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
+
+df.new = data.frame(read_excel("df.new.xlsx"))
 ```
 
 
@@ -210,8 +214,9 @@ The Nelson-Aalen estimate approximation is exceptionally effective as the estima
 Output from our Kaplan-Meier estimators give us the following curve (full KM estimator table can be found in the appendix).
 
 ```{r km.all, fig.align='center', echo=FALSE}
+km.plots = list()
 km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
-km.plot1 = ggsurvplot(km.all, 
+km.plots[[1]] = ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
            title="Post-Myocardial Infarction Survival", 
@@ -228,7 +233,7 @@ km.plot1 = ggsurvplot(km.all,
 
 
 km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
-km.plot2 = ggsurvplot(km.age, 
+km.plots[[2]] = ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Age Group",
@@ -243,7 +248,7 @@ km.plot2 = ggsurvplot(km.age,
            legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
 
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
-km.plot3 = ggsurvplot(km.effusion, 
+km.plots[[3]] = ggsurvplot(km.effusion, 
            palette = c("darkcyan","darkgoldenrod3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Presence of Pericardial Effusion",
@@ -258,7 +263,7 @@ km.plot3 = ggsurvplot(km.effusion,
            legend.labs = c("Present","Absent"))
 
 km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
-km.plot4 = ggsurvplot(km.wmi, 
+km.plots[[4]] = ggsurvplot(km.wmi, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
            subtitle="Stratified by Wall Motion Index",
@@ -272,7 +277,8 @@ km.plot4 = ggsurvplot(km.wmi,
            legend.title = "Groups",
            legend.labs = c("< 12", "12-14", "> 14"))
 
-grid.arrange(km.plot1, km.plot2, km.plot3, km.plot4, ncol=2, nrow=2)
+
+arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
 
 ```
 
