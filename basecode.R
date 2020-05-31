@@ -6,6 +6,7 @@ library(kableExtra)
 library(survival)
 library(survminer)
 library(VIM)
+<<<<<<< HEAD
 
 
 # Introduction <><><><><><><><><><>
@@ -13,6 +14,20 @@ library(VIM)
 # Objective
 # Data
 # Header definition
+=======
+library(missForest)
+library(writexl)
+
+df = data.frame(read_excel("df.xlsx"))    #importing the dataset
+df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
+df.new = data.frame(read_excel("df.new.xlsx")) 
+  
+# Survival object created during the imputation stage
+
+# Dataset
+
+# Dataset: Variable Summary (Appendix)
+>>>>>>> 68397c068cfa8bc48e3e6e90c7d5e2775586203b
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
@@ -52,6 +67,9 @@ Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata ba
 WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
 df.new$Age.s = Age.s
 df.new$WMS.s = WMI.s
+
+write_xlsx(df.new,"df.new.xlsx")
+write.csv(df.new,"df.new.xlsx")
 
 s.df = Surv(df.new$Survival,df.new$Status)
 
