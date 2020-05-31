@@ -28,7 +28,7 @@ df[df=="?"] = " "
 # Abstract
 
 ### Background
-The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
+$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
 
 ### Objectives
 Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardic state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
@@ -138,7 +138,7 @@ We have fixed start and end dates for when the data was collection. Some patient
 
 # Methodology
 
-Here, we brief review the methodology and theory behind our analysis techniques for context.
+Here, we briefly review the methodology and theory behind our analysis techniques for context.
 
 ## Non-Parametric: Kaplan Meier
 
