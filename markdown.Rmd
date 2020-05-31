@@ -57,11 +57,11 @@ Unsurprisingly, as more patients survive CVD related infarction episodes, more d
 
 # Dataset
 
-Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations and records 8 variables. Two patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractal shortening, epss, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
-Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation provide. We will address this specifically in the following section.
+Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation. We discuss the nature of censoring in the following section.
 
-It should be noted the the dataset have 40 missing values after the removal of the two patients. To develop estimates for the missing dated, we employed a k-nearest Neighbor algorithmic approach to predict the values for the missing values. With this in mind, our predictive and summary models will have less than ideal accuracy.
+At this point, 40 points of data were missing from the total dataset. A random forest algorithm (see: missForest package) was employed to iteratively impute values. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
 We then classify continuous variables into groups for stratification. 
 
@@ -121,6 +121,7 @@ round_df <- function(x, digits) {
   x}
 
 df.new = round_df(df.i$ximp,2) #create the new dataset for all methods to use
+write.csv(df.new,'df.new.csv')
 s.df = Surv(df.new$Survival,df.new$Status) #create the new survival obejct for all methods to use
 
 ```
@@ -205,7 +206,7 @@ Output from our Kaplan-Meier estimators give us the following curve (full KM est
 
 ```{r km.all, fig.align='center', echo=FALSE}
 km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
-ggsurvplot(km.all, 
+km.plot1 = ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
            title="Post-Myocardial Infarction Survival", 
@@ -219,6 +220,55 @@ ggsurvplot(km.all,
            surv.median.line = "hv",
            legend.title = "Groups",
            legend.labs = "All")
+
+
+km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
+km.plot2 = ggsurvplot(km.age, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Age Group",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
+km.plot3 = ggsurvplot(km.effusion, 
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Presence of Pericardial Effusion",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("Present","Absent"))
+
+km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+km.plot4 = ggsurvplot(km.wmi, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           title="Post-Myocardial Infarction Survival", 
+           subtitle="Stratified by Wall Motion Index",
+           font.title=c(12,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 12", "12-14", "> 14"))
+
+grid.arrange(km.plot1,km.plot2,km.plot3,km.plot4,ncol=2,nrow=2)
+
 ```
 
 Here is the survival curve for all groups within our dataset. With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is approximately 29 months a 95% lower and upper confidence limits of 27 and 33 months, respectively.  We see that a majority of our censored values have very short survival times. This is an intuitive finding as patients who joined the study late have relatively unknown survival (hence, their right censored nature. A summary of the results from our KM fit is below:
