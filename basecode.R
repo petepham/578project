@@ -52,7 +52,7 @@ df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
 Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
 WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
 df.new$Age.s = Age.s
-df.new$WMI.s = WMI.s
+df.new$WMS.s = WMI.s
 
 s.df = Surv(df.new$Survival,df.new$Status)
 
@@ -88,7 +88,7 @@ ggsurvplot(km.all,
            legend.title = "Groups",
            legend.labs = "All")
 
-km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
+km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df.new)
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -118,7 +118,7 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+km.wmi = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
 ggsurvplot(km.wmi, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
