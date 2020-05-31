@@ -1,41 +1,36 @@
 # Setup
-library(readr)
 library(readxl)
 library(knitr)
 library(tidyverse)
-library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
-library(ggplot2)
 library(VIM)
-library(missForest)
-
-df = data.frame(read_excel("df.xlsx"))    #importing the dataset
-df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
-# Survival object created during the imputation stage
-
-# Abstract ##################################################################
 
 
-# Introduction ##############################################################
-
-
-# Dataset ###################################################################
-
-# Dataset: Variable Summary (Appendix)
+# Introduction <><><><><><><><><><>
+# Background
+# Objective
+# Data
+# Header definition
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
-# Dataset: Table of the Original data (Appendix)
+### Table of the data
 df <- data.frame(read_excel("df.xlsx"))
 df
 
-# Dataset: Imputation
-missing.data = aggr(df) #visualize the missing information, missing 40 points
+## Definitions
 
-set.seed(7522) #this allows for consistent algorithms for each run
-df.i = missForest(df, maxiter = 20, ntree = 1000) # random forest, maximum of 20 interations, 1000 trees per iteration.
+### Imputation
+
+library(missForest)
+missing.data = aggr(df) #visualize the missing information
+missing.data
+
+df.m = prodNA(df, noNA = 0.1) #seed 10% of the missing values 
+
+df.i = missForest(df.m)
 df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
@@ -47,32 +42,24 @@ round_df <- function(x, digits) {
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x}
 
-df.impute = round_df(df.i$ximp,2) #imputed values table
-df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
-Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata based on imputed data
-WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
-df.new$Age.s = Age.s
-df.new$WMI.s = WMI.s
+df.new = round_df(df.i$ximp,2)
+df.new
 
-s.df = Surv(df.new$Survival,df.new$Status)
+# Methods  <><><><><><><><><><>
+## Statistical Analysis
+### Kaplan-Meier
+### Weibull
+### Cox PH
 
-# Methodology ###################################################################
-### Non-parametric: Kaplan
-### Parametric: Log-Normal
-### Parametric: Log-Logistic
-### Parametric: Weibull
-### Regression: Cox PH Model
-### Regression: Alternative Methods - Accelerated Hazard Model
-
-
-# Results #######################################################################
-# Descriptive Statistics [point estimates and quantiles go here]
-## Mean, Median
+# Results  <><><><><><><><><><>
+### Descriptive Statistics [point estimates and quantiles go here]
+### Summary statistics
 
 ## Survival Analysis (chapter 3 material) 
 ### [GRAPHIC] KM Curve
-
-km.all = survfit(s.df~1,type="kaplan-meier", data = df.new)
+df <- data.frame(read_excel("df.xlsx"))
+s.df = Surv(df$Survival,df$Status)
+km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
@@ -88,7 +75,7 @@ ggsurvplot(km.all,
            legend.title = "Groups",
            legend.labs = "All")
 
-km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
+km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df)
 ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -101,9 +88,9 @@ ggsurvplot(km.age,
            xlab="Time to Death (Months)",
            surv.median.line = "hv",
            legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
 
-km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
 ggsurvplot(km.effusion, 
            palette = c("darkcyan","darkgoldenrod3"), 
            title="Post-Myocardial Infarction Survival", 
@@ -118,21 +105,6 @@ ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
-ggsurvplot(km.wmi, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Wall Motion Index",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 12", "12-14", "> 14"))
-           
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve
 
@@ -153,10 +125,6 @@ ggsurvplot(km.wmi,
 #2) for the stratified models (ch3 material)
 #4) for the regression models (ch 4-6 material)
 
-# Conclusion
-
-# Discussion
-
 #Weibull parametric model 
 
 library(readxl)
@@ -166,8 +134,6 @@ library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
-
-df <- data.frame(read_excel("df.xlsx"))
 
 months=df.new$Survival
 status=df.new$Status
@@ -211,7 +177,7 @@ round(C.I.Shat.w,5)
 
 #k-m and s curves same plot
 
-s.df = Surv(df$Survival,df$Status)
+s.df.new = Surv(df.new$Survival,df.new$Status)
 km.all = survfit(s.df~1,type="kaplan-meier", data = df)
 ggsurvplot(km.all, 
            palette = "#2E9FDF", 
@@ -251,7 +217,7 @@ x7=df.new$WMI
 y2=Surv(months,status)
 data.frame.2=data.frame(y,x1,x2,x3,x4,x5,x6,x7)
 
-cph.fit1=coxph(Surv(months,status)~x1+x2+x3+x4+x5+x6+x7,data=df.new)
+cph.fit1=coxph(Surv(months,status)~x2,data=df.new)
 summary(cph.fit1)
 
 cph.fit2=stepAIC(cph.fit1,~.^2)
