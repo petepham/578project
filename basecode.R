@@ -48,9 +48,28 @@ df.new$WMS.s = WMS.s
 s.df = Surv(df.new$Survival,df.new$Status)
 
 write_xlsx(df.new,"df.new.xlsx")
-write.csv(df.new,"df.new.xlsx")
+write.csv(df.new,"df.new.csv")
 
 s.df = Surv(df.new$Survival,df.new$Status)
+
+set.seed(7522) 
+df.i = missForest(df, maxiter = 30, ntree = 1000)
+
+# dataframe rounding option
+round_df <- function(x, digits) {
+  # round all numeric variables
+  # x: data frame 
+  # digits: number of digits to round
+  numeric_columns <- sapply(x, mode) == 'numeric'
+  x[numeric_columns] <-  round(x[numeric_columns], digits)
+  x}
+
+df.impute = round_df(df.i$ximp,2) #imputed values table
+df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
+Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data
+WMS.s = ifelse(df.impute$WMS < 12,0,ifelse(df.impute$WMS < 15, 1, 2)) #new WMS strata based on imputed data
+df.new$Age.s = Age.s
+df.new$WMS.s = WMS.s
 
 # Methodology ###################################################################
 ### Non-parametric: Kaplan

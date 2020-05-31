@@ -26,6 +26,8 @@ df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
 
 df.new = data.frame(read_excel("df.new.xlsx"))
+
+s.df = Surv(df.new$Survival,df.new$Status)
 ```
 
 
@@ -109,33 +111,7 @@ Following imputation, we verify the imputation accuracy using the normalized roo
 
 \[ NRMSE\ =\ \sqrt{\frac{mean\left(\left(X^{true}-X^{imp}\right)^2\right)}{var\left(X^{true}\right)}} \]
 
-Where X is a matrix of our dataset. Our calculated NRMSE is as follows:
-
-```{r imputation, echo=FALSE, warning=FALSE, message=FALSE}
-
-set.seed(7522) 
-df.i = missForest(df, maxiter = 30, ntree = 1000)
-
-# dataframe rounding option
-round_df <- function(x, digits) {
-  # round all numeric variables
-  # x: data frame 
-  # digits: number of digits to round
-  numeric_columns <- sapply(x, mode) == 'numeric'
-  x[numeric_columns] <-  round(x[numeric_columns], digits)
-  x}
-
-df.impute = round_df(df.i$ximp,2) #imputed values table
-df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
-Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data
-WMS.s = ifelse(df.impute$WMS < 12,0,ifelse(df.impute$WMS < 15, 1, 2)) #new WMS strata based on imputed data
-df.new$Age.s = Age.s
-df.new$WMS.s = WMS.s
-
-s.df = Surv(df.new$Survival,df.new$Status)
-```
-
-Being a random forest iterative process, each imputed dataset will be different from each other. For our particular seed and iterations, we aobtained a NRMSE value of 0.1442 - that is our inputted values have an estimate 14.42% deviation from estimated true accuracy.
+Where X is a matrix of our dataset. Being a random forest iterative process, each imputed dataset will be different from each other. For our particular seed and iterations, we aobtained a NRMSE value of 0.1442 - that is our inputted values have an estimate 14.42% deviation from estimated true accuracy.
 
 The full imputed dataset may be found in the appendix of this paper. As well as references to the authors who created the algorithm.
 
