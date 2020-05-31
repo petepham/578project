@@ -10,6 +10,7 @@ library(survminer)
 library(ggplot2)
 library(VIM)
 library(missForest)
+library(writexl)
 
 df = data.frame(read_excel("df.xlsx"))    #importing the dataset
 df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
@@ -53,6 +54,9 @@ Age.s = ifelse(df.i2$Age < 55,0,ifelse(df.i2$Age < 71, 1, 2)) #new age strata ba
 WMS.s = ifelse(df.i2$WMS < 12,0,ifelse(df.i2$WMS < 15, 1, 2)) #new WMS strata based on imputed data
 df.new$Age.s = Age.s
 df.new$WMS.s = WMI.s
+
+write_xlsx(df.new,"df.new.xlsx")
+write.csv(df.new,"df.new.xlsx")
 
 s.df = Surv(df.new$Survival,df.new$Status)
 
