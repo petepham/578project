@@ -11,25 +11,28 @@ library(writexl)
 
 df = data.frame(read_excel("df.xlsx"))    #importing the dataset
 df[df=="?"] = " "    #removing all "?'s" with blanks. This prepares the dataset for imputation.
-# df.new = data.frame(read_excel("df.new.xlsx")) 
+df.new = data.frame(read_excel("df.new.xlsx")) 
+
 
 
 # Dataset: Variable Summary (Appendix)
 df.sum <- data.frame(read_excel("df.sum.xlsx"))
 df.sum
 
-### Table of the data
+
+
+# Table of the data
 df <- data.frame(read_excel("df.xlsx"))
 df
 
-# Dataset: Imputation
 
+
+# Dataset Imputation
 set.seed(7522) 
 df.i = missForest(df, maxiter = 30, ntree = 1000)
 df.i$ximp #quick check of imputed values
 df.i$OOBerror #this is the normalized mean squared error. We will compared this with the next step
 
-# dataframe rounding function
 round_df <- function(x, digits) {
   # round all numeric variables
   # x: data frame 
@@ -52,109 +55,142 @@ write.csv(df.new,"df.new.csv")
 
 s.df = Surv(df.new$Survival,df.new$Status)
 
-set.seed(7522) 
-df.i = missForest(df, maxiter = 30, ntree = 1000)
-
-# dataframe rounding option
-round_df <- function(x, digits) {
-  # round all numeric variables
-  # x: data frame 
-  # digits: number of digits to round
-  numeric_columns <- sapply(x, mode) == 'numeric'
-  x[numeric_columns] <-  round(x[numeric_columns], digits)
-  x}
-
-df.impute = round_df(df.i$ximp,2) #imputed values table
-df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
-Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data
-WMS.s = ifelse(df.impute$WMS < 12,0,ifelse(df.impute$WMS < 15, 1, 2)) #new WMS strata based on imputed data
-df.new$Age.s = Age.s
-df.new$WMS.s = WMS.s
-
-# Methodology ###################################################################
-### Non-parametric: Kaplan
-### Parametric: Log-Normal
-### Parametric: Log-Logistic
-### Parametric: Weibull
-### Regression: Cox PH Model
-### Regression: Alternative Methods - Accelerated Hazard Model
-
-# Methods  <><><><><><><><><><>
-## Statistical Analysis
-### Kaplan-Meier
-### Weibull
-### Cox PH
-
-# Results  <><><><><><><><><><>
-### Descriptive Statistics [point estimates and quantiles go here]
-### Summary statistics
-
-## Survival Analysis (chapter 3 material) 
-### [GRAPHIC] KM Curve
-df <- data.frame(read_excel("df.xlsx"))
-s.df = Surv(df$Survival,df$Status)
-km.all = survfit(s.df~1,type="kaplan-meier", data = df)
-ggsurvplot(km.all, 
-           palette = "#2E9FDF", 
-           conf.int = TRUE, 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="All Groups",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = "All")
 
 
-km.age = survfit(s.df~Age.Strata, type="kaplan-meier", data = df.new)
-ggsurvplot(km.age, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Age Group",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 45 Year","45 - 64 Years","\u2265 65 Years"))
+# Kaplan-Meier Plots
+km.plots = list()
 
-km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df)
-ggsurvplot(km.effusion, 
-           palette = c("darkcyan","darkgoldenrod3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Presence of Pericardial Effusion",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("Present","Absent"))
+km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
+km.plots[[1]] = ggsurvplot(km.all, 
+                           palette = "#2E9FDF", 
+                           conf.int = TRUE, 
+                           title="Post-Myocardial Infarction Survival", 
+                           subtitle="Survival Among All Groups",
+                           font.title=c(14,"bold.italic"),
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = "All")
 
-km.wms = survfit(s.df~WMS.S, type="kaplan-meier", data = df.new)
-ggsurvplot(km.wms,
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Wall Motion Index",
-           font.title=c(12,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 12", "12-14", "> 14"))
-           
+
+km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
+km.plots[[2]] = ggsurvplot(km.age, 
+                           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                           subtitle="Survival, Stratified by Age Group",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+
+km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
+km.plots[[3]] = ggsurvplot(km.effusion, 
+                           palette = c("darkcyan","darkgoldenrod3"), 
+                           subtitle="Survival, Stratified by Presence of Pericardial Effusion",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("Present","Absent"))
+
+km.wms = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+km.plots[[4]] = ggsurvplot(km.wms, 
+                           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                           subtitle="Survival, Stratified by Wall Motion Index",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("< 12", "12-14", "> 14"))
+
+
+arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
+
+# Kaplan-Meier Suvival Summary
+ks1 = data.frame(t(summary(km.all)$table))
+ks2 = data.frame(summary(km.age)$table)
+ks3 = data.frame(summary(km.effusion)$table)
+ks4 = data.frame(summary(km.wms)$table)
+
+ksall = rbind(ks1, ks2, ks3, ks4)
+km.as = ksall[,c(1,4,5,7,8,9)]
+colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(km.as) = c("All","Age:<55", "Age: 55-65", "Age: >65", "P.Eff: Absent","P.Eff: Present", "WMS: < 12", "WMS: 12-14", "WMS: >14")
+
+kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
+  kable_styling(position = "center", latex_options="hold_position")
+
+
+# Kaplan-Meier Cumulative Hazard Estimators
+haz.plots = list()
+
+haz.plots[[1]] = ggsurvplot(km.all, 
+                            fun = "cumhaz",
+                            palette = "#2E9FDF", 
+                            conf.int = TRUE, 
+                            title="Post-Myocardial Infarction Hazard", 
+                            subtitle="Hazard Among All Groups",
+                            font.title=c(14,"bold.italic"),
+                            font.subtitle = c(10,"italic"),
+                            font.x = c(9, "bold.italic"),
+                            font.y = c(9, "bold.italic"),
+                            ylab="Surival Proportion", 
+                            xlab="Time to Death (Months)",
+                            legend.title = "Groups",
+                            legend.labs = "All")
+
+haz.plots[[2]] = ggsurvplot(km.age, 
+                            fun = "cumhaz",
+                            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                            subtitle="Hazard, Stratified by Age Group",
+                            font.subtitle = c(10,"italic"),
+                            font.x = c(9, "bold.italic"),
+                            font.y = c(9, "bold.italic"),
+                            ylab="Surival Proportion", 
+                            xlab="Time to Death (Months)",
+                            legend.title = "Groups",
+                            legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+
+haz.plots[[3]] = ggsurvplot(km.effusion, 
+                            fun = "cumhaz",
+                            palette = c("darkcyan","darkgoldenrod3"), 
+                            subtitle="Hazard, Stratified by Pericardial Effusion Presence",
+                            font.subtitle = c(10,"italic"),
+                            font.x = c(9, "bold.italic"),
+                            font.y = c(9, "bold.italic"),
+                            ylab="Surival Proportion", 
+                            xlab="Time to Death (Months)",
+                            legend.title = "Groups",
+                            legend.labs = c("Present","Absent"))
+
+haz.plots[[4]] = ggsurvplot(km.wms, 
+                            fun = "cumhaz",
+                            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                            subtitle="Hazard, Stratified by Wall Motion Index",
+                            font.subtitle = c(10,"italic"),
+                            font.x = c(9, "bold.italic"),
+                            font.y = c(9, "bold.italic"),
+                            ylab="Surival Proportion", 
+                            xlab="Time to Death (Months)",
+                            legend.title = "Groups",
+                            legend.labs = c("< 12", "12-14", "> 14"))
+
+
+arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
+
 
 ### [GRAPHIC] Weibull Curve
 ### [GRAPHIC] Log-Logistic Curve

@@ -230,8 +230,8 @@ km.plots[[3]] = ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
-km.plots[[4]] = ggsurvplot(km.wmi, 
+km.wms = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
+km.plots[[4]] = ggsurvplot(km.wms, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            subtitle="Survival, Stratified by Wall Motion Index",
            font.subtitle = c(10,"italic"),
@@ -251,11 +251,18 @@ arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
 Here is the survival curve for all groups within our dataset. With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is approximately 29 months a 95% lower and upper confidence limits of 27 and 33 months, respectively.  We see that a majority of our censored values have very short survival times. This is an intuitive finding as patients who joined the study late have relatively unknown survival (hence, their right censored nature. A summary of the results from our KM fit is below:
 
 ```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
-km.all.summary = data.frame(t(summary(km.all)$table))
-km.as = km.all.summary[,c(1,4,5,7,8,9)]
-colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
 
-kable(km.as, caption="Kaplan-Meier Results") %>%
+ks1 = data.frame(t(summary(km.all)$table))
+ks2 = data.frame(summary(km.age)$table)
+ks3 = data.frame(summary(km.effusion)$table)
+ks4 = data.frame(summary(km.wms)$table)
+
+ksall = rbind(ks1, ks2, ks3, ks4)
+km.as = ksall[,c(1,4,5,7,8,9)]
+colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(km.as) = c("All","Age:<55", "Age: 55-65", "Age: >65", "P.Eff: Absent","P.Eff: Present", "WMS: < 12", "WMS: 12-14", "WMS: >14")
+
+kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
@@ -303,7 +310,7 @@ haz.plots[[3]] = ggsurvplot(km.effusion,
            legend.title = "Groups",
            legend.labs = c("Present","Absent"))
 
-haz.plots[[4]] = ggsurvplot(km.wmi, 
+haz.plots[[4]] = ggsurvplot(km.wms, 
            fun = "cumhaz",
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
            subtitle="Hazard, Stratified by Wall Motion Index",
