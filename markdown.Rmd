@@ -33,39 +33,34 @@ s.df = Surv(df.new$Survival,df.new$Status)
 
 # Abstract
 
-### Background
-$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
+$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurrence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
 
-### Objectives
-Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardic state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
+$\textbf{Objective:}$ Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardiac state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
 
-We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe the data as well as choose a regression model to be used for predictive surviability. 
+We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe the data as well as choose a regression model to be used for predictive survivability. 
 
-### Methods
-Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of nonparametric (Kaplan-Meier) and parametric methods (Weilbull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardic state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
+$\textbf{Methods:}$ Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
-### Results
-Initial non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups. We choose a Weibull regression fit (tenative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
+$\textbf{Results:}$ Initial non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups. We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
 
-### Conclusion
-Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-mycardial episode survival.
+$\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
 
 
 
 # Introduction
 
-Heart disease has become the leading cause of US deaths among all racial and ethnic groups (Heron 2019, Fryar 2012). In 2009 cardiovascular disease represented nearly 64% of all cardiac related deaths (Dalen, et. Al. 2014). These myocardial infarctions – commonly known as heart attacks - are becoming largely common among all U.S. demographic populations. As such, researchers are looking to understand the underlying causes of these episodes. Specifically, increases in cardiovascular disease (CVD) cases have been largely attributed to many risk factors such as high levels of low-density lipoproteins (LPL), high blood pressure, and smoking (Fryar 2012). 
+Heart disease has become the leading cause of US deaths among all racial and ethnic groups (Heron 2019, Fryar 2012). In 2009 cardiovascular disease represented nearly 64% of all cardiac related deaths (Dalen, et. Al. 2014). These myocardial infarction – commonly known as heart attacks - are becoming largely common among all U.S. demographic populations. As such, researchers are looking to understand the underlying causes of these episodes. Specifically, increases in cardiovascular disease (CVD) cases have been largely attributed to many risk factors such as high levels of low-density lipoproteins (LPL), high blood pressure, and smoking (Fryar 2012). 
 
 These variables are often the results of lifestyle choices and effects of poverty. The prevalence of the disease has closely been followed a large body of conducted researchers aiming to reduce either the number of these cases or reduce the mortality of the specific myocardial infarction rates. Between 1980 and 2002, mortality rates saw a decrease of approximately 49% (Wilmot 2015). Decreases in mortality was common through the world better medical intervention techniques and increase awareness of healthier lifestyle choices became more prevalent (Goldman, et al. 1984).	
 
-Unsurprisingly, as more patients survive CVD related infarction episodes, more detail has been paid to understand the survivability the time period following an episode. Wall motion score (a measure of heart contractility during cycling) was significantly higher in those that survived versus those that died (Kan, et. Al. 1986). We hope to examine several factors that determine survivability among these patients. In addition to wall motion score, we hope to stratify and understand the relationships between time to event (death) measurements compared to general heart health and age. Our goal is to describe the survivability of our dataset and provide a model to predict the factors that determine survability in the one-year period following a myocardial infarction episode.
+Unsurprisingly, as more patients survive CVD related infarction episodes, more detail has been paid to understand the survivability the time period following an episode. Wall motion score (a measure of heart contractility during cycling) was significantly higher in those that survived versus those that died (Kan, et. Al. 1986). We hope to examine several factors that determine survivability among these patients. In addition to wall motion score, we hope to stratify and understand the relationships between time to event (death) measurements compared to general heart health and age. Our goal is to describe the survivability of our dataset and provide a model to predict the factors that determine survivability in the one-year period following a myocardial infarction episode.
 
 
 # Dataset
 
-Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractal shortening, epss, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractal shortening, EPSS, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
-Since the time of myocardial infarction varies (depending if a patient joined the study prior to the starat), some patients were followed for less than a year. This provides a clear censoring and truncation. We discuss the nature of censoring in the following section.
+Since the time of myocardial infarction varies (depending if a patient joined the study prior to the start), some patients were followed for less than a year. This provides a clear censoring and truncation. We discuss the nature of censoring in the following section.
 
 At this point, 40 points of data were missing from the total dataset. A random forest algorithm (see: missForest package) was employed to iteratively impute values. With this in mind, our predictive and summary models will have less than ideal accuracy.
 
@@ -103,21 +98,21 @@ kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
 
 ```
 
-We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbot (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
+We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbor (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
 
 We used the missFortune package to run up to 500 iterations. Each iteration was allotted 1000 trees for the random forest algorithmic approach.
 
-Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputated dataset can be expressed by:
+Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputed dataset can be expressed by:
 
 \[ NRMSE\ =\ \sqrt{\frac{mean\left(\left(X^{true}-X^{imp}\right)^2\right)}{var\left(X^{true}\right)}} \]
 
-Where X is a matrix of our dataset. Being a random forest iterative process, each imputed dataset will be different from each other. For our particular seed and iterations, we aobtained a NRMSE value of 0.1442 - that is our inputted values have an estimate 14.42% deviation from estimated true accuracy.
+Where X is a matrix of our dataset. Being a random forest iterative process, each imputed dataset will be different from each other. For our particular seed and iterations, we obtained a NRMSE value of 0.1442 - that is our inputted values have an estimate 14.42% deviation from estimated true accuracy.
 
 The full imputed dataset may be found in the appendix of this paper. As well as references to the authors who created the algorithm.
 
 ### Censoring
 
-Our dataset has numerous censored valued - that is, valued that cannot be recorded due the constrainst of the study design. In our data set, we are exmaining the survival after a heart attack, that is, the event of interest is death given that a patient has had already survived a heart attack (left truncation).
+Our dataset has numerous censored valued - that is, valued that cannot be recorded due the constraint of the study design. In our data set, we are examining the survival after a heart attack, that is, the event of interest is death given that a patient has had already survived a heart attack (left truncation).
 
 We have fixed start and end dates for when the data was collection. Some patients joined when the study began. Others joined later after the start date. Because of this, we cannot accurately determine how long a patient survived after our observation period is over. In addition, there are some patients that have been lost to follow up or may have died due to the onset of other unrelated factors. These data present themselves as being randomly right censored.
 
@@ -136,7 +131,7 @@ Where $ n_i $ is the number alive before time $ y_i $ and $ d_i $ is the number 
 
 \[ \hat{S}(t) = \prod_{i=1}^{131} (\frac{n_i -d_i}{n_i}) \]
 
-We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericadial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit.
+We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericardial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit.
 
 ### Cumulative Hazard Estimators
 
@@ -148,7 +143,7 @@ Where $ d_i_ $ is the number of events during each interval and $ n_i $ is the n
 
 \[ var(\tilde{H}(t)) = \sum_{y_{(i)}\leq{t}} \frac{d_i}{{n_i}^2}\]
 
-Nelson-Aalen's hazard estimate is an approximatation of the standard cumulative hazard estimate (shown below):
+Nelson-Aalen's hazard estimate is an approximation of the standard cumulative hazard estimate (shown below):
 
 \[ \hat{H}(t) = -log \prod_{y_{(i)}\leq{t}} \frac{d_i - n_i}{n_i}  \]
 
@@ -189,15 +184,16 @@ The Nelson-Aalen estimate approximation is exceptionally effective as the estima
 
 Output from our Kaplan-Meier estimators give us the following curve (full KM estimator table can be found in the appendix).
 
-```{r km.all, fig.align='center', echo=FALSE}
+```{r km.all, fig.align='center', echo=FALSE, fig.height=8, fig.width=10}
 km.plots = list()
+
 km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
 km.plots[[1]] = ggsurvplot(km.all, 
            palette = "#2E9FDF", 
            conf.int = TRUE, 
            title="Post-Myocardial Infarction Survival", 
-           subtitle="All Groups",
-           font.title=c(12,"bold.italic"),
+           subtitle="Survival Among All Groups",
+           font.title=c(14,"bold.italic"),
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -211,9 +207,7 @@ km.plots[[1]] = ggsurvplot(km.all,
 km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
 km.plots[[2]] = ggsurvplot(km.age, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Age Group",
-           font.title=c(12,"bold.italic"),
+           subtitle="Survival, Stratified by Age Group",
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -226,9 +220,7 @@ km.plots[[2]] = ggsurvplot(km.age,
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
 km.plots[[3]] = ggsurvplot(km.effusion, 
            palette = c("darkcyan","darkgoldenrod3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Presence of Pericardial Effusion",
-           font.title=c(12,"bold.italic"),
+           subtitle="Survival, Stratified by Presence of Pericardial Effusion",
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -241,9 +233,7 @@ km.plots[[3]] = ggsurvplot(km.effusion,
 km.wmi = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
 km.plots[[4]] = ggsurvplot(km.wmi, 
            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Stratified by Wall Motion Index",
-           font.title=c(12,"bold.italic"),
+           subtitle="Survival, Stratified by Wall Motion Index",
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -269,12 +259,66 @@ kable(km.as, caption="Kaplan-Meier Results") %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
-- Add stratified on age
+Cumulative Hazard
 
-- Add pericardial effusion
+```{r km.hazard.all, fig.align='center', echo=FALSE, fig.height=8, fig.width=10}
+haz.plots = list()
 
-- Add stratified on cardiac physiology
+haz.plots[[1]] = ggsurvplot(km.all, 
+           fun = "cumhaz",
+           palette = "#2E9FDF", 
+           conf.int = TRUE, 
+           title="Post-Myocardial Infarction Hazard", 
+           subtitle="Hazard Among All Groups",
+           font.title=c(14,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = "All")
 
+haz.plots[[2]] = ggsurvplot(km.age, 
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           subtitle="Hazard, Stratified by Age Group",
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+
+haz.plots[[3]] = ggsurvplot(km.effusion, 
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3"), 
+           subtitle="Hazard, Stratified by Pericardial Effusion Presence",
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("Present","Absent"))
+
+haz.plots[[4]] = ggsurvplot(km.wmi, 
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           subtitle="Hazard, Stratified by Wall Motion Index",
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("< 12", "12-14", "> 14"))
+
+
+arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
+
+```
 
 ## Parametric: Log-Normal Model
 
@@ -409,17 +453,6 @@ kable(df, "latex",
 ## Imputed Dataset
 
 ```{r imp.table, echo=FALSE, results='asis', warning=FALSE, message=FALSE}
-
-round_df <- function(x, digits) {
-    # round all numeric variables
-    # x: data frame 
-    # digits: number of digits to round
-    numeric_columns <- sapply(x, mode) == 'numeric'
-    x[numeric_columns] <-  round(x[numeric_columns], digits)
-    x}
-
-df.new = round_df(df.i$ximp,2)
-
 kable(df.new, "latex", 
       booktabs = TRUE,
       longtable = TRUE,
