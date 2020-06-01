@@ -133,21 +133,14 @@ Where $ n_i $ is the number alive before time $ y_i $ and $ d_i $ is the number 
 
 We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericardial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit.
 
-### Cumulative Hazard Estimators
+### Cumulative Hazard Estimator
 
-We calculate the hazard of our Kaplan-Survivor function by using Nelson-Aalen's hazard estimate. 
+We calculate the hazard of our Kaplan-Survivor function by observing standard cumulative hazard estimate (shown below):
 
-\[ \tilde{H}(t) = \sum_{y_{(i)}\leq{t}} \frac{d_i}{n_i}  \]
+\[ \hat{H}(t) = -log S(t) = -log \prod_{y_{(i)}\leq{t}} \frac{d_i - n_i}{n_i}  \]
 
-Where $ d_i_ $ is the number of events during each interval and $ n_i $ is the number alive before each time. The variance of the Nelson-Aalen's hazard estimate can be found as follows:
+Intuitively, the relationship of the observed hazard is the negative log of the survival function at each interval. We can clearly see a graphical relationship between our survival by examining our hazard plots in the results section. There was the possibility of using Nelson-Aalen's approximation for hazard, but we find that the computation is trivial.
 
-\[ var(\tilde{H}(t)) = \sum_{y_{(i)}\leq{t}} \frac{d_i}{{n_i}^2}\]
-
-Nelson-Aalen's hazard estimate is an approximation of the standard cumulative hazard estimate (shown below):
-
-\[ \hat{H}(t) = -log \prod_{y_{(i)}\leq{t}} \frac{d_i - n_i}{n_i}  \]
-
-The Nelson-Aalen estimate approximation is exceptionally effective as the estimate sums the hazard from each interval step. Thus, producing an effective substitution of the observed cumulative hazard product sum shown above. We just Nelson-Aalen to estimate the hazard for each of our non-parametric stratification.
 
 ## Parametric Estimates: Log-Normal Distribution
 
@@ -169,16 +162,7 @@ The Nelson-Aalen estimate approximation is exceptionally effective as the estima
 
 
 
-
-
-
-
 # Results
-
-## Exploratory Data Analysis
-
-
-
 
 ## Non-Parametric: Kaplan-Meier Survival Estimates
 
@@ -266,7 +250,7 @@ kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
-Cumulative Hazard
+## Cumulative Hazard Estimates
 
 ```{r km.hazard.all, fig.align='center', echo=FALSE, fig.height=8, fig.width=10}
 haz.plots = list()
@@ -326,6 +310,8 @@ haz.plots[[4]] = ggsurvplot(km.wms,
 arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
 
 ```
+
+Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
 
 ## Parametric: Log-Normal Model
 
@@ -390,6 +376,17 @@ arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
 ```
 
 # Discussion
+
+## Explanation of results
+In our non-parametric analysis, median survival times for nearly all of the stratification elements show similar results. The exception of these results are patients with pericardial effusion present and high wall motion scores. Well functioning hearts generally do not have this effusion present as [insert additional explanation of the pathology]. Wall motion scores reflecting heart muscle activity outside of the 12-14 range indicate abnormal heart function. This too, may be hinting at the survivability of post-infarction patients. 
+
+An interesting observation of non-parametric analysis when stratified on age shows a lower survivability in the younger age groups. Intuitively, we would expect higher survivability given that younger patients have more robust bodies. An explanation could be the externalities attached to having a heart attack at such young ages. For example, if a patient is young and at risk for heart attacks, then it's likely that that patient is already at risk for other factors, increasing the relative risk for that group.
+
+## Summary of Limitations
+Very clearly, our data is smaller than we hoped for. To project a large regression fit to reliably predict variables, we would require a much larger dataset that also includes the aforementioned sex discrepancies. Additionally, none of our variables have a significant effect on our model. This suggests that either (1) our data set is too small to develop a concrete prediction model or (2) our chosen recorded variables actually do not effect the survivability of our patients. In examination of stratification shows relative unequal distribution among groups. For example, when examining pericardial effusion, we compare 106 records of with effusion absent to 24 records of effusion present. Such comparisons are unequal comparisons.
+
+## Conclusion
+We can conclude that future studies should definitely expand on collection of variables that could potentially influence survivability. Interesting effects may include poverty, diet, ethnicity, race, sex, and even work place stress/effects.
 
 \newpage
 
