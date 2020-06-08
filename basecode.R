@@ -41,6 +41,9 @@ round_df <- function(x, digits) {
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x}
 
+kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
+  kable_styling(position = "center", latex_options="hold_position")
+
 df.impute = round_df(df.i$ximp,2) #imputed values table
 df.new = df.impute[,c(-5,-12)] #remove incomplete strata from original data
 Age.s = ifelse(df.impute$Age < 55,0,ifelse(df.impute$Age < 71, 1, 2)) #new age strata based on imputed data

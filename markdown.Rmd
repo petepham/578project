@@ -93,8 +93,8 @@ In addition to the two rows that we removed, we further modified the dataset. Th
 
 missing.data = aggr(df) #visualize the missing information
 
-kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
-  kable_styling(position = "center", latex_options="hold_position")
+#kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
+  #kable_styling(position = "center", latex_options="hold_position")
 
 ```
 
@@ -312,6 +312,22 @@ arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
 ```
 
 Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
+
+```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
+
+ks1 = data.frame(t(summary(km.all)$table))
+ks2 = data.frame(summary(km.age)$table)
+ks3 = data.frame(summary(km.effusion)$table)
+ks4 = data.frame(summary(km.wms)$table)
+
+ksall = rbind(ks1, ks2, ks3, ks4)
+km.as = ksall[,c(1,4,5,7,8,9)]
+colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(km.as) = c("All","Age:<55", "Age: 55-65", "Age: >65", "P.Eff: Absent","P.Eff: Present", "WMS: < 12", "WMS: 12-14", "WMS: >14")
+
+kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
+  kable_styling(position = "center", latex_options="hold_position")
+```
 
 ## Parametric: Log-Normal Model
 
