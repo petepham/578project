@@ -1,6 +1,6 @@
 ---
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
-author: "Alvein, Orr, Pham"
+author: "Research: Alvein, Parametric: Orr, Non-Parametric: Pham"
 date: "5/22/2020"
 output: pdf_document
 ---
