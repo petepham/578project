@@ -120,7 +120,7 @@ km.epss = survfit(s.df~EPSS.s, type="kaplan-meier", data = df.new)
 
 arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
 
-# Kaplan-Meier Suvival Summary
+# Kaplan-Meier Survival Summary
 ks1 = data.frame(t(summary(km.all)$table ))
 ks2 = data.frame(summary(km.age)$table)
 ks3 = data.frame(summary(km.effusion)$table)
