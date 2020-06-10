@@ -237,6 +237,8 @@ km.plots[[5]] = ggsurvplot(km.fsh,
            legend.title = "Groups",
            legend.labs = c("< 12", "12-14", "> 14"))
 
+# change WMS.s to binary stratification (0/1)
+# add f.shortening
 
 arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=3)
 
@@ -402,6 +404,8 @@ kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
 ```
 
 # Discussion
+
+[Add F-shortening discussion]
 
 ## Explanation of results
 In our non-parametric analysis, median survival times for nearly all of the stratification elements show similar results. The exception of these results are patients with pericardial effusion present and high wall motion scores. Well functioning hearts generally do not have this effusion present as [insert additional explanation of the pathology]. Wall motion scores reflecting heart muscle activity outside of the 12-14 range indicate abnormal heart function. This too, may be hinting at the survivability of post-infarction patients. 
