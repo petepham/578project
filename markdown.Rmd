@@ -78,7 +78,7 @@ WMS = c("< 12", "12-14", "> 14")
 groupings = data.frame(Indicator, Age, Effusion, WMS)
 groupings
 
-kable(groupings, caption="Stratification Groupings") %>%
+kable(groupings, caption="Stratification Groupings", align="c") %>%
   kable_styling(position = "center", latex_options="hold_position")
 
 ```
@@ -92,9 +92,6 @@ In addition to the two rows that we removed, we further modified the dataset. Th
 ```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 missing.data = aggr(df) #visualize the missing information
-
-#kable(missing.data$missings, caption="Missing Values in Original Dataset") %>%
-  #kable_styling(position = "center", latex_options="hold_position")
 
 ```
 
@@ -127,7 +124,7 @@ We use Kaplan-Meier (KM) survival estimators to model a step curve for the survi
 
 \[ \hat{S}(t) = \prod_{y_{(i)}\leq{t}}^{k} p_i = \prod_{i=1}^{k} (\frac{n_i -d_i}{n_i}) \]
 
-Where $ n_i $ is the number alive before time $ y_i $ and $ d_i $ is the number of events during during that interval. In our case, $ y_i $ is the specific patient being observed, $ n_i $ is the number of patients alive at time $ y_i $. With $ k = 131 $, our KM equation is:
+Where $n_i$ is the number alive before time $y_i$ and $d_i$ is the number of events during during that interval. In our case, $y_i$ is the specific patient being observed, $n_i$ is the number of patients alive at time $y_i$. With $k = 131$, our KM equation is:
 
 \[ \hat{S}(t) = \prod_{i=1}^{131} (\frac{n_i -d_i}{n_i}) \]
 
@@ -313,7 +310,7 @@ arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
 
 Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
 
-```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
+```{r km.haz.summary, fig.align='center', echo=FALSE, results = 'asis'}
 
 ks1 = data.frame(t(summary(km.all)$table))
 ks2 = data.frame(summary(km.age)$table)
