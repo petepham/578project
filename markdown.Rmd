@@ -224,8 +224,21 @@ km.plots[[4]] = ggsurvplot(km.wms,
            legend.title = "Groups",
            legend.labs = c("< 12", "12-14", "> 14"))
 
+km.fsh = survfit(s.df~F.Shortening, type="kaplan-meier", data = df.new)
+km.plots[[5]] = ggsurvplot(km.fsh, 
+           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+           subtitle="Survival, Stratified by Wall Motion Index",
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           surv.median.line = "hv",
+           legend.title = "Groups",
+           legend.labs = c("< 12", "12-14", "> 14"))
 
-arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
+
+arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=3)
 
 ```
 

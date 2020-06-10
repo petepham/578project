@@ -111,8 +111,7 @@ km.plots[[4]] = ggsurvplot(km.wms,
                            font.y = c(9, "bold.italic"),
                            ylab="Surival Proportion", 
                            xlab="Time to Death (Months)",
-                           surv.median.line = "hv"
-                           )
+                           surv.median.line = "hv"                           )
 
 km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
 km.lvdd = survfit(s.df~LVDD.s, type="kaplan-meier", data = df.new)
@@ -122,7 +121,7 @@ km.epss = survfit(s.df~EPSS.s, type="kaplan-meier", data = df.new)
 arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
 
 # Kaplan-Meier Suvival Summary
-ks1 = data.frame(t(summary(km.all)$table))
+ks1 = data.frame(t(summary(km.all)$table ))
 ks2 = data.frame(summary(km.age)$table)
 ks3 = data.frame(summary(km.effusion)$table)
 ks4 = data.frame(summary(km.wms)$table)
