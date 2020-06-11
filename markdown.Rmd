@@ -21,6 +21,8 @@ library(VIM)
 library(missForest)
 library(ggplot2)
 library(ggpubr)
+library(MASS)
+library(SurvCorr)
 
 df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
@@ -164,26 +166,44 @@ We calculate the hazard of our Kaplan-Survivor function by observing standard cu
 
 Intuitively, the relationship of the observed hazard is the negative log of the survival function at each interval. We can clearly see a graphical relationship between our survival by examining our hazard plots in the results section. There was the possibility of using Nelson-Aalen's approximation for hazard, but we find that the computation is trivial.
 
+# Parametric Modeling of Survival Data
 
-## Parametric Estimates: Log-Normal Distribution
+Another technique for characterizing the survival function is to assume a distributional model for the data. Compared with the Kaplan-Meier approach, this method has certain advantages that include a continuous survival curve and simplicity of estimation and prediction. If the selected model accurately describes the data, it may also lend insight into the underlying mechanism for the survival behavior. This method is only applicable if a distributional model can be identified that fits the survival data adequately.  
+
+For the post-myocardial infarction dataset, We fit three commonly employed distributional models to the survival data and evaluating goodness of fit of the three models. This is accomplished by comparing the modeled survival curves to the Kaplan-Meier curve and by comparing point estimates for each model. 
+
+The three models chosen for comparison are the well-known Weibull, Lognormal, and Loglogistic distributions.
+
+The Weibull hazard function is given below, where $\lambda$ and $\alpha$ are the scale and shape parameters.  Weibull hazard is rising if$\alpha$ > 1, constant if $\alpha$ = 1, and declining if $\alpha$ < 1.
+
+\[ \ h(t) = {\lambda}^{-1}{(-log(1-p))}^{1/\alpha} \]
+
+The log-normal distribution can be defined relative to the standard normal distribution; a random variable Y may be said to have the log-normal distribution if for some random variable T that has standard normal distribution: 
+
+\[ log (Y) = \alpha + \sigma{T} \]
+
+The hazard function of the log-normal distribution increases with time from 0 until it reaches a maximum and then decreases, approaching 0 as time approaches infinity. 
+
+The log-logistic distribution can be defined relative to the standard logistic distribution; a random variable X may be said to have the log-logistic distribution if for some random variable S that has standard logistic distribution: 
+
+\[ log (X) = \alpha + \sigma{S} \]
+
+the hazard function of the log-logistic distribution decreases with time from $\infty$ if $\alpha$ < 1, decreases from $\lambda$ if $\alpha$ = 1, and if $\alpha$ > 1 resembles the log-normal distribution. 
 
 
+# Semi-Parametric Modeling of Survival Data
 
-## Parametric Estimates: Log-Logistic Distribution
+Where fully parametric models offer flexibility and the efficient, relatively simple estimation of overall survival function parameters,semi-parametric models offer the advantage of being well-suited to the estimation of covariate effects. Semi-parametric models decompose risk into a baseline hazard component and a relative risk component that is dependent on the covariates. 
 
+The semi-parametric Cox proportional hazards model is employed here to explore the relationship between predictor variables and survival behavior. 
 
+The Cox PH hazard function is defined as follows: 
 
-## Parametric Estimates: Weibull Distribution
+\[ h(t)=h_0(t)×exp(b_1x_1+b_2x_2+...+b_nx_n) \]
 
+where t represents the survival time, $x_1,x_2,...,x_n$ are the set of prognostic factors or covariates, and the coefficients $b_1,b_2,...,b_n$ measure the effect of the covariates on survival time. The baseline hazard $h_0(t)$ corresponds to the value of the hazard if all covariates are equal to zero.
 
-
-## Hazard Estimates 
-
-
-
-## Regression & Model Selection
-
-
+Use of the Cox PH model requires that the baseline hazard is not dependent on the covariates, and that the covariate terms do not depend on time - that is, that the slope coefficients are constant. Hazard functions stratified on covariate group may be used to assess the proportional hazard assumption. If the hazards functions for covariate groups cross over time, the proportionality assumption is not met and alternate analysis methods should be employed. One such method involves sub-setting the survival data and covariates based on hazard cross-over time. In this approach, a separate model is fit to each subset where it has been determined that the proportionality assumption holds. Alternately one may apply alternate modeling techniques that are suitable for time-varying effects, or simply investigate the impact of covariate by inspection of stratified Kaplan-Meier survival curves (Kim, 2000).
 
 # Results
 
@@ -360,68 +380,202 @@ arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=3)
 Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
 
 
+## Parameter Estimation
 
-## Parametric: Log-Normal Model
+The estimated distributional model curves are overlaid on the K-M curve for the post-myocardial infarction data in the figures below. 
 
-```{r ln.plot, echo=FALSE}
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+
+months=df.new$Survival
+status=df.new$Status
+months.u=months[status == 1]
+months.u = sort(months.u)
+nu = length(months.u)
+
+#Weibull model plot
+
+weib.fit=survreg(Surv(months,status)~1,dist="weib")
+alphahat=1/weib.fit$scale
+scalehat=exp(weib.fit$coefficients)
+Shat.w = 1- pweibull(months.u,alphahat,scalehat)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main= "Survival Curves - Weibull and Kaplan-Meier",
+     lwd=2,
+     col = "darkcyan")
+lines(months.u, Shat.w, col="darkgoldenrod3",lwd=2)
+legend(40, 0.8, legend=c("Kaplan-Meier", "Weibull"),
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8,lwd=2)
+abline(h=0)
+
+#log-normal model plot
+
+lognorm.fit=survreg(Surv(months,status)~1,dist="lognormal")
+muhat=lognorm.fit$coefficients
+sigmahat=lognorm.fit$scale
+Shat.l = 1- pnorm(log(months.u),muhat,sigmahat)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main="Survival Curves - Log-normal and Kaplan-Meier",
+     lwd=2,
+     col="darkcyan")
+lines(months.u, Shat.l, col="darkgoldenrod3",lwd=2)
+legend(40, 0.8, legend=c("Kaplain", "Weibull"), lwd=2,
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8)
+abline(h=0)
+
+#log-logistic model plot
+
+loglog.fit=survreg(Surv(months,status)~1,dist="loglogistic")
+muhat=loglog.fit$coefficients
+sigmahat=loglog.fit$scale
+Shat.ll = 1- plogis(log(months.u),muhat,sigmahat)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main="Survival Curves - Log-logistic and Kaplan-Meier",
+     lwd=2,
+     col="darkcyan")
+lines(months.u, Shat.ll, col="darkgoldenrod3",lwd=2,)
+legend(40, 0.8, legend=c("Kaplan", "Weibull"), lwd=2,
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8)
+abline(h=0)
 
 ```
 
 
 
+The table below summarizes the parameter point estimates and corresponding 95% confidence intervals. 
 
 
-## Parametric: Log-Logistic Model
+```{r echo = FALSE, results = "asis", message = FALSE}
 
-```{r ll.plot, echo=FALSE}
-
-```
-
-
-
-
-
-
-## Parametric: Weibull Model
-
-```{r wb.plot, echo=FALSE}
+param.est = data.frame(read_excel("param.est.xlsx"))
+kable(param.est, 
+      col.names = c("Model","Quantile", "Point Estimate", "95% LCL", "95% UCL", "Interval Length")
+      ) 
 
 ```
 
 
+Q-Q plots were also prepared for each distribution, and are provided in the Appendix. Based on inspection of the Q-Q plots and the K-M overlay plots, we found that the Weibull model appears to provide the best fit. In addition, it was noted that the confidence intervals for point estimation were overall more narrow for the Weibull model compared to log-normal and log-logistic. It was also observed that the point estimate for median is close to that identified by the Kaplan-Meier approach (29 months in K-M estimation, 30 months when estimating with Weibull fit). We propose the Weibull model as descriptive of the post-myocardial infarction survival data.
 
+## Regression Analysis - Cox Proportional Hazard Modeling 
 
+Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicolinearity (see Appendix for plots of the covariates). After eliminating colinear variables, the covariate pool comprised the following factors: 
 
+\begin{description}
+  \item[$\bullet$] Age
+  \item[$\bullet$] Pericardial Effusion
+  \item[$\bullet$] Wall Motion Score
+  \item[$\bullet$] Fractional Shortening
+\end{description}
 
+The proportional hazard assumption was evaluated for this model. Survival curves stratified by group were assessed for each of the four selected covariates. It was found that the proportional hazard assumption does not hold, as hazards for each group cross over with time for each covariate. 
 
-## Cox Proportional Hazard
+This limitation was addressed through the identification of survival time subsets in which covariates met the proportional hazards assumption, and could thus be employed as predictor variables. These subsets were identified by inspecting hazard function data stratified on all covariates and identifying regions of crossover. (See Appendix for plots of stratified hazard functions with the approximate crossover regions marked).
 
-```{r coxph.plot, echo=FALSE}
+The selected time subsets were obtained as follows:
 
+$Subset \:1: t \leq {26} \:{months}$
+$Subset \:2:26 \:{months}< t < 46 \:{months}$
+$Subset \:3: 46 \: months \leq t$
+
+Within each time subset, the proportional hazard assumption was tested for each of the four covariates and found to hold. A Cox PH model was fitted to each subset of the survival data, reduced as far as possible using a Step AIC procedure with Likelihood Ratio Test selection, and evaluated for adequacy using standard diagnostic techniques. 
+
+The three models are summarized below: 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+
+library("gtsummary")
+LL=0.0
+UL=26.0
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod1=cph.fit2
+
+t1 <-
+  mod1 %>%
+  tbl_regression(exponentiate = TRUE)%>%
+  add_nevent()
+
+LL=26
+UL=46
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod2=cph.fit2
+
+t2 <-
+  mod2 %>%
+  tbl_regression(exponentiate = TRUE) %>%
+  add_nevent()
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>UL]
+status=df.new$Status[df.new$Survival>UL]
+Age=df.new$Age[df.new$Survival>UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
+mod3=cph.fit2
+
+t3 <-
+  mod3 %>%
+  tbl_regression(exponentiate = TRUE)%>%
+  add_nevent()
+
+# merge tables 
+
+  tbl_merge(
+    tbls = list(t1, t2, t3),
+    tab_spanner = c("Model 1", "Model 2", "Model 3")
+  )
 ```
+For Model 1, the significant predictors of survival time are identified as Fractional Shortening and its interaction with Wall Motion Score. Although Wall Motion Score does not have a significant effect on survival as a main effect, it is retained due to is presence in the interaction term.  
 
-## Model Diagnostics
+For Model 2, the significant predictor of survival time is identified as patient age. Age is found to have a very weak effect on survival; none of the echocardiographic covariates had an impact on survival in this time region. Both these findings are supported by inspection of the stratified hazard function plots.  
 
+For subset 3, the sample size of events in the survival data subset was small (n=11) and a significant model was not obtained. The model is presented for context but is poorly descriptive of the relationship between prognostic factors and survival.
 
-
-
-
-
-### AIC, BIC, and Confidence Intervals
-
-```{r diagnostic.table, echo=FALSE}
-
-```
-
-### Residual Analysis/QQ Plot
-
-```{r diagnostic.resid, echo=FALSE}
-
-```
-
-```{r diagnostic.qqplot, echo=FALSE}
-
-```
+Model residual diagnostics were assessed for all three models. Models 1 and 2 showed overall good fit to the data and demonstrated proportional hazard assumption compliance. As expected given the discussion above, Model 3 did not result in a good overall fit, although proportional hazard assumption was met. Model diagnostic residual plots and further discussion may be found in the Appendix. 
 
 # Discussion
 
@@ -432,11 +586,15 @@ In our non-parametric analysis, median survival times for nearly all of the stra
 
 An interesting observation of non-parametric analysis when stratified on age shows a lower survivability in the younger age groups. Intuitively, we would expect higher survivability given that younger patients have more robust bodies. An explanation could be the externalities attached to having a heart attack at such young ages. For example, if a patient is young and at risk for heart attacks, then it's likely that that patient is already at risk for other factors, increasing the relative risk for that group.
 
+In the parametric analysis, it was found that the survivor data is well-described by the Weibull distribution. This finding enables the construction of a continuous survivor function and provides the opportunity for flexible point estimation as well as estimation of survival probability over a given input time. Semi-parametric modeling was also performed. Three Cox Proportional Hazards models were developed that described the relationship between prognostic factors and survival; one for short survival times; one for intermediate survival times; and another for long survival times. Given a small sample size for long survival times, only the first two models were significant. A key finding from this analysis is that when survival time is shorter, abnormalities in the echocardiographic profile of the patient's heart are what predict survival, rather than age. Conversely, when the survival times are longer, it is the age of the patient that predicts survival (albeit weakly), rather than any of the echocardiographic properties do not. This is consistent with the behavior of the stratified hazard curves for these variables over time. This result seems to imply that in the acute recovery period following a myocardial infarction, patient prognosis is closely tied to heart health; but as time progresses, patient age becomes the key driver of prognosis. This finding is intuitive, since as treatment and recovery progress over time, risk related to the myocardial event would decrease and other pre-existing risks would play a larger role in survival. 
+
 ## Summary of Limitations
-Very clearly, our data is smaller than we hoped for. To project a large regression fit to reliably predict variables, we would require a much larger dataset that also includes the aforementioned sex discrepancies. Additionally, none of our variables have a significant effect on our model. This suggests that either (1) our data set is too small to develop a concrete prediction model or (2) our chosen recorded variables actually do not effect the survivability of our patients. In examination of stratification shows relative unequal distribution among groups. For example, when examining pericardial effusion, we compare 106 records of with effusion absent to 24 records of effusion present. Such comparisons are unequal comparisons.
+Very clearly, our data is smaller than we hoped for, both in the number of observations and in the availability of meaningful prognostic factors. Development of a single large regression fit that reliably predicts covariates would require a much larger dataset. In particular, the lack of gender as an available covariate is a potential limitation of our data, as the effect of gender on heart-related survival is well established in the literature. Longer collection period over a greater number of patients would yield stronger regression model development. As-is, there is not enough data to produce a significant model across the entire survival time window. 
+
+A particular limitation related to subgroup dimension was identified through the stratification analysis. Examination of stratified data showed relative unequal distributions among groups. For example, when examining pericardial effusion, we compare 106 records of with effusion absent to 24 records of effusion present. Such comparisons are unequal comparisons. 
 
 ## Conclusion
-We can conclude that future studies should definitely expand on collection of variables that could potentially influence survivability. Interesting effects may include poverty, diet, ethnicity, race, sex, and even work place stress/effects.
+This study identified a variety of properties of the post-myocardial infarction survival data. The overall survival function was characterized by both non-parametric Kaplan-Meier and Weibull models, and point estimates determined. Analysis of the effect of echocardiographic data and of age on survival was performed both by inspection of stratified survival curves and by regression analysis. Findings included that age group has an impact on survival, but that this effect potentially varies over time, and that certain heart-related prognostic factors (in particular wall motion score and its interaction with fractional shortening) also have an impact on survival that varies over time. We conclude that future studies should expand on collection of variables that could potentially influence survivability, as well as the cohort size and length of follow-up period. Interesting effects to include may include poverty, diet, ethnicity, race, sex, and even work place stress/effects. Finally, further investigation with a larger dataset on the relationship between acute survival time and echocardiographic data profile and between the relationship of age group on survival data  may yield useful insights into specific risk profiles for post-myocardial infarction patients. 
 
 \newpage
 
@@ -530,6 +688,367 @@ kable(km.sum,
   kable_styling(latex_options = "hold_position")
 
 ```
+
+\newpage
+
+\newpage
+
+## Parametric Model Q-Q Plots
+
+Q-Q plots for each of the three assessed parametric models are provided below. We see that the Weibull model has the best fit, with no large departures from the straight line. 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+#Q-Q Plots - Weibull, Log-lognormal, Log-logistic
+#qq.surv function: 
+#Author: Jong Sung Kim, Date: 8/10/2004
+# Edited by D. Leif Rustvold, Date: 6/7/2006
+
+qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0, adjpb = 
+                      0.025, ...)
+{
+  ## Purpose: qqplot for distributions that satisfy a log-linear form
+  ## for one sample.  It fits each sample with own intercept and slope 
+  ## (location and scale).
+  ##-------------------------------------------------------------------
+  ## Arguments
+  ## =========
+  ## time:   observed time
+  ## status: censoring indicator
+  ##
+  ## Options
+  ## =======
+  ## pdgy:   Flag to generate for pedagogical purposes additional lines
+  ##         incorporating the effect of how we treat censored
+  ##         observations on the MLE's (equivalently estimated line).
+  ##         pdgy=0 is the default, for no additional lines. 
+  ##         pdgy=1 generates additional lines.
+  ## distribution:  Distribution for fit.
+  ##         May take values "weibull", "loglogistic", or "lognormal".
+  ##         The default is "weibull" distribution (exponential model with
+  ##         scale=1).  Enter "loglogistic" to fit loglogistic distribution;
+  ##         Enter "lognormal" to fit lognormal distribution. 
+  ## scale:  Scale parameter.  scale=0 is the default. This estimates 
+  ##         the scale. With distribution "weibull", scale=1 fits the 
+  ##         exponential model. 
+  ## adjpb:  Replaces the zero survival probability when the max is exact.
+  ##         Or when the min is censored, it replaces the survival 
+  ##         probability by 1 - adjpb.  Default is 0.025. 
+  ##         This has nothing to do with the MLE line, but is solely for 
+  ##         plotting the point on the graph.
+  ##-------------------------------------------------------------------
+  ## Author: Jong Sung Kim, Date: 8/10/2004
+  ## Edited by D. Leif Rustvold, Date: 6/7/2006
+  d <- data.frame(time, status)
+  # data frame 
+  d <- na.exclude(d)
+  # Missing observations excluded
+  d <- d[order(d$time),  ]
+  # Rearranging the observed times into a nondecreasing order
+  # Unordered times sometimes mess up QQ-plots. 
+  time <- d$time
+  # sorted time
+  status <- d$status
+  # status corresponding to sorted time
+  data <- Surv(time, status)
+  # Surv object
+  t.c <- class(data)
+  if((!is.null(t.c)) && t.c == "Surv")
+    data <- list(data)
+  t.s <- summary(survfit(Surv(time, status)~1, type = "kaplan-meier",
+                         na.action = na.exclude))
+  survp <- t.s$surv
+  survtime <- t.s$time
+  rare <- F
+  # rare = T indicates that the smallest observation is censored
+  if(time[1] < survtime[1]) {
+    print("Smallest observation is censored!")
+    survp <- c(1 - adjpb, survp)
+    survtime <- c(time[1], survtime)
+    rare <- T
+  }
+  ############
+  ############
+  xlabs <- ifelse(distribution == "weibull", 
+                  "Standard Extreme Value Quantiles", ifelse(distribution == 
+                                                               "loglogistic", "Standard Log-logistic Quantiles", ifelse(
+                                                                 distribution == "lognormal", "Standard Lognormal Quantiles",
+                                                                 "")))
+  if(pdgy == 1) {
+    ###############
+    t.s.exactall <- summary(survfit(Surv(time, status >= 0)~1, type
+                                    = "kaplan-meier", na.action = na.exclude))
+    exactall.survp <- t.s.exactall$surv
+    exactall.survtime <- t.s.exactall$time
+    exactall.length <- length(exactall.survtime)
+    exactall.survp[exactall.length] <- adjpb
+    t.ss.exactall <- exactall.survp
+    #quant.exactall <- qweibull(1 - t.ss.exactall, 1)
+    quant.exactall <- switch(distribution,
+                             weibull = qweibull(1 - t.ss.exactall, 1),
+                             lognormal = qlnorm(1 - t.ss.exactall),
+                             loglogistic = exp(logis((1 - t.ss.exactall))))
+    exactall.sevq <- log(quant.exactall)
+    # standard extreme value quantile
+    exactall.logtime <- log(exactall.survtime)
+    print(data.frame(exactall.logtime, exactall.sevq))
+    ############### 
+    ok <- status == 1
+    t.s.exact <- summary(survfit(Surv(time[ok], status[ok])~1, type
+                                 = "kaplan-meier", na.action = na.exclude))
+    exact.survp <- t.s.exact$surv
+    exact.survtime <- t.s.exact$time
+    exact.length <- length(exact.survtime)
+    exact.survp[exact.length] <- adjpb
+    t.ss.exact <- exact.survp
+    #quant.exact <- qweibull(1 - t.ss.exact, 1)
+    quant.exact <- switch(distribution,
+                          weibull = qweibull(1 - t.ss.exact, 1),
+                          lognormal = qlnorm(1 - t.ss.exact),
+                          loglogistic = exp(qlogis(1 - t.ss.exact)))
+    exact.sevq <- log(quant.exact)
+    # standard extreme value quantile
+    exact.logtime <- log(exact.survtime)
+    print(data.frame(exact.logtime, exact.sevq))
+    ###############
+    n <- length(time)
+    t.ss <- rep(0, n)
+    for(i in 1:n) {
+      # This loop assigns probabilities to censored time points, 
+      # and takes care of tied observations as well
+      idx <- time[i] >= survtime
+      t.ss[i] <- min(survp[idx], na.rm = T)
+    }
+    #sevq <- log(qweibull(1 - t.ss, 1))
+    sevq <- log(switch(distribution,
+                       weibull = qweibull(1 - t.ss, 1),
+                       lognormal = qlnorm(1 - t.ss),
+                       loglogistic = exp(qlogis(1 - t.ss))))
+    # standard extreme value quantile
+    logtime <- log(time)
+    print(data.frame(logtime, sevq))
+    ######## Multiple Plot starts ##########
+    xrange <- range(c(exactall.sevq, exact.sevq, sevq))
+    yrange <- range(c(exactall.logtime, exact.logtime, logtime))
+    par(mar = c(5, 5, 2, 2))
+    plot(sevq, logtime, type = "n", lty = 1, xlim = xrange, ylim
+         = yrange, xlab = xlabs, ylab = "Ordered Log Time",
+         ...)
+    points(sevq[ok], logtime[ok], pch = 1)
+    # exact points portion
+    points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+    # censored points portion
+    points(exactall.sevq, exactall.logtime, pch = 3, col = 6)
+    # exactall
+    exactallfit <- survreg(Surv(time, status >= 0) ~ 1, dist = 
+                             distribution, scale = scale)
+    # treating censored as exac
+    t
+    abline(exactallfit$coef, exactallfit$scale, lty = 3, col = 6)
+    points(exact.sevq, exact.logtime, pch = 5, col = 5)
+    # exact points only
+    exactonlyfit <- survreg(Surv(time[ok], status[ok]) ~ 1, dist
+                            = distribution, scale = scale)
+    # deleting censored
+    abline(exactonlyfit$coef, exactonlyfit$scale, lty = 2, col = 5
+    )
+    fit <- survreg(Surv(time, status) ~ 1, dist = "weibull", scale
+                   = scale)
+    # censoring taken into account
+    abline(fit$coef, fit$scale, lty = 1, col = 1)
+  }
+  else {
+    n <- length(time)
+    t.ss <- rep(0, n)
+    for(i in 1:n) {
+      # This loop assigns probabilities to censored time points, 
+      # and takes care of tied observations as well
+      idx <- time[i] >= survtime
+      t.ss[i] <- min(survp[idx], na.rm = T)
+    }
+    #sevq <- log(qweibull(1 - t.ss, 1))
+    sevq <- log(switch(distribution,
+                       weibull = qweibull(1 - t.ss, 1),
+                       lognormal = qlnorm(1 - t.ss),
+                       loglogistic = exp(qlogis(1 - t.ss))))
+    # standard extreme value quantile
+    logtime <- log(time)
+    print(data.frame(logtime, sevq))
+    par(mar = c(5, 5, 2, 2))
+    plot(sevq, logtime, type = "n", xlab = xlabs, ylab = 
+           "Ordered Log Time", ...)
+    ok <- status == 1
+    # exact status only 
+    points(sevq[ok], logtime[ok], pch = 1)
+    # exact points only
+    points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+    # censored points only
+    fit <- survreg(Surv(time, status) ~ 1, dist = distribution,
+                   scale = scale)
+    # censoring taken into account
+    abline(fit$coef, fit$scale, lty = 1, col = 1)
+  }
+  ymax <- max(logtime)
+  yrange <- diff(range(logtime))
+  yn <- ymax - yrange * seq(0, by = 0.05, length = 5)
+  if(pdgy == 1) {
+    xmin <- min(c(sevq, exact.sevq, exactall.sevq))
+    xrange <- diff(range(c(sevq, exact.sevq, exactall.sevq)))
+  }
+  else {
+    xmin <- min(sevq)
+    xrange <- diff(range(sevq))
+  }
+  x1 <- xmin + 0.05 * xrange
+  x2 <- xmin + 0.1 * xrange
+  x3 <- xmin + 0.15 * xrange
+  points(x1, yn[1], pch = "\255", font = 8)
+  text(x3, yn[1], "censored", adj = 0)
+  points(x1, yn[2], pch = 1)
+  text(x3, yn[2], "exact", adj = 0)
+  if(pdgy == 1) {
+    lines(c(x1, x2), rep(yn[3], 2), lty = 1, col = 1, lwd = 3)
+    text(x3, yn[3], "censoring taken into account", adj = 0)
+    lines(c(x1, x2), rep(yn[4], 2), lty = 3, col = 6, lwd = 3)
+    text(x3, yn[4], "treating censored as exact", adj = 0)
+    lines(c(x1, x2), rep(yn[5], 2), lty = 2, col = 5, lwd = 3)
+    text(x3, yn[5], "deleting censored", adj = 0)
+  }
+  on.exit()
+  paste("Q-Q plot for", distribution, "done")
+}
+
+months=df.new$Survival
+status=df.new$Status
+qq.surv(months, status, distribution = "weibull",
+        adjpb=0,
+        main="Q-Q plot - Weibull fit")
+qq.surv(months, status, distribution = "lognormal",
+        adjpb=0,
+        main="Q-Q plot - Log-normal fit")
+qq.surv(months, status, distribution = "loglogistic",
+        adjpb=0,
+        main="Q-Q plot - Log-logistic fit")
+
+```
+
+## Hazard Plots for Regression Covariates - Regression Time Interval Identification
+
+Hazard curves stratified by group for each regression covariate are provided below, with the three time interval for the cox PH modeling marked on each plot. It can be observed that these time intervals approximately correspond to hazard crossover behavior for the covariates, with the exception of pericardial infusion. 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+
+p= ggsurvplot(km.age, 
+              fun = "cumhaz",
+              palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+              subtitle="Hazard, Stratified by Age Group",
+              font.subtitle = c(10,"italic"),
+              font.x = c(9, "bold.italic"),
+              font.y = c(9, "bold.italic"),
+              ylab="Surival Proportion", 
+              xlab="Time to Death (Months)",
+              legend.title = "Groups",
+              legend.labs = c("Age < 63","Age => 63")
+)
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
+
+p = ggsurvplot(km.effusion, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3"), 
+               subtitle="Hazard, Stratified by Pericardial Effusion Presence",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)",
+               legend.title = "Groups",
+               legend.labs = c("Present","Absent"))
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
+
+p = ggsurvplot(km.wms, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+               subtitle="Hazard, Stratified by Wall Motion Index",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)")
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
+
+
+p = ggsurvplot(km.fshort, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+               subtitle="Hazard, Stratified by Fractional Shortening",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)"
+)
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
+
+```
+
+\newpage
+
+## Regression Model Diagnostics
+
+Cox-Snell residual plot for assessment of overall model fit and dfbeta residual plots for evaluation of constant coefficients are presented below for each of the three models. It can be seen that the model fits the data well overall and meets the constant coefficient assumption for Models 1 and 2, given that the Cox-Snell residuals fall closely along the straight line and that Schoenfeld residuals are symmetric about 0 with large p-values. However, these assumptions are not met for Model 3, which is not unexpected due to the small sample size. 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+#Cox-Snell residual analysis for overall model fit
+
+status=df.new$Status[df.new$Survival>=0 & df.new$Survival<=26]
+rc=abs(status - mod1$residuals)
+km.rc = survfit(Surv(rc,status)~1)
+summary.km.rc=summary(km.rc)
+rcu=summary.km.rc$time
+surv.rc = summary.km.rc$surv
+plot(rcu,-log(surv.rc),type="p",
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Model 1 - Cox-Snell residual model fit evaluation")
+abline(a=0,b=1); abline(v=0); abline(h=0)
+
+status=df.new$Status[df.new$Survival>26 & df.new$Survival<=46]
+rc=abs(status - mod2$residuals)
+km.rc = survfit(Surv(rc,status)~1)
+summary.km.rc=summary(km.rc)
+rcu=summary.km.rc$time
+surv.rc = summary.km.rc$surv
+plot(rcu,-log(surv.rc),type="p",
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Model 2 - Cox-Snell residual model fit evaluation")
+abline(a=0,b=1); abline(v=0); abline(h=0)
+
+months=df.new$Survival[df.new$Survival>46]
+rc=abs(status - mod3$residuals)
+km.rc = survfit(Surv(rc,status)~1)
+summary.km.rc=summary(km.rc)
+rcu=summary.km.rc$time
+surv.rc = summary.km.rc$surv
+plot(rcu,-log(surv.rc),type="p",
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Model 3 - Cox-Snell residual model fit evaluation")
+abline(a=0,b=1); abline(v=0); abline(h=0)
+
+#Schoenfeld residuals; test for constant coefficients 
+
+test.ph <- cox.zph(mod1)
+ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 1")
+
+test.ph <- cox.zph(mod2)
+ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 2")
+
+test.ph <- cox.zph(mod3)
+ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 3")
+
+```
+
 
 \newpage
 

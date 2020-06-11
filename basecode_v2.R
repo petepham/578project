@@ -266,14 +266,17 @@ haz.plots[[7]] = ggsurvplot(km.lvdd,
 
 arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=4)
 
+## Parametric Modeling ##
 
-library(readxl)
-library(knitr)
+#Load libraries
+
 library(tidyverse)
 library(dplyr)
 library(kableExtra)
 library(survival)
 library(survminer)
+
+#Data preparation for model fits
 
 months=df.new$Survival
 status=df.new$Status
@@ -281,13 +284,14 @@ months.u=months[status == 1]
 months.u = sort(months.u)
 nu = length(months.u)
 
-#parameter estimation - weibull
+#Weibull model fit
 
 weib.fit=survreg(Surv(months,status)~1,dist="weib")
 alphahat=1/weib.fit$scale
 scalehat=exp(weib.fit$coefficients)
 
-#Point and CI estimates for 3 quantiles
+#Point and 95% CI estimates for Weibull
+
 medhat25.w = predict(weib.fit,type="uquantile",p=0.25,se.fit=T)
 medhat25.1.w = medhat25.w$fit[1]
 medhat25.1.se.w = medhat25.w$se.fit[1]
@@ -310,45 +314,31 @@ C.I.median25.w
 C.I.median5.w
 C.I.median75.w
 
-#point estimates S(t)
+#Point estimates S(t) for Weibull
 
 Shat.w = 1- pweibull(months.u,alphahat,scalehat)
 C.I.Shat.w = data.frame(months.u,Shat.w)
 round(C.I.Shat.w,5)
 
-#k-m and s curves same plot
+#Overlay K-M and Weibull survival curves
 
-s.df.new = Surv(df.new$Survival,df.new$Status)
-km.all = survfit(s.df.new~1,type="kaplan-meier", data = df)
-#convert my plot to this plot later
-#ggsurvplot(km.all, 
- #          palette = "#2E9FDF", 
-  #         conf.int = TRUE, 
-   #        title="Post-Myocardial Infarction Survival", 
-    #       subtitle="All Groups",
-     #      font.title="bold",
-      #     font.subtitle = "italic",
-       #    ylab="Surival Proportion", 
-        #   xlab="Time to Death (Months)",
-         #  main= "Survival Curves - Weibull and Kaplan Meier",
-          # surv.median.line = "hv",
-           #legend.title = "Groups",
-           #legend.labs = "All")
-
-plot(km.all,conf.int=F,xlab="time until death (in months)",ylab="proportion survived",main= "Survival Curves - Weibull and Kaplan Meier",)
-lines(months.u, Shat.w, lty=4)
-legend(40, 0.8, legend=c("Kaplan-Meier", "Weibull"),lty=1:4, cex=0.8)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main= "Survival Curves - Weibull and Kaplan-Meier",
+     lwd=2,
+     col = "darkcyan")
+lines(months.u, Shat.w, col="darkgoldenrod3",lwd=2)
+legend(40, 0.8, legend=c("Kaplan-Meier", "Weibull"),
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8,lwd=2)
 abline(h=0)
 
+#Log-normal model fit
 
-#lognormal model
-
-#parameter estimation
 lognorm.fit=survreg(Surv(months,status)~1,dist="lognormal")
 muhat=lognorm.fit$coefficients
 sigmahat=lognorm.fit$scale
 
-#Point and CI estimates for 3 quantiles
+#Point and 95% CI estimates for quantiles
 
 medhat25.l = predict(lognorm.fit,type="uquantile",p=0.25,se.fit=T)
 medhat25.1.l = medhat25.l$fit[1]
@@ -372,30 +362,33 @@ C.I.median25.l
 C.I.median5.l
 C.I.median75.l
 
-#point estimates S(t) lognormal
+#Point estimates S(t) log-normal fit
 
 Shat.l = 1- pnorm(log(months.u),muhat,sigmahat)
 C.I.Shat.l = data.frame(months.u,Shat.l)
 round(C.I.Shat.l,5)
 
-#k-m and lognormal s curves same plot
+#K-M and log-normal survival curve overlay
 
-s.df.new = Surv(df.new$Survival,df.new$Status)
-km.all = survfit(s.df.new~1,type="kaplan-meier", data = df)
-
-plot(km.all,conf.int=F,xlab="time until death (in months)",ylab="proportion survived",main="Survival Curves - Lognormal and Kaplan-Meier")
-lines(months.u, Shat.l, lty=4)
-legend(40, 0.8, legend=c("Kaplan-Meier", "Lognormal"),lty=1:4, cex=0.8)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main="Survival Curves - Log-normal and Kaplan-Meier",
+     lwd=2,
+     col="darkcyan")
+lines(months.u, Shat.l, col="darkgoldenrod3",lwd=2)
+legend(40, 0.8, legend=c("Kaplain", "Weibull"), lwd=2,
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8)
 abline(h=0)
 
-#loglogistic model
+#Log-logistic Model Fit
 
-#parameter estimation
+#Log-logistical model 
+
 loglog.fit=survreg(Surv(months,status)~1,dist="loglogistic")
 muhat=loglog.fit$coefficients
 sigmahat=loglog.fit$scale
 
-#Point and CI estimates for 3 quantiles
+#Point and 95% CI estimates for quantiles - Log-logistic fit
 
 medhat25.ll = predict(loglog.fit,type="uquantile",p=0.25,se.fit=T)
 medhat25.1.ll = medhat25.ll$fit[1]
@@ -419,21 +412,29 @@ C.I.median25.ll
 C.I.median5.ll
 C.I.median75.ll
 
-#point estimates S(t) loglogistic
+#Point estimates S(t) - log-logistic
 
 Shat.ll = 1- plogis(log(months.u),muhat,sigmahat)
 C.I.Shat.ll = data.frame(months.u,Shat.ll)
 round(C.I.Shat.ll,5)
 
-#k-m and loglogistic s curves same plot
+#K-M and log-logistic survival curves overlaid
 
-plot(km.all,conf.int=F,xlab="time until death (in months)",ylab="proportion survived",main="Survival Curves - Loglogistic and Kaplan-Meier")
-lines(months.u, Shat.ll, lty=4)
-legend(40, 0.8, legend=c("Kaplan-Meier", "Lognormal"),lty=1:4, cex=0.8)
+plot(km.all,conf.int=F,xlab="time until death (in months)",
+     ylab="proportion survived",
+     main="Survival Curves - Log-logistic and Kaplan-Meier",
+     lwd=2,
+     col="darkcyan")
+lines(months.u, Shat.ll, col="darkgoldenrod3",lwd=2,)
+legend(40, 0.8, legend=c("Kaplan", "Weibull"), lwd=2,
+       col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8)
 abline(h=0)
 
+#Q-Q Plots - Weibull, Log-lognormal, Log-logistic
+#qq.surv function: 
+#Author: Jong Sung Kim, Date: 8/10/2004
+# Edited by D. Leif Rustvold, Date: 6/7/2006
 
-##qq.surv function##
 qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0, adjpb = 
                       0.025, ...)
 {
@@ -648,191 +649,267 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
   paste("Q-Q plot for", distribution, "done")
 }
 
-qq.surv(months, status, distribution = "weibull")
-mtext("Q-Q plot for the diabetes data (weibull fit)",3,line=-2,cex=1)
-mtext("diabetic group",3,line=-3,cex=0.8)
+qq.surv(months, status, distribution = "weibull",
+        adjpb=0,
+        main="Q-Q plot - Weibull fit")
+qq.surv(months, status, distribution = "lognormal",
+        adjpb=0,
+        main="Q-Q plot - Log-normal fit")
+qq.surv(months, status, distribution = "loglogistic",
+        adjpb=0,
+        main="Q-Q plot - Log-logistic fit")
 
-qq.surv(months, status, distribution = "lognormal")
-mtext("Q-Q plot for the diabetes data (lognormal fit)",3,line=-2,cex=1)
-mtext("diabetic group",3,line=-3,cex=0.8)
+## Semi-Parametric Modeling (CoxPH) ##
 
-qq.surv(months, status, distribution = "loglogistic")
-mtext("Q-Q plot for the diabetes data (loglogistic fit)",3,line=-2,cex=1)
-mtext("diabetic group",3,line=-3,cex=0.8)
-
-
-
-#####
-
+#Load libraries
 
 library(survminer)
 library(MASS)
 library(survival)
 library(SurvCorr)
 
+#Initial data evaluation; inspect for multicollinearity in covariates
+
 df=data.frame(df.new$P.Effusion,df.new$Age,df.new$F.Shortening,df.new$EPSS,df.new$LVDD,df.new$WMS)
 pairs(df) 
+#We exclude EPSS and LVDD as a result of this inspection. 
 
-#regression approach: treat age as primary exposure variable.
-#we see that hazard for age varies with time, so split up cox models. 
-#note: based on multicollinearity between variables, we leave out EPSS and LVDD.   
+#Hazard plots for regression covariates with survival time subsets identified
 
-#first region: less than 27 months. Age and WMS can be considered covariates. Stratify on the others.
+p= ggsurvplot(km.age, 
+              fun = "cumhaz",
+              palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+              subtitle="Hazard, Stratified by Age Group",
+              font.subtitle = c(10,"italic"),
+              font.x = c(9, "bold.italic"),
+              font.y = c(9, "bold.italic"),
+              ylab="Surival Proportion", 
+              xlab="Time to Death (Months)",
+              legend.title = "Groups",
+              legend.labs = c("Age < 63","Age => 63")
+)
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
 
-months=df.new$Survival[df.new$Survival<27]
-status=df.new$Status[df.new$Survival<27]
-x1=df.new$Age[df.new$Survival<27]
-x2=df.new$P.Effusion[df.new$Survival<27]
-x3=df.new$WMS[df.new$Survival<27]
-x4=df.new$F.Shortening[df.new$Survival<27]
-x5=df.new$EPSS[df.new$Survival<27]
-x6=df.new$LVDD[df.new$Survival<27]
+p = ggsurvplot(km.effusion, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3"), 
+               subtitle="Hazard, Stratified by Pericardial Effusion Presence",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)",
+               legend.title = "Groups",
+               legend.labs = c("Present","Absent"))
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
 
-#strat vars
-x1s=df.new$Age.s[df.new$Survival<27]
-x2s=df.new$P.Effusion[df.new$Survival<27]
-x3s=df.new$WMS.s[df.new$Survival<27]
-x4s=df.new$F.Short.s[df.new$Survival<27]
-x5s=df.new$EPSS.s[df.new$Survival<27]
-x6s=df.new$LVDD.s[df.new$Survival<27]
+p = ggsurvplot(km.wms, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+               subtitle="Hazard, Stratified by Wall Motion Index",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)")
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
 
-cph.fit0=coxph(Surv(months,status)~x1+x2+x3+x4,x=T)
-print(cox.zph(cph.fit0))
-summary(cph.fit0)
-cph.fit1=coxph(Surv(months,status)~x1+x3+strata(x2s)+strata(x4s),x=T)
-#we see that the coefficient for x3 and x1 do not change much; this gives good evidence that stratified model satisfies PH assumption. 
+
+p = ggsurvplot(km.fshort, 
+               fun = "cumhaz",
+               palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+               subtitle="Hazard, Stratified by Fractional Shortening",
+               font.subtitle = c(10,"italic"),
+               font.x = c(9, "bold.italic"),
+               font.y = c(9, "bold.italic"),
+               ylab="Surival Proportion", 
+               xlab="Time to Death (Months)"
+)
+p$plot + geom_vline(xintercept=26)+
+  geom_vline(xintercept=46)
+
+
+#Model for first survival time subset
+
+#Set time region for model
+
+LL=0.0
+UL=26.0
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
 summary(cph.fit1)
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward")
-summary(cph.fit2)
 
-#Cox-Snell residuals - test for overall fit of model (similar to qqplot)
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both")
+summary(cph.fit2)
+mod1=cph.fit2
+
+#Perform Likelihood Ratio Test
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=3
+vars=varstartcount - varendcount
+1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+#Cox-Snell residual analysis for overall model fit
+
 rc=abs(status - cph.fit2$residuals)
 km.rc = survfit(Surv(rc,status)~1)
 summary.km.rc=summary(km.rc)
 rcu=summary.km.rc$time
 surv.rc = summary.km.rc$surv
 plot(rcu,-log(surv.rc),type="p",
-     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc")
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Cox-Snell residual model fit evaluation")
 abline(a=0,b=1); abline(v=0); abline(h=0)
 
+#Schoenfeld residuals; test for constant coefficients 
 
 test.ph <- cox.zph(cph.fit2)
 ggcoxzph(test.ph)
 
-#test for outliers
-ggcoxdiagnostics(cph.fit2, type = "dfbeta",
+#Dfbeta detection of influential observations
+
+ggcoxdiagnostics(cph.fit2, type = "dfbetas",
                  linear.predictions = FALSE, ggtheme = theme_bw())
 
-#Test of constant coefficients
-ggcoxdiagnostics(cph.fit2, type = "deviance",
-                 linear.predictions = FALSE, ggtheme = theme_bw())
+#Model for second survival time subset
 
+#Set time region for model
 
+LL=26
+UL=46
 
-#middle region (based on hazard plots): between 27 and 47 months. 
-#in this region, age and EPSS are proportional hazards
-#stratify on the other variables. 
+#Subset the data based on the time region 
 
-months=df.new$Survival[df.new$Survival>26 & df.new$Survival<48]
-status=df.new$Status[df.new$Survival>26 & df.new$Survival<48]
-x1=df.new$Age[df.new$Survival>26 & df.new$Survival<48]
-x2=df.new$P.Effusion[df.new$Survival>26 & df.new$Survival<48]
-x3=df.new$WMS[df.new$Survival>26 & df.new$Survival<48]
-x4=df.new$F.Shortening[df.new$Survival>26 & df.new$Survival<48]
-x5=df.new$EPSS[df.new$Survival>26 & df.new$Survival<48]
-x6=df.new$LVDD[df.new$Survival>26 & df.new$Survival<48]
+months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
 
-#strat vars
-x1s=df.new$Age.s[df.new$Survival>26 & df.new$Survival<48]
-x2s=df.new$P.Effusion[df.new$Survival>26 & df.new$Survival<48]
-x3s=df.new$WMS.s[df.new$Survival>26 & df.new$Survival<48]
-x4s=df.new$F.Short.s[df.new$Survival>26 & df.new$Survival<48]
-x5s=df.new$EPSS.s[df.new$Survival>26 & df.new$Survival<48]
-x6s=df.new$LVDD.s[df.new$Survival>26 & df.new$Survival<48]
+#Create initial model fit
 
-cph.fit0=coxph(Surv(months,status)~x1+x2+x3+x4,x=T)
-print(cox.zph(cph.fit0))
-summary(cph.fit0)
-cph.fit1=coxph(Surv(months,status)~x1+strata(x3s)+strata(x4s)+strata(x2s),x=T)
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
 summary(cph.fit1)
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward")
-summary(cph.fit2)
 
-#Cox-Snell residuals - test for overall fit of model (similar to qqplot)
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both")
+summary(cph.fit2)
+mod2=cph.fit2
+
+#Perform Likelihood Ratio Test
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+#Cox-Snell residual analysis for overall model fit
+
 rc=abs(status - cph.fit2$residuals)
 km.rc = survfit(Surv(rc,status)~1)
 summary.km.rc=summary(km.rc)
 rcu=summary.km.rc$time
 surv.rc = summary.km.rc$surv
 plot(rcu,-log(surv.rc),type="p",
-     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc")
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Cox-Snell residual model fit evaluation")
 abline(a=0,b=1); abline(v=0); abline(h=0)
 
+#Schoenfeld residuals; test for constant coefficients 
 
 test.ph <- cox.zph(cph.fit2)
-ggcoxzph(test.ph)
+print(test.ph)
+ggcoxzph(test.ph, main = "Test")
+#slight pattern with time but p>0.05. The assumption of proportional hazards appears to be supported for the covariates sex (which is, recall, a two-level factor, accounting for the two bands in the graph), wt.loss and age.
 
-#test for outliers
-ggcoxdiagnostics(cph.fit2, type = "dfbeta",
+#Dfbeta detection of influential observations
+
+ggcoxdiagnostics(cph.fit2, type = "dfbetas",
                  linear.predictions = FALSE, ggtheme = theme_bw())
 
-#Test of constant coefficients
-ggcoxdiagnostics(cph.fit2, type = "deviance",
-                 linear.predictions = FALSE, ggtheme = theme_bw())
+#Look up potentially influential observation 
 
-#final region: greater than 47 months. Age, WMS, F.Short can be considered covariates. Stratify on the others.
+residuals(cph.fit2,type="dfbetas")
+cph.fit2$x 
+#obs 8 x1=80 (AGE) is a potential influential observation. 
 
-months=df.new$Survival[df.new$Survival>47]
-status=df.new$Status[df.new$Survival>47]
-x1=df.new$Age[df.new$Survival>47]
-x2=df.new$P.Effusion[df.new$Survival>47]
-x3=df.new$WMS[df.new$Survival>47]
-x4=df.new$F.Shortening[df.new$Survival>47]
-x5=df.new$EPSS[df.new$Survival>47]
-x6=df.new$LVDD[df.new$Survival>47]
+#Model for first survival time subset
 
-#strat vars
-x1s=df.new$Age.s[df.new$Survival>47]
-x2s=df.new$P.Effusion[df.new$Survival>47]
-x3s=df.new$WMS.s[df.new$Survival>47]
-x4s=df.new$F.Short.s[df.new$Survival>47]
-x5s=df.new$EPSS.s[df.new$Survival>47]
-x6s=df.new$LVDD.s[df.new$Survival>47]
+#Subset the data based on the time region 
 
-cph.fit0=coxph(Surv(months,status)~x1+x2+x3+x4,x=T)
-print(cox.zph(cph.fit0))
-summary(cph.fit0)
-cph.fit1=coxph(Surv(months,status)~x1+x3+x4+strata(x2s),x=T)
-print(cox.zph(cph.fit1))
+months=df.new$Survival[df.new$Survival>UL]
+status=df.new$Status[df.new$Survival>UL]
+Age=df.new$Age[df.new$Survival>UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
 summary(cph.fit1)
+
+#Reduce with StepAIC procedure
+
 cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward")
 summary(cph.fit2)
 
-#Cox-Snell residuals - test for overall fit of model (similar to qqplot)
+mod3=cph.fit2
+
+#Perform Likelihood Ratio Test
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+#Cox-Snell residual analysis for overall model fit
+
 rc=abs(status - cph.fit2$residuals)
 km.rc = survfit(Surv(rc,status)~1)
 summary.km.rc=summary(km.rc)
 rcu=summary.km.rc$time
 surv.rc = summary.km.rc$surv
 plot(rcu,-log(surv.rc),type="p",
-     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc")
+     xlab="Cox-Snell residual rc",ylab="Cumulative hazard on rc",
+     main="Cox-Snell residual model fit evaluation")
 abline(a=0,b=1); abline(v=0); abline(h=0)
 
+#Schoenfeld residuals; test for constant coefficients 
 
 test.ph <- cox.zph(cph.fit2)
 ggcoxzph(test.ph)
 
-#test for outliers
-ggcoxdiagnostics(cph.fit2, type = "dfbeta",
+#Dfbeta detection of influential observations
+
+ggcoxdiagnostics(cph.fit2, type = "dfbetas",
                  linear.predictions = FALSE, ggtheme = theme_bw())
 
-#Test of constant coefficients
-ggcoxdiagnostics(cph.fit2, type = "deviance",
-                 linear.predictions = FALSE, ggtheme = theme_bw())
-
-
-#It's also possible to check outliers by visualizing the deviance residuals. The deviance residual is a normalized transform of the martingale residual. These residuals should be roughtly symmetrically distributed about zero with a standard deviation of 1.
-
-#Positive values correspond to individuals that "died too soon" compared to expected survival times.
-#Negative values correspond to individual that "lived too long".
-#Very large or small values are outliers, which are poorly predicted by the model.
