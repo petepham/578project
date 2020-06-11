@@ -69,7 +69,7 @@ At this point, 40 points of data were missing from the total dataset. A random f
 
 We then classify continuous variables into groups for stratification. 
 
-Age is divided into three groups with 0 denoting younger than 55 years, 1 denoting 55 to 70 years, and 2 denoting older than 70 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Finally, wall motion score is divided into three groups: 0 denoting scores less than 12, 1 denoting scores of 12 - 17, and 2 denoting scores greater than 14. These groups are summarized in the table below:
+Age is divided into two groups with 0 denoting younger than 63 years, 1 denoting older or equal to 63 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Wall motion score is divided into two groups: 0 denoting scores less than 14, 1 denoting scores greater than or equal to 14. Finally, we divided fractional shortening into two strata as well with 0 being lengths being less than 0.2 seconds and 1 being greater than or equal to 0.2 seconds.
 
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
