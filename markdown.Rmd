@@ -47,7 +47,7 @@ $\textbf{Results:}$ Initial non-parametric Kaplan-Meier curve shows a median sur
 
 $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
 
-
+\newpage
 
 # Introduction
 
@@ -89,9 +89,9 @@ The reader may find a summary of tables and original dataset in the appendix of 
 
 ### Imputation
 
-In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. Below is a summary of the missing data:
+In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. The graphic below describes the number of missing values per variable:
 
-```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
 missing.data = aggr(df) #visualize the missing information
 
@@ -209,13 +209,13 @@ Use of the Cox PH model requires that the baseline hazard is not dependent on th
 
 ## Non-Parametric: Kaplan-Meier Survival Estimates
 
-Output from our Kaplan-Meier estimators give us the following curve (full KM estimator table can be found in the appendix).
+### Comparison of Whole Dataset (Non-Stratified)
 
-```{r km.all, fig.align='center', echo=FALSE, fig.height=8, fig.width=10}
-km.plots = list()
+Kaplan-Meier estimates give us the following curve (full KM estimator table can be found in the appendix).
 
+```{r km.all, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
-km.plots[[1]] = ggsurvplot(km.all, 
+km.allp = ggsurvplot(km.all, 
                            palette = "#2E9FDF", 
                            conf.int = TRUE, 
                            title="Post-Myocardial Infarction Survival", 
@@ -228,10 +228,54 @@ km.plots[[1]] = ggsurvplot(km.all,
                            surv.median.line = "hv",
                            legend.title = "Groups",
                            legend.labs = "All")
+km.allp
+```
 
+```{r ks1, fig.align='center', echo=FALSE, results = 'asis'}
+
+ks1 = data.frame(t(summary(km.all)$table))
+ks1 = ks1[,c(1,4,5,7,8,9)]
+colnames(ks1) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(ks1) = c("All Groups")
+
+kable(ks1, caption="Kaplan-Meier Estimates for All Groups",align="c", digits=2) %>%
+  kable_styling(position = "center", latex_options="hold_position")
+```
+
+The Kaplan-Meier estimates for for all groups within our dataset is shown above. The curve follows a general pattern of decreasing survivability over time.  With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is 29 months with 95% confidence limits between 27 and 33 months. 
+
+```{r kmhaz.all, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
+haz.all = ggsurvplot(km.all, 
+           fun = "cumhaz",
+           palette = "#2E9FDF", 
+           conf.int = TRUE, 
+           title="Post-Myocardial Infarction Hazard", 
+           font.title=c(14,"bold.italic"),
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Cumulative Hazard", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = "All")
+           
+haz.all
+```
+
+
+
+To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractal shortening. We first begin exploring the effects of age and pericardial effusion presence:
+
+
+### Stratified by Age and Pericardial Effusion Presence
+
+The results of a Kaplan-Meier estimate for age and pericardial effusion stratification can be seen below:
+
+```{r km.age.effusion, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
+km.p1 = list()
 
 km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
-km.plots[[2]] = ggsurvplot(km.age, 
+km.p1[[1]] = ggsurvplot(km.age, 
                            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
                            subtitle="Survival, Stratified by Age Group",
                            font.subtitle = c(10,"italic"),
@@ -244,7 +288,7 @@ km.plots[[2]] = ggsurvplot(km.age,
                            legend.labs = c("< 63 Years","\u2265 63 Years"))
 
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
-km.plots[[3]] = ggsurvplot(km.effusion, 
+km.p1[[2]] = ggsurvplot(km.effusion, 
                            palette = c("darkcyan","darkgoldenrod3"), 
                            subtitle="Survival, Stratified by Presence of Pericardial Effusion",
                            font.subtitle = c(10,"italic"),
@@ -256,8 +300,65 @@ km.plots[[3]] = ggsurvplot(km.effusion,
                            legend.title = "Groups",
                            legend.labs = c("Present","Absent"))
 
+arrange_ggsurvplots(km.p1, print=TRUE, ncol=2, nrow=1)
+```
+
+```{r ks2, fig.align='center', echo=FALSE, results = 'asis'}
+ks2 = data.frame(summary(km.age)$table)
+ks3 = data.frame(summary(km.effusion)$table)
+
+ks2.3 = rbind(ks2, ks3)
+ks2.3 = ks2.3[,c(1,4,5,7,8,9)]
+colnames(ks2.3) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(ks2.3) = c("Age < 63", "Age \u2265 63","Absent","Present")
+
+kable(ks2.3, caption="Kaplan-Meier Estimates Stratified by Age and Pericardial Effusion Presence",align="c", digits=2) %>%
+  kable_styling(position = "center", latex_options="hold_position")
+```
+
+When stratified by age, we find a slight difference between the curves. The age group younger than 63 has a mean survival time of 30.47 months with a median survival time of 29 months. The older group - ages greater than 63 - has a similar mean survival time of 30.6 months and a slightly longer median survival time of 32 months. When comparing the presence of pericardial effusion, there are 106 cases where the effusion is absent, while 24 cases have the effusion present. The mean survival time when pericardial effusion is absent is 30.63 months with a median survival time of 31 months. For converse case, the mean survival time is 29.94 months while the median is lower at 27 months.
+
+```{r km.haz1, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
+haz.p1 = list()
+
+haz.p1[[1]] = ggsurvplot(km.age, 
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Cumulative Hazard, Stratified by Age Group",
+           font.title = c(10,"bold.italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Cumulative Hazard", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("< 63 Year","\u2265 63 Years"))
+
+haz.p1[[2]] = ggsurvplot(km.effusion, 
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3"), 
+           title="Cumulative Hazard, Stratified by Pericardial Effusion Presence",
+           font.title = c(10,"bold.italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Cumulative Hazard", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("Present","Absent"))
+
+arrange_ggsurvplots(haz.p1, print=TRUE, ncol=2, nrow=1)
+```
+For both groups, there does not seem to be a large departure from cumulative hazard. When stratifying by age, we see a slight increase in cumulative hazard of the younger group between 30 and 50 months. After that mark, the older group experiences a relative increase in cumulative hazard. When stratified by pericardial effusion presence, very little difference can be observed with any difference being the result of sample size differences.
+
+
+### Stratified by Wall Motion Score and Fractal Shortening Length:
+
+We then explore the effects of wall motion score and fractal shortening:
+
+```{r km.wms.fshort, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
+km.p2 = list()
+
 km.wms = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
-km.plots[[4]] = ggsurvplot(km.wms, 
+km.p2[[1]] = ggsurvplot(km.wms, 
                            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
                            subtitle="Survival, Stratified by Wall Motion Score",
                            font.subtitle = c(10,"italic"),
@@ -270,7 +371,7 @@ km.plots[[4]] = ggsurvplot(km.wms,
                            legend.labs = c("< 14","\u2265 14"))
 
 km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
-km.plots[[5]] = ggsurvplot(km.fshort, 
+km.p2[[2]] = ggsurvplot(km.fshort, 
                            palette = c("darkcyan","darkgoldenrod3"), 
                            subtitle="Survival, Stratified by Fractal Shortening",
                            font.subtitle = c(10,"italic"),
@@ -282,103 +383,60 @@ km.plots[[5]] = ggsurvplot(km.fshort,
                            legend.title = "Groups",
                            legend.labs = c("< 0.2","\u2265 0.2"))
 
-
-arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=3)
-
+arrange_ggsurvplots(km.p2, print=TRUE, ncol=2, nrow=1)
 ```
 
-Here is the survival curve for all groups within our dataset. With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is approximately 29 months a 95% lower and upper confidence limits of 27 and 33 months, respectively.  We see that a majority of our censored values have very short survival times. This is an intuitive finding as patients who joined the study late have relatively unknown survival (hence, their right censored nature. A summary of the results from our KM fit is below:
-
-```{r km.summary, fig.align='center', echo=FALSE, results = 'asis'}
-
-ks1 = data.frame(t(summary(km.all)$table))
-ks2 = data.frame(summary(km.age)$table)
-ks3 = data.frame(summary(km.effusion)$table)
+```{r ks4, fig.align='center', echo=FALSE, results = 'asis'}
 ks4 = data.frame(summary(km.wms)$table)
 ks5 = data.frame(summary(km.fshort)$table)
 
-ksall = rbind(ks1, ks2, ks3, ks4,ks5)
-km.as = ksall[,c(1,4,5,7,8,9)]
-colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(km.as) = c("All","Age:<55", "Age: 55-65", "P.Eff: Absent","P.Eff: Present", "WMS: < 14", "WMS: \u2265 14","Fractal Shortening: < 0.2", "Fractal Shortening: \u2265 0.2")
+ks4.5 = rbind(ks4, ks5)
+ks4.5 = ks4.5[,c(1,4,5,7,8,9)]
+colnames(ks4.5) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
+rownames(ks4.5) = c("Score < 14", "Score \u2265 14","Length < 0.2", "Length \u2265 0.2")
 
-kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
+kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and Fractal Shortening",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
-## Cumulative Hazard Estimates
+When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
 
-```{r km.hazard.all, fig.align='center', echo=FALSE, fig.height=8, fig.width=10}
-haz.plots = list()
+When stratified by fractal shortening length, both groups have a similar mean at approximately 30.4 months. When fractal shortening is less than 0.2, the median survival time is 31 months while having a fractal shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
 
-haz.plots[[1]] = ggsurvplot(km.all, 
-           fun = "cumhaz",
-           palette = "#2E9FDF", 
-           conf.int = TRUE, 
-           title="Post-Myocardial Infarction Hazard", 
-           font.title=c(14,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           legend.title = "Groups",
-           legend.labs = "All")
+```{r km.haz2, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
+haz.p2 = list()
 
-haz.plots[[2]] = ggsurvplot(km.age, 
+haz.p2[[1]] = ggsurvplot(km.wms, 
            fun = "cumhaz",
            palette = c("darkcyan","darkgoldenrod3"), 
-           subtitle="Hazard, Stratified by Age Group",
-           font.subtitle = c(10,"italic"),
+           title="Cumulative Hazard, Stratified by Wall Motion Score",
+           font.title = c(10,"bold.italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years"))
-
-haz.plots[[3]] = ggsurvplot(km.effusion, 
-           fun = "cumhaz",
-           palette = c("darkcyan","darkgoldenrod3"), 
-           subtitle="Hazard, Stratified by Pericardial Effusion Presence",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           legend.title = "Groups",
-           legend.labs = c("Present","Absent"))
-
-haz.plots[[4]] = ggsurvplot(km.wms, 
-           fun = "cumhaz",
-           palette = c("darkcyan","darkgoldenrod3"), 
-           subtitle="Hazard, Stratified by Wall Motion Index",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
+           ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
            legend.labs = c("< 14","\u2265 14"))
 
-haz.plots[[5]] = ggsurvplot(km.fshort,
+haz.p2[[2]] = ggsurvplot(km.fshort,
            fun = "cumhaz",
            palette = c("darkcyan","darkgoldenrod3"), 
-           subtitle="Survival, Stratified by Fractal Shortening",
-           font.subtitle = c(10,"italic"),
+           title="Cumulative Hazard, Stratified by Fractal Shortening",
+           font.title = c(10,"bold.italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
+           ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
            legend.labs = c("< 0.2","\u2265 0.2"))
 
-arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=3)
+arrange_ggsurvplots(haz.p2, print=TRUE, ncol=2, nrow=1)
 
 ```
 
-Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
+Here, we see some minute differences between the hazard curves. When stratified by Wall Motion Score, we see some overlap in the initial stages of the study as well as around approximately 35 months. The exceptions are seen with higher wall motion scores seeing increased risk before the median and decreased relative risk after the median. The converse is seen for the lower wall motion scores.
 
+When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractal shortening lengths have less risk after the median.
 
 ## Parameter Estimation
 
