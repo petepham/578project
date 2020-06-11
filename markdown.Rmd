@@ -170,75 +170,73 @@ km.plots = list()
 
 km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
 km.plots[[1]] = ggsurvplot(km.all, 
-           palette = "#2E9FDF", 
-           conf.int = TRUE, 
-           title="Post-Myocardial Infarction Survival", 
-           subtitle="Survival Among All Groups",
-           font.title=c(14,"bold.italic"),
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = "All")
+                           palette = "#2E9FDF", 
+                           conf.int = TRUE, 
+                           title="Post-Myocardial Infarction Survival", 
+                           subtitle="Survival Among All Groups",
+                           font.title=c(14,"bold.italic"),
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = "All")
 
 
 km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
 km.plots[[2]] = ggsurvplot(km.age, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           subtitle="Survival, Stratified by Age Group",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+                           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                           subtitle="Survival, Stratified by Age Group",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("< 63 Years","\u2265 63 Years"))
 
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
 km.plots[[3]] = ggsurvplot(km.effusion, 
-           palette = c("darkcyan","darkgoldenrod3"), 
-           subtitle="Survival, Stratified by Presence of Pericardial Effusion",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("Present","Absent"))
+                           palette = c("darkcyan","darkgoldenrod3"), 
+                           subtitle="Survival, Stratified by Presence of Pericardial Effusion",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("Present","Absent"))
 
 km.wms = survfit(s.df~WMS.s, type="kaplan-meier", data = df.new)
 km.plots[[4]] = ggsurvplot(km.wms, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           subtitle="Survival, Stratified by Wall Motion Index",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 12", "12-14", "> 14"))
+                           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
+                           subtitle="Survival, Stratified by Wall Motion Score",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("< 14","\u2265 14"))
 
-km.fsh = survfit(s.df~F.Shortening, type="kaplan-meier", data = df.new)
-km.plots[[5]] = ggsurvplot(km.fsh, 
-           palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
-           subtitle="Survival, Stratified by Wall Motion Index",
-           font.subtitle = c(10,"italic"),
-           font.x = c(9, "bold.italic"),
-           font.y = c(9, "bold.italic"),
-           ylab="Surival Proportion", 
-           xlab="Time to Death (Months)",
-           surv.median.line = "hv",
-           legend.title = "Groups",
-           legend.labs = c("< 12", "12-14", "> 14"))
+km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
+km.plots[[5]] = ggsurvplot(km.fshort, 
+                           palette = c("darkcyan","darkgoldenrod3"), 
+                           subtitle="Survival, Stratified by Fractal Shortening",
+                           font.subtitle = c(10,"italic"),
+                           font.x = c(9, "bold.italic"),
+                           font.y = c(9, "bold.italic"),
+                           ylab="Surival Proportion", 
+                           xlab="Time to Death (Months)",
+                           surv.median.line = "hv",
+                           legend.title = "Groups",
+                           legend.labs = c("< 0.2","\u2265 0.2"))
 
-# change WMS.s to binary stratification (0/1)
-# add f.shortening
 
 arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=3)
 
@@ -252,11 +250,12 @@ ks1 = data.frame(t(summary(km.all)$table))
 ks2 = data.frame(summary(km.age)$table)
 ks3 = data.frame(summary(km.effusion)$table)
 ks4 = data.frame(summary(km.wms)$table)
+ks5 = data.frame(summary(km.fshort)$table)
 
-ksall = rbind(ks1, ks2, ks3, ks4)
+ksall = rbind(ks1, ks2, ks3, ks4,ks5)
 km.as = ksall[,c(1,4,5,7,8,9)]
 colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(km.as) = c("All","Age:<55", "Age: 55-65", "Age: >65", "P.Eff: Absent","P.Eff: Present", "WMS: < 12", "WMS: 12-14", "WMS: >14")
+rownames(km.as) = c("All","Age:<55", "Age: 55-65", "P.Eff: Absent","P.Eff: Present", "WMS: < 14", "WMS: \u2265 14","Fractal Shortening: < 0.2", "Fractal Shortening: \u2265 0.2")
 
 kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
@@ -292,7 +291,7 @@ haz.plots[[2]] = ggsurvplot(km.age,
            ylab="Surival Proportion", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years","> 65 Years"))
+           legend.labs = c("< 55 Year","55 - 65 Years"))
 
 haz.plots[[3]] = ggsurvplot(km.effusion, 
            fun = "cumhaz",
@@ -316,10 +315,21 @@ haz.plots[[4]] = ggsurvplot(km.wms,
            ylab="Surival Proportion", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 12", "12-14", "> 14"))
+           legend.labs = c("< 14","\u2265 14"))
 
+haz.plots[[5]] = ggsurvplot(km.fshort,
+           fun = "cumhaz",
+           palette = c("darkcyan","darkgoldenrod3"), 
+           subtitle="Survival, Stratified by Fractal Shortening",
+           font.subtitle = c(10,"italic"),
+           font.x = c(9, "bold.italic"),
+           font.y = c(9, "bold.italic"),
+           ylab="Surival Proportion", 
+           xlab="Time to Death (Months)",
+           legend.title = "Groups",
+           legend.labs = c("< 0.2","\u2265 0.2"))
 
-arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
+arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=4)
 
 ```
 
@@ -331,11 +341,12 @@ ks1 = data.frame(t(summary(km.all)$table))
 ks2 = data.frame(summary(km.age)$table)
 ks3 = data.frame(summary(km.effusion)$table)
 ks4 = data.frame(summary(km.wms)$table)
+ks5 = data.frame(summary(km.fshort)$table)
 
-ksall = rbind(ks1, ks2, ks3, ks4)
+ksall = rbind(ks1, ks2, ks3, ks4,ks5)
 km.as = ksall[,c(1,4,5,7,8,9)]
 colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(km.as) = c("All","Age:<55", "Age: 55-65", "Age: >65", "P.Eff: Absent","P.Eff: Present", "WMS: < 12", "WMS: 12-14", "WMS: >14")
+rownames(km.as) = c("All","Age:<55", "Age: 55-65", "P.Eff: Absent","P.Eff: Present", "WMS: < 14", "WMS: \u2265 14","Fractal Shortening: < 0.2", "Fractal Shortening: \u2265 0.2")
 
 kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
