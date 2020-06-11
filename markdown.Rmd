@@ -60,7 +60,7 @@ Unsurprisingly, as more patients survive CVD related infarction episodes, more d
 
 # Dataset
 
-Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractal shortening, EPSS, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractional shortening, EPSS, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
 Since the time of myocardial infarction varies (depending if a patient joined the study prior to the start), some patients were followed for less than a year. This provides a clear censoring and truncation. We discuss the nature of censoring in the following section.
 
@@ -262,7 +262,7 @@ haz.all
 
 
 
-To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractal shortening. We first begin exploring the effects of age and pericardial effusion presence:
+To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractional shortening. We first begin exploring the effects of age and pericardial effusion presence:
 
 
 ### Stratified by Age and Pericardial Effusion Presence
@@ -348,9 +348,9 @@ arrange_ggsurvplots(haz.p1, print=TRUE, ncol=2, nrow=1)
 For both groups, there does not seem to be a large departure from cumulative hazard. When stratifying by age, we see a slight increase in cumulative hazard of the younger group between 30 and 50 months. After that mark, the older group experiences a relative increase in cumulative hazard. When stratified by pericardial effusion presence, very little difference can be observed with any difference being the result of sample size differences.
 
 
-### Stratified by Wall Motion Score and Fractal Shortening Length:
+### Stratified by Wall Motion Score and fractional Shortening Length:
 
-We then explore the effects of wall motion score and fractal shortening:
+We then explore the effects of wall motion score and fractional shortening:
 
 ```{r km.wms.fshort, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 km.p2 = list()
@@ -371,7 +371,7 @@ km.p2[[1]] = ggsurvplot(km.wms,
 km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
 km.p2[[2]] = ggsurvplot(km.fshort, 
                            palette = c("darkcyan","darkgoldenrod3"), 
-                           subtitle="Survival, Stratified by Fractal Shortening",
+                           subtitle="Survival, Stratified by fractional Shortening",
                            font.subtitle = c(10,"italic"),
                            font.x = c(9, "bold.italic"),
                            font.y = c(9, "bold.italic"),
@@ -393,13 +393,13 @@ ks4.5 = ks4.5[,c(1,4,5,7,8,9)]
 colnames(ks4.5) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
 rownames(ks4.5) = c("Score < 14", "Score \u2265 14","Length < 0.2", "Length \u2265 0.2")
 
-kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and Fractal Shortening",align="c", digits=2) %>%
+kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and fractional Shortening",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
 When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
 
-When stratified by fractal shortening length, both groups have a similar mean at approximately 30.4 months. When fractal shortening is less than 0.2, the median survival time is 31 months while having a fractal shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
+When stratified by fractional shortening length, both groups have a similar mean at approximately 30.4 months. When fractional shortening is less than 0.2, the median survival time is 31 months while having a fractional shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
 
 ```{r km.haz2, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p2 = list()
@@ -419,7 +419,7 @@ haz.p2[[1]] = ggsurvplot(km.wms,
 haz.p2[[2]] = ggsurvplot(km.fshort,
            fun = "cumhaz",
            palette = c("darkcyan","darkgoldenrod3"), 
-           title="Cumulative Hazard, Stratified by Fractal Shortening",
+           title="Cumulative Hazard, Stratified by fractional Shortening",
            font.title = c(10,"bold.italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -434,7 +434,7 @@ arrange_ggsurvplots(haz.p2, print=TRUE, ncol=2, nrow=1)
 
 Here, we see some minute differences between the hazard curves. When stratified by Wall Motion Score, we see some overlap in the initial stages of the study as well as around approximately 35 months. The exceptions are seen with higher wall motion scores seeing increased risk before the median and decreased relative risk after the median. The converse is seen for the lower wall motion scores.
 
-When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractal shortening lengths have less risk after the median.
+When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractional shortening lengths have less risk after the median.
 
 ## Parameter Estimation
 
