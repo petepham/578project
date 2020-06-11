@@ -70,13 +70,13 @@ Age is divided into three groups with 0 denoting younger than 55 years, 1 denoti
 
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-Indicator = c("0","1","2")
-Age = c("< 55 Years", "55-70 Years", "> 70 Years")
-Effusion = c("Fluid is absent", "Fluid is present","")
-WMS = c("< 12", "12-14", "> 14")
+Indicator = c("0","1")
+Age = c("< 63 Years", "\u2265 63 Years")
+Effusion = c("Fluid is absent", "Fluid is present")
+WMS = c("< 11", "\u2265 11")
+FS = c("< 0.2","\u2265 0.2")
 
-groupings = data.frame(Indicator, Age, Effusion, WMS)
-groupings
+groupings = data.frame(Indicator, Age, Effusion, WMS, FS)
 
 kable(groupings, caption="Stratification Groupings", align="c") %>%
   kable_styling(position = "center", latex_options="hold_position")
@@ -199,7 +199,6 @@ km.plots[[1]] = ggsurvplot(km.all,
                            palette = "#2E9FDF", 
                            conf.int = TRUE, 
                            title="Post-Myocardial Infarction Survival", 
-                           subtitle="Survival Among All Groups",
                            font.title=c(14,"bold.italic"),
                            font.subtitle = c(10,"italic"),
                            font.x = c(9, "bold.italic"),
@@ -297,7 +296,6 @@ haz.plots[[1]] = ggsurvplot(km.all,
            palette = "#2E9FDF", 
            conf.int = TRUE, 
            title="Post-Myocardial Infarction Hazard", 
-           subtitle="Hazard Among All Groups",
            font.title=c(14,"bold.italic"),
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
