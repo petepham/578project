@@ -335,22 +335,7 @@ arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=4)
 
 Hazard stratified by pericardial effusion shows relatively similar results between both groups. Age stratified risk shows more risk for the younger groups. Wall motion scores stratification shows a slight increase in risk past the median for higher scores.
 
-```{r km.haz.summary, fig.align='center', echo=FALSE, results = 'asis'}
 
-ks1 = data.frame(t(summary(km.all)$table))
-ks2 = data.frame(summary(km.age)$table)
-ks3 = data.frame(summary(km.effusion)$table)
-ks4 = data.frame(summary(km.wms)$table)
-ks5 = data.frame(summary(km.fshort)$table)
-
-ksall = rbind(ks1, ks2, ks3, ks4,ks5)
-km.as = ksall[,c(1,4,5,7,8,9)]
-colnames(km.as) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(km.as) = c("All","Age:<55", "Age: 55-65", "P.Eff: Absent","P.Eff: Present", "WMS: < 14", "WMS: \u2265 14","Fractal Shortening: < 0.2", "Fractal Shortening: \u2265 0.2")
-
-kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
-  kable_styling(position = "center", latex_options="hold_position")
-```
 
 ## Parametric: Log-Normal Model
 
