@@ -517,7 +517,7 @@ Q-Q plots were also prepared for each distribution, and are provided in the Appe
 
 ## Regression Analysis - Cox Proportional Hazard Modeling 
 
-Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicolinearity (see Appendix for plots of the covariates). After eliminating colinear variables, the covariate pool comprised the following factors: 
+Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicolinearity (see Appendix for plots of the covariates). Potential dependency was observed between Fractional Shortening, E-Point Septal Separation, and Left Ventrical Diastolic Dysfunction. Mechanistically, this is intuitive, since all three variables measure ventrical diastolic behavior. Models were fit with each of these colinear variables, and based on this assessment of Fractional Shortening was selected for inclusion in the final covariate pool of potential prognostic factors for regression. These covariates are:  
 
 \begin{description}
   \item[$\bullet$] Age
@@ -526,15 +526,17 @@ Regression analysis was conducted to identify the relationship between potential
   \item[$\bullet$] Fractional Shortening
 \end{description}
 
-The proportional hazard assumption was evaluated for this model. Survival curves stratified by group were assessed for each of the four selected covariates. It was found that the proportional hazard assumption does not hold, as hazards for each group cross over with time for each covariate. 
+A model employing all of the covariates listed above was created. In order to test validit of the proportional hazard assumption, survival curves stratified by group were assessed for each of the four selected covariates. It was found that the proportional hazard assumption does not hold, as hazards for each group cross over with time for each covariate. 
 
 This limitation was addressed through the identification of survival time subsets in which covariates met the proportional hazards assumption, and could thus be employed as predictor variables. These subsets were identified by inspecting hazard function data stratified on all covariates and identifying regions of crossover. (See Appendix for plots of stratified hazard functions with the approximate crossover regions marked).
 
 The selected time subsets were obtained as follows:
 
-$Subset \:1: t \leq {26} \:{months}$
-$Subset \:2:26 \:{months}< t < 46 \:{months}$
-$Subset \:3: 46 \: months \leq t$
+\begin{description}
+ \item[$Subset \:1: t \leq {26} \:{months}$]
+ \item[$Subset \:2:26 \:{months}< t < 46 \:{months}$]
+ \item[$Subset \:3: 46 \: months \leq t$]
+\end{description}
 
 Within each time subset, the proportional hazard assumption was tested for each of the four covariates and found to hold. A Cox PH model was fitted to each subset of the survival data, reduced as far as possible using a Step AIC procedure with Likelihood Ratio Test selection, and evaluated for adequacy using standard diagnostic techniques. 
 
