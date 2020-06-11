@@ -331,7 +331,7 @@ haz.p1[[1]] = ggsurvplot(km.age,
            ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 55 Year","55 - 65 Years"))
+           legend.labs = c("< 63 Year","\u2265 63 Years"))
 
 haz.p1[[2]] = ggsurvplot(km.effusion, 
            fun = "cumhaz",
