@@ -2,9 +2,7 @@
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
 author: "Research: Alvein, Parametric: Orr, Non-Parametric: Pham"
 date: "5/22/2020"
-output: 
-  pdf_document:
-    latex_engine: xelatex
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
