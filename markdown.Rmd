@@ -44,9 +44,9 @@ We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe th
 
 $\textbf{Methods:}$ Data from 130 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
-$\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower . We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
+$\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower. Multiple parametric models were assessed for potential distributional fit of the survival data and the Weibull distribution was found to model the overall survival behavior well. Reg
 
-$\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
+$\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling overall survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Finally, we identified a regression model that predicts survival given a selection of prognostic factors. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
 
 \newpage
 
@@ -180,11 +180,11 @@ Intuitively, the relationship of the observed hazard is the negative log of the 
 
 # Parametric Modeling of Survival Data
 
-Another technique for characterizing the survival function is to assume a distributional model for the data. Compared with the Kaplan-Meier approach, this method has certain advantages that include a continuous survival curve and simplicity of estimation and prediction. If the selected model accurately describes the data, it may also lend insight into the underlying mechanism for the survival behavior. This method is only applicable if a distributional model can be identified that fits the survival data adequately.  
+Another technique for characterizing the survival function is to assume a distributional model for the data. Compared with the Kaplan-Meier approach, this method has certain advantages; it enables construction of a continuous survival curve and allows simplicity of estimation and prediction. If the selected model accurately describes the data, it may also lend insight into the underlying mechanism for the survival behavior. This method is only applicable if a distributional model can be identified that adequately fits the survival data.  
 
-For the post-myocardial infarction dataset, We fit three commonly employed distributional models to the survival data and evaluating goodness of fit of the three models. This is accomplished by comparing the modeled survival curves to the Kaplan-Meier curve and by comparing point estimates for each model. 
+For the post-myocardial infarction dataset, we fit three commonly employed distributional models to the survival data and evaluating goodness of fit of the three models. This is accomplished by comparing the modeled survival curves to the Kaplan-Meier curve and by comparing point estimates for each model. 
 
-The three models chosen for comparison are the well-known Weibull, Lognormal, and Loglogistic distributions.
+The three models chosen for comparison are the Weibull, log-normal, and log-logistic distributions.
 
 The Weibull hazard function is given below, where $\lambda$ and $\alpha$ are the scale and shape parameters.  Weibull hazard is rising if$\alpha$ > 1, constant if $\alpha$ = 1, and declining if $\alpha$ < 1.
 
@@ -205,7 +205,7 @@ the hazard function of the log-logistic distribution decreases with time from $\
 
 # Semi-Parametric Modeling of Survival Data
 
-Where fully parametric models offer flexibility and the efficient, relatively simple estimation of overall survival function parameters,semi-parametric models offer the advantage of being well-suited to the estimation of covariate effects. Semi-parametric models decompose risk into a baseline hazard component and a relative risk component that is dependent on the covariates. 
+Where fully parametric models offer flexibility and the efficient, relatively simple estimation of overall survival function parameters, semi-parametric models offer the advantage of being well-suited to the estimation of covariate effects. Semi-parametric models decompose risk into a baseline hazard component and a relative risk component that is dependent on the covariates. 
 
 The semi-parametric Cox proportional hazards model is employed here to explore the relationship between predictor variables and survival behavior. 
 
@@ -215,7 +215,7 @@ The Cox PH hazard function is defined as follows:
 
 where t represents the survival time, $x_1,x_2,...,x_n$ are the set of prognostic factors or covariates, and the coefficients $b_1,b_2,...,b_n$ measure the effect of the covariates on survival time. The baseline hazard $h_0(t)$ corresponds to the value of the hazard if all covariates are equal to zero.
 
-Use of the Cox PH model requires that the baseline hazard is not dependent on the covariates, and that the covariate terms do not depend on time - that is, that the slope coefficients are constant. Hazard functions stratified on covariate group may be used to assess the proportional hazard assumption. If the hazards functions for covariate groups cross over time, the proportionality assumption is not met and alternate analysis methods should be employed. One such method involves sub-setting the survival data and covariates based on hazard cross-over time. In this approach, a separate model is fit to each subset where it has been determined that the proportionality assumption holds. Alternately one may apply alternate modeling techniques that are suitable for time-varying effects, or simply investigate the impact of covariate by inspection of stratified Kaplan-Meier survival curves (Kim, 2000).
+Use of the Cox PH model requires that the baseline hazard is not dependent on the covariates, and that the covariate terms do not depend on time - that is, that the slope coefficients are constant. Hazard functions stratified on covariate group may be used to assess the proportional hazard assumption. If the hazards functions for covariate groups cross over time, the proportionality assumption is not met and alternate analysis methods should be employed. One such method involves sub-setting the survival data and covariates based on hazard cross-over time. In this approach, a separate model is fit to each subset where it has been determined that the proportionality assumption holds. Alternately one may apply alternate modeling techniques that are suitable for time-varying effects, or simply investigate the impact of covariate by inspection of stratified Kaplan-Meier survival curves ^14^.
 
 # Results
 
@@ -558,12 +558,14 @@ abline(h=0)
 The table below summarizes the parameter point estimates and corresponding 95% confidence intervals. 
 
 
-```{r echo = FALSE, results = "asis", message = FALSE}
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
 
 param.est = data.frame(read_excel("param.est.xlsx"))
 kable(param.est, 
-      col.names = c("Model","Quantile", "Point Estimate", "95% LCL", "95% UCL", "Interval Length")
-      ) 
+      col.names = c("Model","Quantile", "Point Estimate", "95% LCL", "95% UCL", 
+      "Interval Length"),
+      caption="Kaplan-Meier Estimates for All Groups",align="c", digits=2)%>%
+  kable_styling(position = "center", latex_options="hold_position")
 
 ```
 
@@ -599,6 +601,7 @@ The three models are summarized below:
 
 ```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
 
+
 library("gtsummary")
 LL=0.0
 UL=26.0
@@ -620,6 +623,14 @@ cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fr
 
 cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
 mod1=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=3
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
 
 t1 <-
   mod1 %>%
@@ -647,6 +658,14 @@ cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fr
 cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
 mod2=cph.fit2
 
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
 t2 <-
   mod2 %>%
   tbl_regression(exponentiate = TRUE) %>%
@@ -669,6 +688,14 @@ cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fr
 
 cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
 mod3=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
 
 t3 <-
   mod3 %>%
