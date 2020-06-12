@@ -2,7 +2,9 @@
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
 author: "Research: Alvein, Parametric: Orr, Non-Parametric: Pham"
 date: "5/22/2020"
-output: pdf_document
+output: 
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
@@ -76,8 +78,8 @@ Age is divided into two groups with 0 denoting younger than 63 years, 1 denoting
 Indicator = c("0","1")
 Age = c("< 63 Years", "\u2265 63 Years")
 Effusion = c("Fluid is absent", "Fluid is present")
-WMS = c("< 11", "\u2265 11")
-FS = c("< 0.2","\u2265 0.2")
+WMS = c("< 11", " \u2265 11")
+FS = c("< 0.2"," \u2265 0.2")
 
 groupings = data.frame(Indicator, Age, Effusion, WMS, FS)
 
@@ -349,6 +351,8 @@ kable(ks2.3diff, caption = "Summary of Differences Between Strata")
 
 When stratified by age, we find a slight difference between the curves. The age group younger than 63 has a mean survival time of 30.47 months with a median survival time of 29 months. The older group - ages greater than 63 - has a similar mean survival time of 30.6 months and a slightly longer median survival time of 32 months. When comparing the presence of pericardial effusion, there are 106 cases where the effusion is absent, while 24 cases have the effusion present. The mean survival time when pericardial effusion is absent is 30.63 months with a median survival time of 31 months. For converse case, the mean survival time is 29.94 months while the median is lower at 27 months.
 
+Log-rank tests between both stratification groups returns a p-value of 0.9 for both age strata and effusion strata. When testing at the 95% significance level, we do not have significant differences between groups.
+
 ```{r km.haz1, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p1 = list()
 
@@ -433,15 +437,15 @@ kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and
 
 ```{r ks4.5.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
 
-km.agediff = survdiff(s.df~WMS.s, data = df.new)
-km.fshortdiff = survdiff(s.df~Fshort.s, data = df.new)
+km.wmsdiff = survdiff(s.df~WMS.s, data = df.new)
+km.f.shortdiff = survdiff(s.df~Fshort.s, data = df.new)
 
-ks4.diff = data.frame(tidy(km.agediff))
-ks5.diff = data.frame(tidy(km.effusiondiff))
+ks4.diff = data.frame(tidy(km.wmsdiff))
+ks5.diff = data.frame(tidy(km.f.shortdiff))
 
 ks4.diff = ks4.diff[,c(2,3,4)]
 ks5.diff = ks5.diff[,c(2,3,4)]
-ks4.5diff = rbind(ks2.diff,ks3.diff)
+ks4.5diff = rbind(ks4.diff,ks5.diff)
 colnames(ks4.5diff) = c("N","Observed","Expected")
 rownames(ks4.5diff) = c("Wall Motion Score < 14", "Wall Motion Score \u2265 14","Fractional Shortening < 0.2", "Fractional Shortening \u2265 0.2")
 
@@ -455,6 +459,8 @@ kable(ks4.5diff, caption = "Summary of Differences Between Strata")
 When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
 
 When stratified by fractional shortening length, both groups have a similar mean at approximately 30.4 months. When fractional shortening is less than 0.2, the median survival time is 31 months while having a fractional shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
+
+Log-rank tests to test differences between wall motion score strata show p-value of 0.9 while the same test produces a p-value of 0.6 for fractional shortening. Both of these failures fail to reject the null hypothesis at the 95% significance level. As such, there is no significant difference between both eith strata groupings.
 
 ```{r km.haz2, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p2 = list()
