@@ -1,6 +1,6 @@
 ---
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
-author: "Research: Alvein, Parametric: Orr, Non-Parametric: Pham"
+author: "Research: Kaelin Alvein \linebreak Parametric: Patricia Orr \linebreak Non-Parametric: Pete Pham"
 date: "5/22/2020"
 output: pdf_document
 ---
@@ -42,13 +42,18 @@ $\textbf{Objective:}$ Our goal is to provide detailed survival statistics of pat
 
 We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe the data as well as choose a regression model to be used for predictive survivability. 
 
-$\textbf{Methods:}$ Data from 130 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
+$\textbf{Methods:}$ Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
+<<<<<<< HEAD
 $\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower. Multiple parametric models were assessed for potential distributional fit of the survival data and the Weibull distribution was found to model the overall survival behavior well. Reg
 
 $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling overall survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Finally, we identified a regression model that predicts survival given a selection of prognostic factors. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
+=======
+$\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower survival time of 27 months. No strata was found to be significantly different from each other. We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
 
-\newpage
+$\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, Kaplan-Meier methods show no large difference between any given group. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
+>>>>>>> 36a95b5745f318156a63171d40c0d31088d6f469
+
 
 # Introduction
 
@@ -74,10 +79,10 @@ Age is divided into two groups with 0 denoting younger than 63 years, 1 denoting
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 Indicator = c("0","1")
-Age = c("< 63 Years", "\u2265 63 Years")
+Age = c("< 63 Years", ">= 63 Years")
 Effusion = c("Fluid is absent", "Fluid is present")
-WMS = c("< 11", "\u2265 11")
-FS = c("< 0.2","\u2265 0.2")
+WMS = c("< 11", ">= 11")
+FS = c("< 0.2",">= 0.2")
 
 groupings = data.frame(Indicator, Age, Effusion, WMS, FS)
 
@@ -228,7 +233,7 @@ km.all = survfit(s.df~1,type="kaplan-meier", data=df.new)
 km.allp = ggsurvplot(km.all, 
                            palette = "#2E9FDF", 
                            conf.int = TRUE, 
-                           title="Post-Myocardial Infarction Survival", 
+                           title="Kaplan-Meier Curve for Post-Myocardial Infarction Survival", 
                            font.title=c(14,"bold.italic"),
                            font.subtitle = c(10,"italic"),
                            font.x = c(9, "bold.italic"),
@@ -262,7 +267,7 @@ haz.all = ggsurvplot(km.all,
            fun = "cumhaz",
            palette = "#2E9FDF", 
            conf.int = TRUE, 
-           title="Post-Myocardial Infarction Hazard", 
+           title="Cumulative Hazard Curve for Post-Myocardial Infarction Survival", 
            font.title=c(14,"bold.italic"),
            font.subtitle = c(10,"italic"),
            font.x = c(9, "bold.italic"),
@@ -291,20 +296,20 @@ km.age = survfit(s.df~Age.s, type="kaplan-meier", data = df.new)
 km.p1[[1]] = ggsurvplot(km.age, 
                            palette = c("darkcyan","darkgoldenrod3","darkorange3"), 
                            subtitle="Survival, Stratified by Age Group",
-                           font.subtitle = c(10,"italic"),
+                           font.subtitle = c(10,"bold.italic"),
                            font.x = c(9, "bold.italic"),
                            font.y = c(9, "bold.italic"),
                            ylab="Surival Proportion", 
                            xlab="Time to Death (Months)",
                            surv.median.line = "hv",
                            legend.title = "Groups",
-                           legend.labs = c("< 63 Years","\u2265 63 Years"))
+                           legend.labs = c("< 63 Years",">= 63 Years"))
 
 km.effusion = survfit(s.df~P.Effusion, type="kaplan-meier", data = df.new)
 km.p1[[2]] = ggsurvplot(km.effusion, 
                            palette = c("darkcyan","darkgoldenrod3"), 
                            subtitle="Survival, Stratified by Presence of Pericardial Effusion",
-                           font.subtitle = c(10,"italic"),
+                           font.subtitle = c(10,"bold.italic"),
                            font.x = c(9, "bold.italic"),
                            font.y = c(9, "bold.italic"),
                            ylab="Surival Proportion", 
@@ -323,7 +328,7 @@ ks3 = data.frame(summary(km.effusion)$table)
 ks2.3 = rbind(ks2, ks3)
 ks2.3 = ks2.3[,c(1,4,5,7,8,9)]
 colnames(ks2.3) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(ks2.3) = c("Age < 63", "Age \u2265 63","Absent","Present")
+rownames(ks2.3) = c("Age < 63", "Age >= 63","Absent","Present")
 
 kable(ks2.3, caption="Kaplan-Meier Estimates Stratified by Age and Pericardial Effusion Presence",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
@@ -341,13 +346,15 @@ ks2.diff = ks2.diff[,c(2,3,4)]
 ks3.diff = ks3.diff[,c(2,3,4)]
 ks2.3diff = rbind(ks2.diff,ks3.diff)
 colnames(ks2.3diff) = c("N","Observed","Expected")
-rownames(ks2.3diff) = c("Age < 63", "Age \u2265 63","Absent","Present")
+rownames(ks2.3diff) = c("Age < 63", "Age >= 63","Absent","Present")
 
 kable(ks2.3diff, caption = "Summary of Differences Between Strata")
 
 ```
 
 When stratified by age, we find a slight difference between the curves. The age group younger than 63 has a mean survival time of 30.47 months with a median survival time of 29 months. The older group - ages greater than 63 - has a similar mean survival time of 30.6 months and a slightly longer median survival time of 32 months. When comparing the presence of pericardial effusion, there are 106 cases where the effusion is absent, while 24 cases have the effusion present. The mean survival time when pericardial effusion is absent is 30.63 months with a median survival time of 31 months. For converse case, the mean survival time is 29.94 months while the median is lower at 27 months.
+
+Log-rank tests between both stratification groups returns a p-value of 0.9 for both age strata and effusion strata. When testing at the 95% significance level, we do not have significant differences between groups.
 
 ```{r km.haz1, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p1 = list()
@@ -362,7 +369,7 @@ haz.p1[[1]] = ggsurvplot(km.age,
            ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 63 Year","\u2265 63 Years"))
+           legend.labs = c("< 63 Year",">= 63 Years"))
 
 haz.p1[[2]] = ggsurvplot(km.effusion, 
            fun = "cumhaz",
@@ -400,7 +407,7 @@ km.p2[[1]] = ggsurvplot(km.wms,
                            xlab="Time to Death (Months)",
                            surv.median.line = "hv",
                            legend.title = "Groups",
-                           legend.labs = c("< 14","\u2265 14"))
+                           legend.labs = c("< 14",">= 14"))
 
 km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
 km.p2[[2]] = ggsurvplot(km.fshort, 
@@ -413,7 +420,7 @@ km.p2[[2]] = ggsurvplot(km.fshort,
                            xlab="Time to Death (Months)",
                            surv.median.line = "hv",
                            legend.title = "Groups",
-                           legend.labs = c("< 0.2","\u2265 0.2"))
+                           legend.labs = c("< 0.2",">= 0.2"))
 
 arrange_ggsurvplots(km.p2, print=TRUE, ncol=2, nrow=1)
 ```
@@ -425,7 +432,7 @@ ks5 = data.frame(summary(km.fshort)$table)
 ks4.5 = rbind(ks4, ks5)
 ks4.5 = ks4.5[,c(1,4,5,7,8,9)]
 colnames(ks4.5) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
-rownames(ks4.5) = c("Score < 14", "Score \u2265 14","Length < 0.2", "Length \u2265 0.2")
+rownames(ks4.5) = c("Score < 14", "Score >= 14","Length < 0.2", "Length >= 0.2")
 
 kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and fractional Shortening",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
@@ -433,28 +440,28 @@ kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and
 
 ```{r ks4.5.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
 
-km.agediff = survdiff(s.df~WMS.s, data = df.new)
-km.fshortdiff = survdiff(s.df~Fshort.s, data = df.new)
+km.wmsdiff = survdiff(s.df~WMS.s, data = df.new)
+km.f.shortdiff = survdiff(s.df~Fshort.s, data = df.new)
 
-ks4.diff = data.frame(tidy(km.agediff))
-ks5.diff = data.frame(tidy(km.effusiondiff))
+ks4.diff = data.frame(tidy(km.wmsdiff))
+ks5.diff = data.frame(tidy(km.f.shortdiff))
 
 ks4.diff = ks4.diff[,c(2,3,4)]
 ks5.diff = ks5.diff[,c(2,3,4)]
-ks4.5diff = rbind(ks2.diff,ks3.diff)
+ks4.5diff = rbind(ks4.diff,ks5.diff)
 colnames(ks4.5diff) = c("N","Observed","Expected")
-rownames(ks4.5diff) = c("Wall Motion Score < 14", "Wall Motion Score \u2265 14","Fractional Shortening < 0.2", "Fractional Shortening \u2265 0.2")
+rownames(ks4.5diff) = c("Wall Motion Score < 14", "Wall Motion Score >= 14","Fractional Shortening < 0.2", "Fractional Shortening >= 0.2")
 
 
 kable(ks4.5diff, caption = "Summary of Differences Between Strata")
 
 ```
 
-```
-
 When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
 
 When stratified by fractional shortening length, both groups have a similar mean at approximately 30.4 months. When fractional shortening is less than 0.2, the median survival time is 31 months while having a fractional shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
+
+Log-rank tests to test differences between wall motion score strata show p-value of 0.9 while the same test produces a p-value of 0.6 for fractional shortening. Both of these failures fail to reject the null hypothesis at the 95% significance level. As such, there is no significant difference between either strata groupings.
 
 ```{r km.haz2, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p2 = list()
@@ -469,7 +476,7 @@ haz.p2[[1]] = ggsurvplot(km.wms,
            ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 14","\u2265 14"))
+           legend.labs = c("< 14",">= 14"))
 
 haz.p2[[2]] = ggsurvplot(km.fshort,
            fun = "cumhaz",
@@ -481,7 +488,7 @@ haz.p2[[2]] = ggsurvplot(km.fshort,
            ylab="Cumulative Hazard", 
            xlab="Time to Death (Months)",
            legend.title = "Groups",
-           legend.labs = c("< 0.2","\u2265 0.2"))
+           legend.labs = c("< 0.2",">= 0.2"))
 
 arrange_ggsurvplots(haz.p2, print=TRUE, ncol=2, nrow=1)
 
@@ -733,8 +740,6 @@ Finally, the given dataset did not have clear statements as to what data collect
 
 ## Conclusion
 This study identified a variety of properties of the post-myocardial infarction survival data. The overall survival function was characterized by both non-parametric Kaplan-Meier and Weibull models, and point estimates determined. Analysis of the effect of echocardiographic data and of age on survival was performed both by inspection of stratified survival curves and by regression analysis. Findings included that age group has an impact on survival, but that this effect potentially varies over time, and that certain heart-related prognostic factors (in particular wall motion score and its interaction with fractional shortening) also have an impact on survival that varies over time. We conclude that future studies should expand on collection of variables that could potentially influence survivability, as well as the cohort size and length of follow-up period. Interesting effects to include may include poverty, diet, ethnicity, race, sex, and even work place stress/effects. Finally, further investigation with a larger dataset on the relationship between acute survival time and echocardiographic data profile and between the relationship of age group on survival data  may yield useful insights into specific risk profiles for post-myocardial infarction patients. 
-
-\newpage
 
 # Appendix
 
