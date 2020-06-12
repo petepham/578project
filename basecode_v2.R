@@ -857,7 +857,7 @@ residuals(cph.fit2,type="dfbetas")
 cph.fit2$x 
 #obs 8 x1=80 (AGE) is a potential influential observation. 
 
-#Model for first survival time subset
+#Model for third survival time subset
 
 #Subset the data based on the time region 
 
