@@ -153,7 +153,7 @@ Where $n_i$ is the number alive before time $y_i$ and $d_i$ is the number of eve
 
 We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericardial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit. Additionally, as we stratify groups by covariates, we use the Mantel-Haenszel/log-rank test. The following equation is used to calculate the test statistic in order to compare two strata^14^:
 
-\[ Mantel-Haenszel Statistic = \frac
+\[ Mantel-Haenszel \; Statistic = \frac
 {\sum_{i=1}^{k} (a_i-E_{0}(A_i))}
 {\sqrt{\sum_{i=1}^{k} Var_0 (A_i)}}
 \]
