@@ -36,7 +36,7 @@ s.df = Surv(df.new$Survival,df.new$Status)
 
 # Abstract
 
-$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurrence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities^6^. However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients^8^.
+$\textbf{Background:}$ Myocardial infarction episodes have become an increasing common occurrence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities^6^. However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients^8^.
 
 $\textbf{Objective:}$ Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardiac state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
 
@@ -44,15 +44,10 @@ We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe th
 
 $\textbf{Methods:}$ Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
-<<<<<<< HEAD
 $\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower. Multiple parametric models were assessed for potential distributional fit of the survival data and the Weibull distribution was found to model the overall survival behavior well. Reg
 
 $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling overall survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Finally, we identified a regression model that predicts survival given a selection of prognostic factors. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
-=======
-$\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower survival time of 27 months. No strata was found to be significantly different from each other. We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
 
-$\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, Kaplan-Meier methods show no large difference between any given group. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
->>>>>>> 36a95b5745f318156a63171d40c0d31088d6f469
 
 \newpage
 
