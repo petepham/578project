@@ -156,7 +156,7 @@ km.plots[[7]] = ggsurvplot(km.epss,
                            legend.labs = c("< 11","\u2265 11"))
 
 
-arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=4)
+arrange_ggsurvplots(km.plots, print=TRUE, ncol=2, nrow=2)
 
 # Kaplan-Meier Survival Summary
 ks1 = data.frame(t(summary(km.all)$table))
@@ -174,7 +174,7 @@ kable(km.as, caption="Kaplan-Meier Results",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
 
 # Kaplan-Meier Cumulative Hazard Estimators
-haz.plots = list()
+haz.plot = list()
 
 haz.plots[[1]] = ggsurvplot(km.all, 
                             fun = "cumhaz",
@@ -264,7 +264,7 @@ haz.plots[[7]] = ggsurvplot(km.lvdd,
                             legend.labs = c("< 11","\u2265 11"))
 
 
-arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=4)
+arrange_ggsurvplots(haz.plots, print=TRUE, ncol=2, nrow=2)
 
 ## Parametric Modeling ##
 
