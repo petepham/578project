@@ -492,11 +492,11 @@ Here, we see some minute differences between the hazard curves. When stratified 
 
 When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractional shortening lengths have less risk after the median.
 
-## Parameter Estimation
+## Parametric Analysis and Estimation
 
 The estimated distributional model curves are overlaid on the K-M curve for the post-myocardial infarction data in the figures below. 
 
-```{r echo = FALSE, fig.align='center', out.width = "40%",results = "asis", message = FALSE}
+```{r echo = FALSE, fig.align='center', out.width = "75%",results = "asis", message = FALSE}
 
 months=df.new$Survival
 status=df.new$Status
@@ -554,7 +554,7 @@ abline(h=0)
 
 ```
 
-
+\newpage
 
 The table below summarizes the parameter point estimates and corresponding 95% confidence intervals. 
 
@@ -563,17 +563,20 @@ The table below summarizes the parameter point estimates and corresponding 95% c
 
 library(kableExtra)
 param.est = data.frame(read_excel("param.est.xlsx"))
-x=kable(param.est, 
+kable(param.est, 
       col.names = c("Quantile", "Point Estimate", "95% LCL", "95% UCL", 
       "Interval Length"),
        caption="Parametric Model Estimates",align="c", digits=2)%>%
-  kable_styling(position = "center", latex_options="hold_position")
-   pack_rows(x,"Group 1", 1,3) %>%
-   pack_rows(x,"Group 2", 5,6)
+    group_rows("Weibull Model Fit", 1, 3) %>%
+    group_rows("Log-normal Model Fit", 4,6)%>%
+    group_rows("Log-logistic Model Fit", 7,9)%>%
+    kable_styling(position = "center", latex_options="HOLD_position")
 ```
 
 
 Q-Q plots were also prepared for each distribution, and are provided in the Appendix. Based on inspection of the Q-Q plots and the K-M overlay plots, we found that the Weibull model appears to provide the best fit. In addition, it was noted that the confidence intervals for point estimation were overall more narrow for the Weibull model compared to log-normal and log-logistic. It was also observed that the point estimate for median is close to that identified by the Kaplan-Meier approach (29 months in K-M estimation, 30 months when estimating with Weibull fit). We propose the Weibull model as descriptive of the post-myocardial infarction survival data.
+
+
 
 ## Regression Analysis - Cox Proportional Hazard Modeling 
 
@@ -586,7 +589,7 @@ Regression analysis was conducted to identify the relationship between potential
   \item[$\bullet$] Fractional Shortening
 \end{description}
 
-A model employing all of the covariates listed above was created. In order to test validit of the proportional hazard assumption, survival curves stratified by group were assessed for each of the four selected covariates. It was found that the proportional hazard assumption does not hold, as hazards for each group cross over with time for each covariate. 
+A model employing all of the covariates listed above was created. In order to test validity of the proportional hazard assumption, survival curves stratified by group were assessed for each of the four selected covariates. It was found that the proportional hazard assumption does not hold, as hazards for each group cross over with time for each covariate. 
 
 This limitation was addressed through the identification of survival time subsets in which covariates met the proportional hazards assumption, and could thus be employed as predictor variables. These subsets were identified by inspecting hazard function data stratified on all covariates and identifying regions of crossover. (See Appendix for plots of stratified hazard functions with the approximate crossover regions marked).
 
@@ -712,6 +715,23 @@ t3 <-
     tab_spanner = c("Model 1", "Model 2", "Model 3")
   )
 ```
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+
+library(kableExtra)
+param.est = data.frame(read_excel("param.est.xlsx"))
+kable(param.est, 
+      col.names = c("Quantile", "Point Estimate", "95% LCL", "95% UCL", 
+      "Interval Length"),
+       caption="Parametric Model Estimates",align="c", digits=2)%>%
+    group_rows("Weibull Model Fit", 1, 3) %>%
+    group_rows("Log-normal Model Fit", 4,6)%>%
+    group_rows("Log-logistic Model Fit", 7,9)%>%
+    kable_styling(position = "center", latex_options="HOLD_position")
+```
+
+
+
 For Model 1, the significant predictors of survival time are identified as Fractional Shortening and its interaction with Wall Motion Score. Although Wall Motion Score does not have a significant effect on survival as a main effect, it is retained due to is presence in the interaction term.  
 
 For Model 2, the significant predictor of survival time is identified as patient age. Age is found to have a very weak effect on survival; none of the echocardiographic covariates had an impact on survival in this time region. Both these findings are supported by inspection of the stratified hazard function plots.  
