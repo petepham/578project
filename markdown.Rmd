@@ -1,6 +1,6 @@
 ---
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
-author: "Research: Kaelin Alvein  \n  Parametric Methods: Patricia Orr  \n  Non-Parametric Methods: Pete Pham"
+author: "Research: Kaelin Alvein  \n  Parametric Methods and Regression Analysis: Patricia Orr  \n  Non-Parametric Methods: Pete Pham"
 date: "6/12/2020"
 output: pdf_document
 ---
@@ -571,7 +571,7 @@ Q-Q plots were also prepared for each distribution, and are provided in the Appe
 
 ## Regression Analysis - Cox Proportional Hazard Modeling 
 
-Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicolinearity (see Appendix for plots of the covariates). Potential dependency was observed between Fractional Shortening, E-Point Septal Separation, and Left Ventrical Diastolic Dysfunction. Mechanistically, this is intuitive, since all three variables measure ventrical diastolic behavior. Models were fit with each of these colinear variables, and based on this assessment of Fractional Shortening was selected for inclusion in the final covariate pool of potential prognostic factors for regression. These covariates are:  
+Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicollinearity (see Appendix for plots of the covariates). Potential dependency was observed between Fractional Shortening, E-Point Septal Separation, and Left Ventrical Diastolic Dysfunction. Mechanistically, this is intuitive, since all three variables measure ventrical diastolic behavior. Models were fit with each of these collinear variables, and based on this assessment of Fractional Shortening was selected for inclusion in the final covariate pool of potential prognostic factors for regression. These covariates are:  
 
 \begin{description}
   \item[$\bullet$] Age
@@ -598,127 +598,18 @@ The three models are summarized below:
 
 ```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
 
-
-library("gtsummary")
-LL=0.0
-UL=26.0
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
-status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
-Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
-mod1=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=3
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t1 <-
-  mod1 %>%
-  tbl_regression(exponentiate = TRUE)%>%
-  add_nevent()
-
-LL=26
-UL=46
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
-status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
-Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
-mod2=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=1
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t2 <-
-  mod2 %>%
-  tbl_regression(exponentiate = TRUE) %>%
-  add_nevent()
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>UL]
-status=df.new$Status[df.new$Survival>UL]
-Age=df.new$Age[df.new$Survival>UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
-mod3=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=1
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t3 <-
-  mod3 %>%
-  tbl_regression(exponentiate = TRUE)%>%
-  add_nevent()
-
-# merge tables 
-
-  tbl_merge(
-    tbls = list(t1, t2, t3),
-    tab_spanner = c("Model 1", "Model 2", "Model 3")
-  )
-```
-
-```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
-
+options(knitr.kable.NA = '')
 library(kableExtra)
-param.est = data.frame(read_excel("param.est.xlsx"))
-kable(param.est, 
-      col.names = c("Quantile", "Point Estimate", "95% LCL", "95% UCL", 
-      "Interval Length"),
-       caption="Parametric Model Estimates",align="c", digits=2)%>%
-    group_rows("Weibull Model Fit", 1, 3) %>%
-    group_rows("Log-normal Model Fit", 4,6)%>%
-    group_rows("Log-logistic Model Fit", 7,9)%>%
-    kable_styling(position = "center", latex_options="HOLD_position")
+models = data.frame(read_excel("models.xlsx"))
+kable(models, 
+     col.names =c("Covariate","HR","95% CI","p-val", "HR","95% CI","p-val","HR","95% CI","p-val"),
+      caption="Summary of CoxPH Regression Models",align="c", digits=2)%>%
+      add_header_above(c(" " = 1,"n = 77; #events = 37" = 3, "n = 42; #events = 40" = 3, 
+                         "n = 11; #events = 11" = 3),font_size = 8)%>%
+      add_header_above(c(" " = 1,"LRT = 10.34 on 3 df; p = 0.02" = 3, "LRT = 13.9 on 1 df; p = 0.05" = 3, 
+                         "LRT = 10.34 on 1 df; p = 0.1" = 3),font_size = 8)%>% 
+      add_header_above(c(" " = 1,"Model 1" = 3, "Model 2" = 3, "Model 3" = 3)) %>%
+     kable_styling(position = "center", latex_options="HOLD_position")
 ```
 
 
@@ -918,7 +809,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
   rare <- F
   # rare = T indicates that the smallest observation is censored
   if(time[1] < survtime[1]) {
-    print("Smallest observation is censored!")
+    #print("Smallest observation is censored!")
     survp <- c(1 - adjpb, survp)
     survtime <- c(time[1], survtime)
     rare <- T
@@ -947,7 +838,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
     exactall.sevq <- log(quant.exactall)
     # standard extreme value quantile
     exactall.logtime <- log(exactall.survtime)
-    print(data.frame(exactall.logtime, exactall.sevq))
+    #print(data.frame(exactall.logtime, exactall.sevq))
     ############### 
     ok <- status == 1
     t.s.exact <- summary(survfit(Surv(time[ok], status[ok])~1, type
@@ -965,7 +856,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
     exact.sevq <- log(quant.exact)
     # standard extreme value quantile
     exact.logtime <- log(exact.survtime)
-    print(data.frame(exact.logtime, exact.sevq))
+    #print(data.frame(exact.logtime, exact.sevq))
     ###############
     n <- length(time)
     t.ss <- rep(0, n)
@@ -982,7 +873,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
                        loglogistic = exp(qlogis(1 - t.ss))))
     # standard extreme value quantile
     logtime <- log(time)
-    print(data.frame(logtime, sevq))
+    #print(data.frame(logtime, sevq))
     ######## Multiple Plot starts ##########
     xrange <- range(c(exactall.sevq, exact.sevq, sevq))
     yrange <- range(c(exactall.logtime, exact.logtime, logtime))
@@ -1029,7 +920,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
                        loglogistic = exp(qlogis(1 - t.ss))))
     # standard extreme value quantile
     logtime <- log(time)
-    print(data.frame(logtime, sevq))
+    #print(data.frame(logtime, sevq))
     par(mar = c(5, 5, 2, 2))
     plot(sevq, logtime, type = "n", xlab = xlabs, ylab = 
            "Ordered Log Time", ...)
@@ -1071,7 +962,7 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
     text(x3, yn[5], "deleting censored", adj = 0)
   }
   on.exit()
-  paste("Q-Q plot for", distribution, "done")
+  #paste("Q-Q plot for", distribution, "done")
 }
 
 months=df.new$Survival
@@ -1155,10 +1046,88 @@ p$plot + geom_vline(xintercept=26)+
 
 ## Regression Model Diagnostics
 
-Cox-Snell residual plot for assessment of overall model fit and dfbeta residual plots for evaluation of constant coefficients are presented below for each of the three models. It can be seen that the Models 1 and 2 fit the data well overall given that the Cox-Snell residuals fall closely along the straight line. and that Schoenfeld residuals are symmetric about 0 with large p-values. However, these assumptions are not met for Model 3, which is not unexpected due to the small sample size. 
+Cox-Snell residual plot for assessment of overall model fit and Schoenfeld residual plots for evaluation of constant coefficients are presented below for each of the three models. It can be seen that the Models 1 and 2 fit the data well overall given that the Cox-Snell residuals fall closely along the straight line. and that Schoenfeld residuals are symmetric about 0 with large p-values. However, these assumptions are not met for Model 3, which is not unexpected due to the small sample size. 
 
-```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+```{r echo = FALSE, fig.align='center', out.width = "80%",results = "asis", message = FALSE}
 #Cox-Snell residual analysis for overall model fit
+LL=0.0
+UL=26.0
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
+W.MS=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
+F.Short=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
+
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod1=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=3
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+LL=26
+UL=46
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
+W.MS=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
+F.Short=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod2=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+#Subset the data based on the time region 
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>UL]
+status=df.new$Status[df.new$Survival>UL]
+Age=df.new$Age[df.new$Survival>UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>UL]
+W.MS=df.new$WMS[df.new$Survival>UL]
+F.Short=df.new$F.Shortening[df.new$Survival>UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
+mod3=cph.fit2
 
 status=df.new$Status[df.new$Survival>=0 & df.new$Survival<=26]
 rc=abs(status - mod1$residuals)
@@ -1182,7 +1151,7 @@ plot(rcu,-log(surv.rc),type="p",
      main="Model 2 - Cox-Snell residual model fit evaluation")
 abline(a=0,b=1); abline(v=0); abline(h=0)
 
-months=df.new$Survival[df.new$Survival>46]
+status=df.new$Status[df.new$Survival>46]
 rc=abs(status - mod3$residuals)
 km.rc = survfit(Surv(rc,status)~1)
 summary.km.rc=summary(km.rc)
@@ -1193,19 +1162,35 @@ plot(rcu,-log(surv.rc),type="p",
      main="Model 3 - Cox-Snell residual model fit evaluation")
 abline(a=0,b=1); abline(v=0); abline(h=0)
 
-#Schoenfeld residuals; test for constant coefficients 
+```
 
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+#Schoenfeld residuals; test for constant coefficients 
 test.ph <- cox.zph(mod1)
 ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 1",font.y=8)
+
+
+```
+
+
+```{r echo = FALSE, fig.align='center', out.width="80%", results = "asis", message = FALSE}
 
 test.ph <- cox.zph(mod2)
 ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 2",font.y=8)
 
 test.ph <- cox.zph(mod3)
-ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 3",font.y=8)
-
+ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 3",font.y=8) 
 ```
 
+\newpage
+## Pairs Plot of Covariates
+
+Pairs plots of the prognistic factors in the dataset are provided below. These plots were investigated as part of the covariate selection process for identification of possible multicollinearity. 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+df=data.frame(df.new$P.Effusion,df.new$Age,df.new$F.Shortening,df.new$EPSS,df.new$LVDD,df.new$WMS)
+pairs(df) 
+```
 
 \newpage
 
