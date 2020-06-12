@@ -23,6 +23,7 @@ library(ggplot2)
 library(ggpubr)
 library(MASS)
 library(SurvCorr)
+library(broom)
 
 df = data.frame(read_excel("df.xlsx"))
 df[df=="?"] = " "
@@ -35,15 +36,15 @@ s.df = Surv(df.new$Survival,df.new$Status)
 
 # Abstract
 
-$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurrence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities (Gu, et al 1999). However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients (Rimm, et al. 1995).
+$\textbf{Background:}$ The rates of myocardial infarction is becoming an increasing common occurrence in the United States. Rapid development of medical technology and knowledge have led to an decline in myocardial infarction fatalities^6^. However, there is much to be learned regarding the survival probabilities of patients following an infarction episode.Some studies have already examined the effects of externalities on the survival rates of these patients^8^.
 
 $\textbf{Objective:}$ Our goal is to provide detailed survival statistics of patients during a post-myocardial infarction time period with specific concern addressed to age, ventricular activity, and physiological cardiac state. Using these variables,  we aim to provide succinct information on the current state of the dataset as well as provide robust predictors for the future estimates of survival for future patients.
 
 We aim to fit non-parametric (Kaplan-Meier) and parameters curves to describe the data as well as choose a regression model to be used for predictive survivability. 
 
-$\textbf{Methods:}$ Data from 133 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
+$\textbf{Methods:}$ Data from 130 post-myocardial infarction patients measure the time in months until death in a one year monitoring period of follow-up. We use a combination of non-parametric (Kaplan-Meier) and parametric methods (Weibull, Log-Normal, Log-Logistic, Cox PH) to determine estimates of survival among gender and physiological cardiac state (contraction depth, muscular activity, anatomical status). We fit multiple distributions over the dataset to provide current-state information of the patient dataset. Then, we regress multiple models and use combination of Akaike Information  (AIC) statistics, logistic ratio tests, and residual analysis to determine model adequacy. 
 
-$\textbf{Results:}$ Initial non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups. We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
+$\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival time of ~30 months for all age groups with the exception of pericardial effusion presence. Patients with pericardial effusion have a slightly lower . We choose a Weibull regression fit (tentative) for predictive model as we have favorable AIC, ratio, and residual indicators out of all of our model.
 
 $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, when examining the survival times for the Kaplan-Meier step curve, we see that the younger age groups do survive as well as their older counterparts. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
 
@@ -51,16 +52,16 @@ $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regressio
 
 # Introduction
 
-Heart disease has become the leading cause of US deaths among all racial and ethnic groups (Heron 2019, Fryar 2012). In 2009 cardiovascular disease represented nearly 64% of all cardiac related deaths (Dalen, et. Al. 2014). These myocardial infarction – commonly known as heart attacks - are becoming largely common among all U.S. demographic populations. As such, researchers are looking to understand the underlying causes of these episodes. Specifically, increases in cardiovascular disease (CVD) cases have been largely attributed to many risk factors such as high levels of low-density lipoproteins (LPL), high blood pressure, and smoking (Fryar 2012). 
+Heart disease has become the leading cause of US deaths among all racial and ethnic groups^2,7^. In 2009 cardiovascular disease represented nearly 64% of all cardiac related deaths^4^. These myocardial infarction – commonly known as heart attacks - are becoming largely common among all U.S. demographic populations. As such, researchers are looking to understand the underlying causes of these episodes. Specifically, increases in cardiovascular disease (CVD) cases have been largely attributed to many risk factors such as high levels of low-density lipoproteins (LPL), high blood pressure, and smoking^2^. 
 
-These variables are often the results of lifestyle choices and effects of poverty. The prevalence of the disease has closely been followed a large body of conducted researchers aiming to reduce either the number of these cases or reduce the mortality of the specific myocardial infarction rates. Between 1980 and 2002, mortality rates saw a decrease of approximately 49% (Wilmot 2015). Decreases in mortality was common through the world better medical intervention techniques and increase awareness of healthier lifestyle choices became more prevalent (Goldman, et al. 1984).	
+These variables are often the results of lifestyle choices and effects of poverty. The prevalence of the disease has closely been followed a large body of conducted researchers aiming to reduce either the number of these cases or reduce the mortality of the specific myocardial infarction rates. Between 1980 and 2002, mortality rates saw a decrease of approximately 49%^15^. Decreases in mortality was common through the world better medical intervention techniques and increase awareness of healthier lifestyle choices became more prevalent^5^.	
 
-Unsurprisingly, as more patients survive CVD related infarction episodes, more detail has been paid to understand the survivability the time period following an episode. Wall motion score (a measure of heart contractility during cycling) was significantly higher in those that survived versus those that died (Kan, et. Al. 1986). We hope to examine several factors that determine survivability among these patients. In addition to wall motion score, we hope to stratify and understand the relationships between time to event (death) measurements compared to general heart health and age. Our goal is to describe the survivability of our dataset and provide a model to predict the factors that determine survivability in the one-year period following a myocardial infarction episode.
+Unsurprisingly, as more patients survive CVD related infarction episodes, more detail has been paid to understand the survivability the time period following an episode. Wall motion score (a measure of heart contractility during cycling) was significantly higher in those that survived versus those that died^7^. We hope to examine several factors that determine survivability among these patients. In addition to wall motion score, we hope to stratify and understand the relationships between time to event (death) measurements compared to general heart health and age. Our goal is to describe the survivability of our dataset and provide a model to predict the factors that determine survivability in the one-year period following a myocardial infarction episode.
 
 
 # Dataset
 
-Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractal shortening, EPSS, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
+Our data was obtained our data set from Kaggle via the Reed Institute. The data set contains 133 total patient observations across 8 variables: status at the end of the survival period, age, presence of pericardial effusion, fractional shortening, EPSS, wall motion score, wall motion index, and alive at the end of one year. Three patient survival times were not given; thus, we elected to remove those values to develop the most accurate portrayal of survival times. 
 
 Since the time of myocardial infarction varies (depending if a patient joined the study prior to the start), some patients were followed for less than a year. This provides a clear censoring and truncation. We discuss the nature of censoring in the following section.
 
@@ -68,7 +69,7 @@ At this point, 40 points of data were missing from the total dataset. A random f
 
 We then classify continuous variables into groups for stratification. 
 
-Age is divided into three groups with 0 denoting younger than 55 years, 1 denoting 55 to 70 years, and 2 denoting older than 70 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Finally, wall motion score is divided into three groups: 0 denoting scores less than 12, 1 denoting scores of 12 - 17, and 2 denoting scores greater than 14. These groups are summarized in the table below:
+Age is divided into two groups with 0 denoting younger than 63 years, 1 denoting older or equal to 63 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Wall motion score is divided into two groups: 0 denoting scores less than 14, 1 denoting scores greater than or equal to 14. Finally, we divided fractional shortening into two strata as well with 0 being lengths being less than 0.2 seconds and 1 being greater than or equal to 0.2 seconds.
 
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
@@ -123,11 +124,11 @@ df.new$EPSS.s = EPSS.s
 
 ```
 
-We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbor (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset (Stekhoven 2012). The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
+We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbor (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset^12^. The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
 
 We used the missFortune package to run up to 500 iterations. Each iteration was allotted 1000 trees for the random forest algorithmic approach.
 
-Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE, Oba et al. (2003)). The general performance of our imputed dataset can be expressed by:
+Following imputation, we verify the imputation accuracy using the normalized root mean squared error as an indicator of accuracy (NRMSE)^8^. The general performance of our imputed dataset can be expressed by:
 
 \[ NRMSE\ =\ \sqrt{\frac{mean\left(\left(X^{true}-X^{imp}\right)^2\right)}{var\left(X^{true}\right)}} \]
 
@@ -148,7 +149,7 @@ Here, we briefly review the methodology and theory behind our analysis technique
 
 ## Non-Parametric: Kaplan Meier
 
-We use Kaplan-Meier (KM) survival estimators to model a step curve for the survival of our censored dataset. The KM estimator is an adjustment of an empirical survival function to reflect the presence of right-censored observations (Tableman & Kim, 2004). The estimator can be described in the following equation:
+We use Kaplan-Meier (KM) survival estimators to model a step curve for the survival of our censored dataset. The KM estimator is an adjustment of an empirical survival function to reflect the presence of right-censored observations^14^. The estimator can be described in the following equation:
 
 \[ \hat{S}(t) = \prod_{y_{(i)}\leq{t}}^{k} p_i = \prod_{i=1}^{k} (\frac{n_i -d_i}{n_i}) \]
 
@@ -156,7 +157,18 @@ Where $n_i$ is the number alive before time $y_i$ and $d_i$ is the number of eve
 
 \[ \hat{S}(t) = \prod_{i=1}^{131} (\frac{n_i -d_i}{n_i}) \]
 
-We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericardial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit.
+We use this equation to estimate the survival at each time interval. We conduct this analysis for the whole data set and then choose to stratify on age, pericardial effusion presence, and wall motion score. We also include cumulative hazard estimators based on the KM fit. Additionally, as we stratify groups by covariates, we use the Mantel-Haenszel/log-rank test. The following equation is used to calculate the test statistic in order to compare two strata^14^:
+
+\[ Mantel-Haenszel Statistic = \frac
+{\sum_{i=1}^{k} (a_i-E_{0}(A_i))}
+{\sqrt{\sum_{i=1}^{k} Var_0 (A_i)}}
+\]
+
+Where,
+
+\[E_0(A) = \frac{m_1 n_1}{n} \;\; and \;\;\; Var_0(A) =\frac{m_1(n-m_1)}{n-1}*\frac{n_1}{n}(1-\frac{n_1}{n})\]
+
+We then use the Mantel-Haenzel statistics to perform a standard chi-square test to examine the differences between our strata.
 
 ### Cumulative Hazard Estimator
 
@@ -209,8 +221,6 @@ Use of the Cox PH model requires that the baseline hazard is not dependent on th
 
 ## Non-Parametric: Kaplan-Meier Survival Estimates
 
-### Comparison of Whole Dataset (Non-Stratified)
-
 Kaplan-Meier estimates give us the following curve (full KM estimator table can be found in the appendix).
 
 ```{r km.all, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
@@ -242,7 +252,10 @@ kable(ks1, caption="Kaplan-Meier Estimates for All Groups",align="c", digits=2) 
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
-The Kaplan-Meier estimates for for all groups within our dataset is shown above. The curve follows a general pattern of decreasing survivability over time.  With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is 29 months with 95% confidence limits between 27 and 33 months. 
+
+The Kaplan-Meier estimates for for all groups within our dataset is shown above. The curve follows a general pattern of decreasing survivability over time. With time spanning to a maximum of 57 months, we have  a mean survival time of approximately 30.5 months. The median survival time is 29 months with 95% confidence limits between 27 and 33 months. 
+
+When testing for significant difference between strata groups we use the log-ran
 
 ```{r kmhaz.all, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.all = ggsurvplot(km.all, 
@@ -264,7 +277,7 @@ haz.all
 
 
 
-To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractal shortening. We first begin exploring the effects of age and pericardial effusion presence:
+To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractional shortening. We first begin exploring the effects of age and pericardial effusion presence:
 
 
 ### Stratified by Age and Pericardial Effusion Presence
@@ -316,6 +329,24 @@ kable(ks2.3, caption="Kaplan-Meier Estimates Stratified by Age and Pericardial E
   kable_styling(position = "center", latex_options="hold_position")
 ```
 
+```{r ks2.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
+
+km.agediff = survdiff(s.df~Age.s, data = df.new)
+km.effusiondiff = survdiff(s.df~P.Effusion, data = df.new)
+
+ks2.diff = data.frame(tidy(km.agediff))
+ks3.diff = data.frame(tidy(km.effusiondiff))
+
+ks2.diff = ks2.diff[,c(2,3,4)]
+ks3.diff = ks3.diff[,c(2,3,4)]
+ks2.3diff = rbind(ks2.diff,ks3.diff)
+colnames(ks2.3diff) = c("N","Observed","Expected")
+rownames(ks2.3diff) = c("Age < 63", "Age \u2265 63","Absent","Present")
+
+kable(ks2.3diff, caption = "Summary of Differences Between Strata")
+
+```
+
 When stratified by age, we find a slight difference between the curves. The age group younger than 63 has a mean survival time of 30.47 months with a median survival time of 29 months. The older group - ages greater than 63 - has a similar mean survival time of 30.6 months and a slightly longer median survival time of 32 months. When comparing the presence of pericardial effusion, there are 106 cases where the effusion is absent, while 24 cases have the effusion present. The mean survival time when pericardial effusion is absent is 30.63 months with a median survival time of 31 months. For converse case, the mean survival time is 29.94 months while the median is lower at 27 months.
 
 ```{r km.haz1, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
@@ -347,12 +378,13 @@ haz.p1[[2]] = ggsurvplot(km.effusion,
 
 arrange_ggsurvplots(haz.p1, print=TRUE, ncol=2, nrow=1)
 ```
+
 For both groups, there does not seem to be a large departure from cumulative hazard. When stratifying by age, we see a slight increase in cumulative hazard of the younger group between 30 and 50 months. After that mark, the older group experiences a relative increase in cumulative hazard. When stratified by pericardial effusion presence, very little difference can be observed with any difference being the result of sample size differences.
 
 
-### Stratified by Wall Motion Score and Fractal Shortening Length:
+### Stratified by Wall Motion Score and fractional Shortening Length:
 
-We then explore the effects of wall motion score and fractal shortening:
+We then explore the effects of wall motion score and fractional shortening:
 
 ```{r km.wms.fshort, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 km.p2 = list()
@@ -373,7 +405,7 @@ km.p2[[1]] = ggsurvplot(km.wms,
 km.fshort = survfit(s.df~Fshort.s, type="kaplan-meier", data = df.new)
 km.p2[[2]] = ggsurvplot(km.fshort, 
                            palette = c("darkcyan","darkgoldenrod3"), 
-                           subtitle="Survival, Stratified by Fractal Shortening",
+                           subtitle="Survival, Stratified by fractional Shortening",
                            font.subtitle = c(10,"italic"),
                            font.x = c(9, "bold.italic"),
                            font.y = c(9, "bold.italic"),
@@ -395,13 +427,34 @@ ks4.5 = ks4.5[,c(1,4,5,7,8,9)]
 colnames(ks4.5) = c("Records","Events","Mean","Median","Median 0.95 LCL","Median 0.95 UCL")
 rownames(ks4.5) = c("Score < 14", "Score \u2265 14","Length < 0.2", "Length \u2265 0.2")
 
-kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and Fractal Shortening",align="c", digits=2) %>%
+kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and fractional Shortening",align="c", digits=2) %>%
   kable_styling(position = "center", latex_options="hold_position")
+```
+
+```{r ks4.5.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
+
+km.agediff = survdiff(s.df~WMS.s, data = df.new)
+km.fshortdiff = survdiff(s.df~Fshort.s, data = df.new)
+
+ks4.diff = data.frame(tidy(km.agediff))
+ks5.diff = data.frame(tidy(km.effusiondiff))
+
+ks4.diff = ks4.diff[,c(2,3,4)]
+ks5.diff = ks5.diff[,c(2,3,4)]
+ks4.5diff = rbind(ks2.diff,ks3.diff)
+colnames(ks4.5diff) = c("N","Observed","Expected")
+rownames(ks4.5diff) = c("Wall Motion Score < 14", "Wall Motion Score \u2265 14","Fractional Shortening < 0.2", "Fractional Shortening \u2265 0.2")
+
+
+kable(ks4.5diff, caption = "Summary of Differences Between Strata")
+
+```
+
 ```
 
 When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
 
-When stratified by fractal shortening length, both groups have a similar mean at approximately 30.4 months. When fractal shortening is less than 0.2, the median survival time is 31 months while having a fractal shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
+When stratified by fractional shortening length, both groups have a similar mean at approximately 30.4 months. When fractional shortening is less than 0.2, the median survival time is 31 months while having a fractional shortening length that is greater than 0.2, we have a slightly lower median survival time of 29 months.
 
 ```{r km.haz2, fig.align='center', echo=FALSE, fig.height=4, fig.width=10}
 haz.p2 = list()
@@ -421,7 +474,7 @@ haz.p2[[1]] = ggsurvplot(km.wms,
 haz.p2[[2]] = ggsurvplot(km.fshort,
            fun = "cumhaz",
            palette = c("darkcyan","darkgoldenrod3"), 
-           title="Cumulative Hazard, Stratified by Fractal Shortening",
+           title="Cumulative Hazard, Stratified by fractional Shortening",
            font.title = c(10,"bold.italic"),
            font.x = c(9, "bold.italic"),
            font.y = c(9, "bold.italic"),
@@ -436,7 +489,7 @@ arrange_ggsurvplots(haz.p2, print=TRUE, ncol=2, nrow=1)
 
 Here, we see some minute differences between the hazard curves. When stratified by Wall Motion Score, we see some overlap in the initial stages of the study as well as around approximately 35 months. The exceptions are seen with higher wall motion scores seeing increased risk before the median and decreased relative risk after the median. The converse is seen for the lower wall motion scores.
 
-When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractal shortening lengths have less risk after the median.
+When stratified by fractral shortening, the cumulative hazard curves are approximately similar with higher fractional shortening lengths have less risk after the median.
 
 ## Parameter Estimation
 
@@ -639,19 +692,17 @@ Model residual diagnostics were assessed for all three models. Models 1 and 2 sh
 
 # Discussion
 
-[Add F-shortening discussion]
-
 ## Explanation of results
-In our non-parametric analysis, median survival times for nearly all of the stratification elements show similar results. The exception of these results are patients with pericardial effusion present and high wall motion scores. Well functioning hearts generally do not have this effusion present as [insert additional explanation of the pathology]. Wall motion scores reflecting heart muscle activity outside of the 12-14 range indicate abnormal heart function. This too, may be hinting at the survivability of post-infarction patients. 
-
-An interesting observation of non-parametric analysis when stratified on age shows a lower survivability in the younger age groups. Intuitively, we would expect higher survivability given that younger patients have more robust bodies. An explanation could be the externalities attached to having a heart attack at such young ages. For example, if a patient is young and at risk for heart attacks, then it's likely that that patient is already at risk for other factors, increasing the relative risk for that group.
+In our non-parametric analysis, median survival times for nearly all of the stratification elements show relatively similar results with the exception of high wall motion scores. When stratified by age group, we see relatively similar survival proportions with some distinction before and after the median. Before the median, the older group has a slightly lower survival proportion. However, after the median, the older group has a slightly higher survival proportion before 45 months. This slight discrepancy could be due to the externalities attached to young heart attack patients. If patients are experiencing heart attacks at a younger age, there could be higher chances that those patients already have other health concerns. Patients experiencing and surviving a heart attack at older ages could be in physically superior condition than their younger counterparts. All other stratification groups show relatively similar median survival proportions. An interesting observation can be seen when we arbitrarily divide the age strata into three groups. We see a much greater risk associated with patients younger than 55 while all other age groups perform similarly.
 
 In the parametric analysis, it was found that the survivor data is well-described by the Weibull distribution. This finding enables the construction of a continuous survivor function and provides the opportunity for flexible point estimation as well as estimation of survival probability over a given input time. Semi-parametric modeling was also performed. Three Cox Proportional Hazards models were developed that described the relationship between prognostic factors and survival; one for short survival times; one for intermediate survival times; and another for long survival times. Given a small sample size for long survival times, only the first two models were significant. A key finding from this analysis is that when survival time is shorter, abnormalities in the echocardiographic profile of the patient's heart are what predict survival, rather than age. Conversely, when the survival times are longer, it is the age of the patient that predicts survival (albeit weakly), rather than any of the echocardiographic properties do not. This is consistent with the behavior of the stratified hazard curves for these variables over time. This result seems to imply that in the acute recovery period following a myocardial infarction, patient prognosis is closely tied to heart health; but as time progresses, patient age becomes the key driver of prognosis. This finding is intuitive, since as treatment and recovery progress over time, risk related to the myocardial event would decrease and other pre-existing risks would play a larger role in survival. 
 
 ## Summary of Limitations
 Very clearly, our data is smaller than we hoped for, both in the number of observations and in the availability of meaningful prognostic factors. Development of a single large regression fit that reliably predicts covariates would require a much larger dataset. In particular, the lack of gender as an available covariate is a potential limitation of our data, as the effect of gender on heart-related survival is well established in the literature. Longer collection period over a greater number of patients would yield stronger regression model development. As-is, there is not enough data to produce a significant model across the entire survival time window. 
 
-A particular limitation related to subgroup dimension was identified through the stratification analysis. Examination of stratified data showed relative unequal distributions among groups. For example, when examining pericardial effusion, we compare 106 records of with effusion absent to 24 records of effusion present. Such comparisons are unequal comparisons. 
+A particular limitation related to subgroup dimension was identified through the stratification analysis. Examination of stratified data showed relative unequal distributions among groups. For example, when examining pericardial effusion, we compare 106 records of with effusion absent to 24 records of effusion present. Given that the collection methods are unclear and the groups sizes are so much different form each other, we cannot fully be confident in our results. Such comparisons are unequal comparisons. 
+
+Finally, the given dataset did not have clear statements as to what data collection methods were used. Given our smaller sample size and these unknown methods, we cannot be entirely confident that our results reflect the survival behavior of the population as a whole. Future studies would benefit greatly 
 
 ## Conclusion
 This study identified a variety of properties of the post-myocardial infarction survival data. The overall survival function was characterized by both non-parametric Kaplan-Meier and Weibull models, and point estimates determined. Analysis of the effect of echocardiographic data and of age on survival was performed both by inspection of stratified survival curves and by regression analysis. Findings included that age group has an impact on survival, but that this effect potentially varies over time, and that certain heart-related prognostic factors (in particular wall motion score and its interaction with fractional shortening) also have an impact on survival that varies over time. We conclude that future studies should expand on collection of variables that could potentially influence survivability, as well as the cohort size and length of follow-up period. Interesting effects to include may include poverty, diet, ethnicity, race, sex, and even work place stress/effects. Finally, further investigation with a larger dataset on the relationship between acute survival time and echocardiographic data profile and between the relationship of age group on survival data  may yield useful insights into specific risk profiles for post-myocardial infarction patients. 
@@ -662,30 +713,35 @@ This study identified a variety of properties of the post-myocardial infarction 
 
 ## References
 
-Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G., Stefanadis, C. I., … Chimonas, E. T. (2006). Younger age potentiates post myocardial infarction survival disadvantage of women. International Journal of Cardiology, 108(3), 320–325. doi: 10.1016/j.ijcard.2005.05.016
+1. Andrikopoulos, G. K., Tzeis, S. E., Pipilis, A. G., Richter, D. J., Kappos, K. G., Stefanadis, C. I., … Chimonas, E. T. (2006). Younger age potentiates post myocardial infarction survival disadvantage of women. International Journal of Cardiology, 108(3), 320–325. doi: 10.1016/j.ijcard.2005.05.016
 
-Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
+2. Fryar CD, Chen T-C, Li X. Prevalence of uncontrolled risk factors for cardiovascular disease: United States, 1999–2010 pdf icon[PDF-494K]. NCHS data brief, no. 103. Hyattsville, MD: National Center for Health Statistics; 2012. Accessed May 9, 2019.
 
-Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
+3. Ford, E. S., & Capewell, S. (2007). Coronary Heart Disease Mortality Among Young Adults in the U.S. From 1980 Through 2002. Journal of the American College of Cardiology, 50(22), 2128–2132. doi: 10.1016/j.jacc.2007.05.056
 
-Goldman, L. (1984). The Decline in Ischemic Heart Disease Mortality Rates. Annals of Internal Medicine, 101(6), 825. doi: 10.7326/0003-4819-101-6-825
-Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
-Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
+4. Dalen JE, Alpert JS, Goldberg RJ, Weinstein RS. The epidemic of the 20(th) century: coronary heart disease. Am J Med. 2014;127(9):807‐812. doi:10.1016/j.amjmed.2014.04.015
 
-Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
-Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
+5. Goldman, L. (1984). The Decline in Ischemic Heart Disease Mortality Rates. Annals of Internal Medicine, 101(6), 825. doi: 10.7326/0003-4819-101-6-825
 
-Rimm, E. B., Stampfer, M. J., Giovannucci, E., Ascherio, A., Spiegelman, D., Colditz, G. A., & Willett, W. C. (1995). Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men. American Journal of Epidemiology, 141(12), 1117–1127. doi: 10.1093/oxfordjournals.aje.a117385 
+6. Gu K, Cowie CC, Harris MI. Diabetes and Decline in Heart Disease Mortality in US Adults. JAMA. 1999;281(14):1291–1297. doi:10.1001/jama.281.14.1291
 
-Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
+7. Heron, M. Deaths: Leading causes for 2017 pdf icon[PDF – 3 M]. National Vital Statistics Reports;68(6). Accessed November 19, 2019.
 
-Sia, Y. T., Parker, T. G., Liu, P., Tsoporis, J. N., Adam, A., & Rouleau, J. L. (2002). Improved post-myocardial infarction survival with probucol in rats: Effects on left ventricular function, morphology, cardiac oxidative stress and cytokine expression. Journal of the American College of Cardiology, 39(1), 148–156. doi: 10.1016/s0735-1097(01)01709-0
+8. Kan, G., Visser, C., Kooler, J., & Dunning, A. (1986). Short and long term predictive value of wall motion score in acute myocardial infarction. British Heart Journal, 56, 422-427.
 
-Stekhoven, D. J., & Buhlmann, P. (2011). MissForest--non-parametric missing value imputation for mixed-type data. Bioinformatics, 28(1), 112–118. doi: 10.1093/bioinformatics/btr597 
+9. Oba S, Sato MA, Takemasa I, Monden M, Matsubara K, Ishii S. A Bayesian missing value estimation method for gene expression profile data. Bioinformatics. 2003;19(16):2088‐2096. doi:10.1093/bioinformatics/btg287
 
-Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
+10. Rimm, E. B., Stampfer, M. J., Giovannucci, E., Ascherio, A., Spiegelman, D., Colditz, G. A., & Willett, W. C. (1995). Body Size and Fat Distribution as Predictors of Coronary Heart Disease among Middle-aged and Older US Men. American Journal of Epidemiology, 141(12), 1117–1127. doi: 10.1093/oxfordjournals.aje.a117385 
 
-Wilmot, K. A., O’Flaherty, M., Capewell, S., Ford, E. S., & Vaccarino, V. (2015). Coronary Heart Disease Mortality Declines in the United States From 1979 Through 2011CLINICAL PERSPECTIVE. Circulation, 132(11), 997–1002. doi: 10.1161/circulationaha.115.015293
+11. Salzberg, S. (1988). Exemplar-based learning: Theory and implementation (Technical Report TR-10-88). Harvard University, Center for Research in Computing Technology, Aiken Computation Laboratory (33 Oxford Street; Cambridge, MA 02138).
+
+12. Sia, Y. T., Parker, T. G., Liu, P., Tsoporis, J. N., Adam, A., & Rouleau, J. L. (2002). Improved post-myocardial infarction survival with probucol in rats: Effects on left ventricular function, morphology, cardiac oxidative stress and cytokine expression. Journal of the American College of Cardiology, 39(1), 148–156. doi: 10.1016/s0735-1097(01)01709-0
+
+13. Stekhoven, D. J., & Buhlmann, P. (2011). MissForest--non-parametric missing value imputation for mixed-type data. Bioinformatics, 28(1), 112–118. doi: 10.1093/bioinformatics/btr597 
+
+14. Tableman, M., & Kim, J. S. (2004). Survival analysis using S: analysis of time-to-event data. Boca Raton, Florida: Chapman & Hall.
+
+15. Wilmot, K. A., O’Flaherty, M., Capewell, S., Ford, E. S., & Vaccarino, V. (2015). Coronary Heart Disease Mortality Declines in the United States From 1979 Through 2011CLINICAL PERSPECTIVE. Circulation, 132(11), 997–1002. doi: 10.1161/circulationaha.115.015293
 
 
 \newpage
