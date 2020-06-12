@@ -886,7 +886,7 @@ lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
 varstartcount=10
 varendcount=1
 vars=varstartcount - varendcount
-1-pchisq(lrt,vars)
+pval=1-pchisq(lrt,vars)
 
 #Note: selects the reduced model (p-val>0.05)
 
