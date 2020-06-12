@@ -1,7 +1,7 @@
 ---
 title: "Survival Analysis of Post-Myocardial Infarction Patients"
-author: "Research: Kaelin Alvein \linebreak Parametric: Patricia Orr \linebreak Non-Parametric: Pete Pham"
-date: "5/22/2020"
+author: "Research: Kaelin Alvein  \n  Parametric Methods: Patricia Orr  \n  Non-Parametric Methods: Pete Pham"
+date: "6/12/2020"
 output: pdf_document
 ---
 
@@ -48,6 +48,7 @@ $\textbf{Results:}$ Non-parametric Kaplan-Meier curve shows a median survival ti
 
 $\textbf{Conclusion:}$ Thus, for predictive model we found the Weibull regression fit to be the most ideal candidate for modeling survivability for patient groups. Additionally, Kaplan-Meier methods show no large difference between any given group. Given our limited sample size for that population, we recommend continued studies into external effects of the post-myocardial episode survival.
 
+\newpage
 
 # Introduction
 
