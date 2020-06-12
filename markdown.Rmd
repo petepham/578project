@@ -71,7 +71,6 @@ We then classify continuous variables into groups for stratification.
 Age is divided into two groups with 0 denoting younger than 63 years, 1 denoting older or equal to 63 years. Pericardial effusion is already grouped into binary values with 0 denoting the absence of fluid while 1 denotes the presence of the effusion. Wall motion score is divided into two groups: 0 denoting scores less than 14, 1 denoting scores greater than or equal to 14. Finally, we divided fractional shortening into two strata as well with 0 being lengths being less than 0.2 seconds and 1 being greater than or equal to 0.2 seconds.
 
 ```{r groupings.table, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-
 Indicator = c("0","1")
 Age = c("< 63 Years", ">= 63 Years")
 Effusion = c("Fluid is absent", "Fluid is present")
@@ -82,7 +81,6 @@ groupings = data.frame(Indicator, Age, Effusion, WMS, FS)
 
 kable(groupings, caption="Stratification Groupings", align="c") %>%
   kable_styling(position = "center", latex_options="hold_position")
-
 ```
 
 The reader may find a summary of tables and original dataset in the appendix of this paper.
@@ -92,7 +90,6 @@ The reader may find a summary of tables and original dataset in the appendix of 
 In addition to the two rows that we removed, we further modified the dataset. The provided data contains 40 missing values that we chose to impute using the random forest algorithm methods in the missForest R package. The graphic below describes the number of missing values per variable:
 
 ```{r missing.table, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
 missing.data = aggr(df) #visualize the missing information
 
 set.seed(7522) 
@@ -114,13 +111,11 @@ Fshort.s = ifelse(df.impute$F.Shortening < 0.2,0,1) #new fshort strata based on 
 LVDD.s = ifelse(df.impute$LVDD < 4.75,0,1) #new lvdd strata based on imputed data
 EPSS.s = ifelse(df.impute$EPSS < 11.1,0,1)#new epss strata based on imputed data
 
-
 df.new$Age.s = Age.s
 df.new$WMS.s = WMS.s
 df.new$F.Short.s = Fshort.s
 df.new$LVDD.s = LVDD.s
 df.new$EPSS.s = EPSS.s
-
 ```
 
 We leverage the missForest package that uses algorithmic process used here uses a modified k-nearest neighbor (KNN) approach. Using a training data set, the routines of the algorithm predicts the missing values trained on the observed parts of the dataset^12^. The process checks each iteration for an acceptable amount of error. If an iteration produces an error that is smallest than that last iteration, then the algorithm continues to function. This progress stops when an error is larger than the previous iteration. Refer to Stekhoven, et. al 2012 for more detail. 
@@ -329,7 +324,6 @@ kable(ks2.3, caption="Kaplan-Meier Estimates Stratified by Age and Pericardial E
 ```
 
 ```{r ks2.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
-
 km.agediff = survdiff(s.df~Age.s, data = df.new)
 km.effusiondiff = survdiff(s.df~P.Effusion, data = df.new)
 
@@ -342,8 +336,8 @@ ks2.3diff = rbind(ks2.diff,ks3.diff)
 colnames(ks2.3diff) = c("N","Observed","Expected")
 rownames(ks2.3diff) = c("Age < 63", "Age >= 63","Absent","Present")
 
-kable(ks2.3diff, caption = "Summary of Differences Between Strata")
-
+kable(ks2.3diff, caption = "Summary of Differences Between Strata")%>%
+  kable_styling(position = "center", latex_options="hold_position")
 ```
 
 When stratified by age, we find a slight difference between the curves. The age group younger than 63 has a mean survival time of 30.47 months with a median survival time of 29 months. The older group - ages greater than 63 - has a similar mean survival time of 30.6 months and a slightly longer median survival time of 32 months. When comparing the presence of pericardial effusion, there are 106 cases where the effusion is absent, while 24 cases have the effusion present. The mean survival time when pericardial effusion is absent is 30.63 months with a median survival time of 31 months. For converse case, the mean survival time is 29.94 months while the median is lower at 27 months.
@@ -434,7 +428,6 @@ kable(ks4.5, caption="Kaplan-Meier Estimates Stratified by Wall Motion Score and
 ```
 
 ```{r ks4.5.survdiff, fig.align='center', echo=FALSE, results = 'asis'}
-
 km.wmsdiff = survdiff(s.df~WMS.s, data = df.new)
 km.f.shortdiff = survdiff(s.df~Fshort.s, data = df.new)
 
@@ -447,9 +440,8 @@ ks4.5diff = rbind(ks4.diff,ks5.diff)
 colnames(ks4.5diff) = c("N","Observed","Expected")
 rownames(ks4.5diff) = c("Wall Motion Score < 14", "Wall Motion Score >= 14","Fractional Shortening < 0.2", "Fractional Shortening >= 0.2")
 
-
-kable(ks4.5diff, caption = "Summary of Differences Between Strata")
-
+kable(ks4.5diff, caption = "Summary of Differences Between Strata")%>%
+  kable_styling(position = "center", latex_options="hold_position")
 ```
 
 When stratified by wall motion score, we find a difference between the curves. Wall motion scores less than 14 have a mean survival time of 32.17 months with a median survival time of 31 months. Wall motion scores greater or equal to 14 have a lower mean survival time of 28.61 months and a median survival time of 27 months.
@@ -486,7 +478,6 @@ haz.p2[[2]] = ggsurvplot(km.fshort,
            legend.labs = c("< 0.2",">= 0.2"))
 
 arrange_ggsurvplots(haz.p2, print=TRUE, ncol=2, nrow=1)
-
 ```
 
 Here, we see some minute differences between the hazard curves. When stratified by Wall Motion Score, we see some overlap in the initial stages of the study as well as around approximately 35 months. The exceptions are seen with higher wall motion scores seeing increased risk before the median and decreased relative risk after the median. The converse is seen for the lower wall motion scores.
@@ -552,7 +543,6 @@ lines(months.u, Shat.ll, col="darkgoldenrod3",lwd=2,)
 legend(40, 0.8, legend=c("Kaplan", "Weibull"), lwd=2,
        col=c("darkcyan","darkgoldenrod3"), lty=1:1, cex=0.8)
 abline(h=0)
-
 ```
 
 \newpage
