@@ -581,7 +581,7 @@ Q-Q plots were also prepared for each distribution, and are provided in the Appe
 
 ## Regression Analysis - Cox Proportional Hazard Modeling 
 
-Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicolinearity (see Appendix for plots of the covariates). Potential dependency was observed between Fractional Shortening, E-Point Septal Separation, and Left Ventrical Diastolic Dysfunction. Mechanistically, this is intuitive, since all three variables measure ventrical diastolic behavior. Models were fit with each of these colinear variables, and based on this assessment of Fractional Shortening was selected for inclusion in the final covariate pool of potential prognostic factors for regression. These covariates are:  
+Regression analysis was conducted to identify the relationship between potential predictor variables and survival. As a first step, the covariate pool was screened for potential multicollinearity (see Appendix for plots of the covariates). Potential dependency was observed between Fractional Shortening, E-Point Septal Separation, and Left Ventrical Diastolic Dysfunction. Mechanistically, this is intuitive, since all three variables measure ventrical diastolic behavior. Models were fit with each of these collinear variables, and based on this assessment of Fractional Shortening was selected for inclusion in the final covariate pool of potential prognostic factors for regression. These covariates are:  
 
 \begin{description}
   \item[$\bullet$] Age
@@ -608,127 +608,18 @@ The three models are summarized below:
 
 ```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
 
-
-library("gtsummary")
-LL=0.0
-UL=26.0
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
-status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
-Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
-mod1=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=3
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t1 <-
-  mod1 %>%
-  tbl_regression(exponentiate = TRUE)%>%
-  add_nevent()
-
-LL=26
-UL=46
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
-status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
-Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
-mod2=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=1
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t2 <-
-  mod2 %>%
-  tbl_regression(exponentiate = TRUE) %>%
-  add_nevent()
-
-#Subset the data based on the time region 
-
-months=df.new$Survival[df.new$Survival>UL]
-status=df.new$Status[df.new$Survival>UL]
-Age=df.new$Age[df.new$Survival>UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
-
-#Create initial model fit
-
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
-
-#Reduce with StepAIC procedure
-
-cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
-mod3=cph.fit2
-
-lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
-varstartcount=10
-varendcount=1
-vars=varstartcount - varendcount
-pval=1-pchisq(lrt,vars)
-
-#Note: selects the reduced model (p-val>0.05)
-
-t3 <-
-  mod3 %>%
-  tbl_regression(exponentiate = TRUE)%>%
-  add_nevent()
-
-# merge tables 
-
-  tbl_merge(
-    tbls = list(t1, t2, t3),
-    tab_spanner = c("Model 1", "Model 2", "Model 3")
-  )
-```
-
-```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
-
+options(knitr.kable.NA = '')
 library(kableExtra)
-param.est = data.frame(read_excel("param.est.xlsx"))
-kable(param.est, 
-      col.names = c("Quantile", "Point Estimate", "95% LCL", "95% UCL", 
-      "Interval Length"),
-       caption="Parametric Model Estimates",align="c", digits=2)%>%
-    group_rows("Weibull Model Fit", 1, 3) %>%
-    group_rows("Log-normal Model Fit", 4,6)%>%
-    group_rows("Log-logistic Model Fit", 7,9)%>%
-    kable_styling(position = "center", latex_options="HOLD_position")
+models = data.frame(read_excel("models.xlsx"))
+kable(models, 
+     col.names =c("Covariate","HR","95% CI","p-val", "HR","95% CI","p-val","HR","95% CI","p-val"),
+      caption="Summary of CoxPH Regression Models",align="c", digits=2)%>%
+      add_header_above(c(" " = 1,"n = 77; #events = 37" = 3, "n = 42; #events = 40" = 3, 
+                         "n = 11; #events = 11" = 3),font_size = 8)%>%
+      add_header_above(c(" " = 1,"LRT = 10.34 on 3 df; p = 0.02" = 3, "LRT = 13.9 on 1 df; p = 0.05" = 3, 
+                         "LRT = 10.34 on 1 df; p = 0.1" = 3),font_size = 8)%>% 
+      add_header_above(c(" " = 1,"Model 1" = 3, "Model 2" = 3, "Model 3" = 3)) %>%
+     kable_styling(position = "center", latex_options="HOLD_position")
 ```
 
 
@@ -1169,6 +1060,81 @@ Cox-Snell residual plot for assessment of overall model fit and dfbeta residual 
 
 ```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
 #Cox-Snell residual analysis for overall model fit
+LL=0.0
+UL=26.0
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod1=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=3
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+LL=26
+UL=46
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
+status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
+Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="both",trace=FALSE)
+mod2=cph.fit2
+
+lrt=-2*cph.fit2$loglik[2]+2*cph.fit1$loglik[2]
+varstartcount=10
+varendcount=1
+vars=varstartcount - varendcount
+pval=1-pchisq(lrt,vars)
+
+#Note: selects the reduced model (p-val>0.05)
+
+#Subset the data based on the time region 
+
+months=df.new$Survival[df.new$Survival>UL]
+status=df.new$Status[df.new$Survival>UL]
+Age=df.new$Age[df.new$Survival>UL]
+Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
+Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
+Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
+
+#Create initial model fit
+
+cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+
+#Reduce with StepAIC procedure
+
+cph.fit2=stepAIC(cph.fit1,~.^2,direction="backward",trace=FALSE)
+mod3=cph.fit2
 
 status=df.new$Status[df.new$Survival>=0 & df.new$Survival<=26]
 rc=abs(status - mod1$residuals)
@@ -1216,6 +1182,14 @@ ggcoxzph(test.ph, main="Schoenfeld Residuals - Const Coeff Evaluation for Model 
 
 ```
 
+## Pairs Plot of Covariates
+
+Pairs plots of the prognistic factors in the dataset are provided below. These plots were investigated as part of the covariate selection process for identification of possible multicollinearity. 
+
+```{r echo = FALSE, fig.align='center', results = "asis", message = FALSE}
+df=data.frame(df.new$P.Effusion,df.new$Age,df.new$F.Shortening,df.new$EPSS,df.new$LVDD,df.new$WMS)
+pairs(df) 
+```
 
 \newpage
 
