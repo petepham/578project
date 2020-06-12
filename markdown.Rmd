@@ -279,7 +279,7 @@ haz.all
 To explore differences among groups, we stratify among age, pericardial effusion presence, wall motion score, and fractional shortening. We first begin exploring the effects of age and pericardial effusion presence:
 
 
-### Stratified by Age and Pericardial Effusion Presence
+### Kaplan-Meier Stratified by Age and Pericardial Effusion Presence
 
 The results of a Kaplan-Meier estimate for age and pericardial effusion stratification can be seen below:
 
@@ -382,8 +382,9 @@ arrange_ggsurvplots(haz.p1, print=TRUE, ncol=2, nrow=1)
 
 For both groups, there does not seem to be a large departure from cumulative hazard. When stratifying by age, we see a slight increase in cumulative hazard of the younger group between 30 and 50 months. After that mark, the older group experiences a relative increase in cumulative hazard. When stratified by pericardial effusion presence, very little difference can be observed with any difference being the result of sample size differences.
 
+\newpage
 
-### Stratified by Wall Motion Score and fractional Shortening Length:
+### Kaplan-Meier Stratified by Wall Motion Score and Fractional Shortening Length:
 
 We then explore the effects of wall motion score and fractional shortening:
 
