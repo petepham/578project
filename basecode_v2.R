@@ -650,13 +650,10 @@ qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0,
 }
 
 qq.surv(months, status, distribution = "weibull",
-        adjpb=0,
         main="Q-Q plot - Weibull fit")
 qq.surv(months, status, distribution = "lognormal",
-        adjpb=0,
         main="Q-Q plot - Log-normal fit")
 qq.surv(months, status, distribution = "loglogistic",
-        adjpb=0,
         main="Q-Q plot - Log-logistic fit")
 
 ## Semi-Parametric Modeling (CoxPH) ##
@@ -744,13 +741,13 @@ UL=26.0
 months=df.new$Survival[df.new$Survival>=LL & df.new$Survival<=UL]
 status=df.new$Status[df.new$Survival>=LL & df.new$Survival<=UL]
 Age=df.new$Age[df.new$Survival>=LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>=LL & df.new$Survival<=UL]
+W.MS=df.new$WMS[df.new$Survival>=LL & df.new$Survival<=UL]
+F.Short=df.new$F.Shortening[df.new$Survival>=LL & df.new$Survival<=UL]
 
 #Create initial model fit
 
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
 summary(cph.fit1)
 
 #Reduce with StepAIC procedure
@@ -783,8 +780,9 @@ abline(a=0,b=1); abline(v=0); abline(h=0)
 
 #Schoenfeld residuals; test for constant coefficients 
 
+par(mfrow=c(1,1))
 test.ph <- cox.zph(cph.fit2)
-ggcoxzph(test.ph)
+ggcoxzph(test.ph,font.y=8)
 
 #Dfbeta detection of influential observations
 
@@ -803,13 +801,13 @@ UL=46
 months=df.new$Survival[df.new$Survival>LL & df.new$Survival<=UL]
 status=df.new$Status[df.new$Survival>LL & df.new$Survival<=UL]
 Age=df.new$Age[df.new$Survival>LL & df.new$Survival<=UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>LL & df.new$Survival<=UL]
+W.MS=df.new$WMS[df.new$Survival>LL & df.new$Survival<=UL]
+F.Short=df.new$F.Shortening[df.new$Survival>LL & df.new$Survival<=UL]
 
 #Create initial model fit
 
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
 summary(cph.fit1)
 
 #Reduce with StepAIC procedure
@@ -844,7 +842,8 @@ abline(a=0,b=1); abline(v=0); abline(h=0)
 
 test.ph <- cox.zph(cph.fit2)
 print(test.ph)
-ggcoxzph(test.ph, main = "Test")
+ggcoxzph(test.ph)
+
 #slight pattern with time but p>0.05. The assumption of proportional hazards appears to be supported for the covariates sex (which is, recall, a two-level factor, accounting for the two bands in the graph), wt.loss and age.
 
 #Dfbeta detection of influential observations
@@ -865,13 +864,13 @@ cph.fit2$x
 months=df.new$Survival[df.new$Survival>UL]
 status=df.new$Status[df.new$Survival>UL]
 Age=df.new$Age[df.new$Survival>UL]
-Pericardial_Effusion=df.new$P.Effusion[df.new$Survival>UL]
-Wall_Motion_Score=df.new$WMS[df.new$Survival>UL]
-Fractional_Shortening=df.new$F.Shortening[df.new$Survival>UL]
+P.Eff=df.new$P.Effusion[df.new$Survival>UL]
+W.MS=df.new$WMS[df.new$Survival>UL]
+F.Short=df.new$F.Shortening[df.new$Survival>UL]
 
 #Create initial model fit
 
-cph.fit1=coxph(Surv(months,status)~Age+Pericardial_Effusion+Wall_Motion_Score+Fractional_Shortening,x=T)
+cph.fit1=coxph(Surv(months,status)~Age+P.Eff+W.MS+F.Short,x=T)
 summary(cph.fit1)
 
 #Reduce with StepAIC procedure

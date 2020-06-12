@@ -199,7 +199,7 @@ The semi-parametric Cox proportional hazards model is employed here to explore t
 
 The Cox PH hazard function is defined as follows: 
 
-\[ h(t)=h_0(t)×exp(b_1x_1+b_2x_2+...+b_nx_n) \]
+\[ h(t)=h_0(t)exp(b_1x_1+b_2x_2+...+b_nx_n) \]
 
 where t represents the survival time, $x_1,x_2,...,x_n$ are the set of prognostic factors or covariates, and the coefficients $b_1,b_2,...,b_n$ measure the effect of the covariates on survival time. The baseline hazard $h_0(t)$ corresponds to the value of the hazard if all covariates are equal to zero.
 
@@ -540,7 +540,7 @@ The selected time subsets were obtained as follows:
  \item[$Subset \:3: 46 \: months \leq t$]
 \end{description}
 
-Within each time subset, the proportional hazard assumption was tested for each of the four covariates and found to hold. A Cox PH model was fitted to each subset of the survival data, reduced as far as possible using a Step AIC procedure with Likelihood Ratio Test selection, and evaluated for adequacy using standard diagnostic techniques. 
+Within each time subset, the proportional hazard assumption was tested for each of the four covariates and found to hold. A Cox PH model was fitted to each subset of the survival data, reduced as far as possible using a Step AIC procedure up to second order interactions with Likelihood Ratio Test selection of the final model, and evaluated for adequacy using standard diagnostic techniques. 
 
 The three models are summarized below: 
 
